@@ -285,6 +285,44 @@
       "observed": "Run concluded success. gh-pages created with .nojekyll, index.html, latest/, previews.json and branches/claude-intelligent-cannon-d1nqq6/ (68 files); previews.json records commit 79bbae5, version 0.1.0, 1 in-progress and 15 planned tickets, 26 UNRUN. https://domusgpt.github.io/Seafood-Confidential/ returns 404 until the owner enables Pages from the gh-pages branch.",
       "result": "pass",
       "location": ".github/workflows/pages.yml; branch gh-pages"
+    },
+    {
+      "id": "EV-0017",
+      "recordedAt": "2026-11-18T12:34:55-05:00",
+      "session": "S01",
+      "environment": "GitHub Actions ubuntu-latest; CI runs 44353695905 (push) and 44353711344 (pull_request) on 5fea5ca",
+      "commit": "5fea5ca0a9c95a127dd422f942b2c302eb73f9b1",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-TRACK",
+        "WS-HUB",
+        "WS-ENV"
+      ],
+      "kind": "verification",
+      "summary": "CI green on GitHub after the bootstrap fix, including the visual and accessibility job",
+      "steps": "Push of 5fea5ca triggered CI (checks + visual) and Pages previews; read job steps and the visual job log via the GitHub API.",
+      "observed": "Validate, test and build: all 14 steps passed (validators, tests, status freshness, hub build/check, Prettier, pinned tool install from a cold cache, actionlint, shellcheck, gitleaks over full history, glslang). Visual and accessibility check: '44/44 page renders clean' on the runner (reduced-motion renders static); artifact hub-screenshots-5fea5ca (45 files, 38 MB, sha256 c032f928…) retained 14 days. Pages previews run 2: success. CI runs 1-2 on 79bbae5 failed before the fix (EV-0015).",
+      "result": "pass",
+      "location": "https://github.com/Domusgpt/Seafood-Confidential/actions/runs/44353695905"
+    },
+    {
+      "id": "EV-0018",
+      "recordedAt": "2026-11-18T12:35:41-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Node 24.22.3, pnpm 12.21.0 with release-age and trust gates; scratch probe outside the repository",
+      "commit": "WORKTREE@5fea5ca0a9c95a127dd422f942b2c302eb73f9b1",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-ENV",
+        "WS-PLAN",
+        "SC-001"
+      ],
+      "kind": "observation",
+      "summary": "Recommended foundation libraries install and type-check; Ghost Source theme validated by gscan",
+      "steps": "In the scratch Next.js 16.4.6 probe: pnpm add -D typescript@6.0.3 typescript-eslint vitest @playwright/test@1.63.0; pnpm add @opentelemetry/api @vercel/otel pino; tsc --noEmit; next build. Cloned TryGhost/Source at its latest tag and ran gscan.",
+      "observed": "Installed under the supply-chain gates: typescript 6.0.3, typescript-eslint ^8.73.0, vitest ^5.1.0, @playwright/test 1.63.0, @opentelemetry/api ^1.10.0, @vercel/otel ^2.3.0, pino ^10.4.0 (alongside next 16.4.6, react 19.3.0, supabase-js 2.119.0, @supabase/ssr 0.12.7, @tryghost/admin-api 1.14.16, zod 4.6.7, MCP SDK 1.32.2). tsc 6.0.3 --noEmit clean; next build compiled. Source theme v1.7.6: MIT (Ghost Foundation), engines ghost >=5.0.0 and node >=22.12.0; gscan: 'Your theme is compatible with Ghost 6.x'. The package store is warm for the next turn.",
+      "result": "pass",
+      "location": "docs/planning/FOUNDATION_PLANNING_BRIEF.md#environment-feasibility"
     }
   ]
 }

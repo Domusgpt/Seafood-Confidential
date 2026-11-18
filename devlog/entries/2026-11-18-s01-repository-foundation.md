@@ -11,7 +11,7 @@ recordedAt: 2026-11-18T12:05:00-05:00
 author: "Claude Code (cloud session) for Paul Phillips"
 tickets: [SC-001]
 workstreams: [WS-REPO, WS-ENV, WS-TRACK, WS-HUB, WS-PLAN]
-evidence: [EV-0001, EV-0002, EV-0003, EV-0004, EV-0005, EV-0006, EV-0007, EV-0008, EV-0009, EV-0010, EV-0011, EV-0012, EV-0013, EV-0014, EV-0015, EV-0016]
+evidence: [EV-0001, EV-0002, EV-0003, EV-0004, EV-0005, EV-0006, EV-0007, EV-0008, EV-0009, EV-0010, EV-0011, EV-0012, EV-0013, EV-0014, EV-0015, EV-0016, EV-0017, EV-0018]
 status: complete
 tags: [foundation, tooling, project-hub, planning]
 ---
@@ -36,6 +36,7 @@ The launch packet that arrived as a zip is now a working repository. The develop
 **Environment and tooling (your mid-turn request)**
 - `tools/bootstrap/install-dev-tools.sh` installs pinned tools and verifies each against a SHA-256 hash: actionlint 1.7.12, gitleaks 8.30.1, shellcheck 0.11.0, firebase-tools 15.36.0, vercel 66.1.0, gscan 6.7.0, and Node 24 LTS side-by-side.
 - Repo dependencies are pinned exactly: Supabase CLI 3.2.0, Playwright 1.63.0, axe, Ajv, marked, yaml, Prettier and the OFL fonts. pnpm 12 runs with supply-chain gates.
+- At your second request, the recommended foundation libraries were also pre-installed (TypeScript 6.0.3, typescript-eslint, Vitest, Playwright Test, OpenTelemetry, pino) and Ghost's MIT Source theme was validated with gscan (EV-0018).
 - Docker is running with a registry mirror. Supabase local stack images, Ghost 6.78.0 and Mailpit are pulled and verified. A Next.js 16.4.6 probe with the foundation libraries builds, which also warmed the package store. glslang is installed for shader validation.
 
 **Project hub and previews**
@@ -82,7 +83,7 @@ The launch packet that arrived as a zip is now a working repository. The develop
 
 ## Evidence
 
-EV-0001 to EV-0016 are in [the evidence log](../../devtrack/evidence.json). All passed except EV-0009 and EV-0010, which are informational. EV-0015 records the CI defect found after the first push and its verified fix. EV-0016 records the first real Pages publication to `gh-pages`.
+EV-0001 to EV-0018 are in [the evidence log](../../devtrack/evidence.json). All passed except EV-0009 and EV-0010, which are informational. EV-0015 records the CI defect found after the first push and its verified fix. EV-0016 records the first real Pages publication to `gh-pages`. EV-0017 records CI passing on GitHub after the fix, including 44/44 clean renders on the runner. EV-0018 records that the recommended foundation libraries install and type-check, and that the Source theme passes gscan.
 
 | Screens (final verification round, EV-0012) | |
 |---|---|
@@ -105,5 +106,5 @@ The visual codex page is in [hub-visual-codex-desktop.jpg](../assets/2026-11-18-
 1. Enable GitHub Pages from the `gh-pages` branch, then open the preview from the PR.
 2. Founders: answer the questions in the planning brief, at minimum Q1 to Q4 and Q8 to Q9, plus decisions D01, D04, D05, D06 and D10.
 3. Next turn: plan mode on the brief, then build foundation phases F0 to F2 (desk scaffold, database with grants, RLS and pgTAP) on a new session branch.
-4. Optionally save the environment setup script so new cloud sessions start with these tools.
+4. ~~Save the environment setup script~~ Done: saved to the cloud environment and guarded to run only when this repository is checked out. It is unproven until a fresh session builds a new container.
 5. Agent setup: merge the `sc-visual-codex` entry into your shared visual codex skill, which isn't installed in this cloud environment, and complete the shader and dev-blog skills' missing scripts and references.

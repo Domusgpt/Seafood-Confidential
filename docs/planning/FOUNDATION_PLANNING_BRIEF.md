@@ -51,6 +51,8 @@ Checked 18 November 2026 (EV-0009, EV-0010) against primary sources: nodejs.org,
 | Ghost 6.78 local | Runs in development mode with SQLite. It must bind IPv4 (`server__host=0.0.0.0`); the default IPv6 bind fails here with EAFNOSUPPORT | EV-0007 |
 | Next.js 16.4.6 | Template plus supabase-js, `@supabase/ssr`, Ghost Admin API client, zod 4, MCP SDK and Ajv install and build under Node 24 and pnpm 12 policies; two policy adjustments were needed | EV-0008 |
 | Tools | actionlint, gitleaks, shellcheck, glslang, Firebase CLI, Vercel CLI, gscan, Supabase CLI; pinned and checksum-verified | EV-0005 |
+| Recommended libraries | TypeScript 6.0.3 with typescript-eslint 8.73 (`tsc --noEmit` clean), Vitest 5.1, Playwright Test 1.63.0, OpenTelemetry (`@opentelemetry/api`, `@vercel/otel`) and pino install under the pnpm gates; the package store is warm | EV-0018 |
+| Ghost theme base | Source v1.7.6 (MIT, Ghost Foundation) passes gscan: "compatible with Ghost 6.x" | EV-0018 |
 
 ## Proposed foundation architecture
 
