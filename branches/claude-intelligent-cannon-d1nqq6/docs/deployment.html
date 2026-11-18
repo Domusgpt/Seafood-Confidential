@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Deploying the desk · Seafood Confidential project hub</title>
+<meta name="description" content="Deploying the desk (docs/DEPLOYMENT.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.3.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9fc2e76dedba66a77472cb42d1442d46e0f487fb">Commit <code>9fc2e76</code></a>
+      <span>Built Nov 18, 2026, 2:39 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="desk.html">Operations desk</a></li><li><a href="deployment.html" aria-current="page">Deploying the desk</a></li><li><a href="hosting-and-costs.html">Hosting and running costs</a></li><li><a href="agent-lab.html">Agent lab (Claude against the gateway)</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li><li><a href="adr-003.html">ADR-003 operations desk foundation stack and data access</a></li><li><a href="adr-004.html">ADR-004 desk-driven Ghost drafts and one-click human publishing</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="deploying-the-desk-v030">Deploying the desk (v0.3.0)</h1>
+<p>How to take the desk from the local stack to hosted Supabase and Google Cloud Run, the path recommended in <a href="hosting-and-costs.html">planning/HOSTING_AND_COSTS.md</a>. Nothing here has been run against hosted services yet. The steps are verified locally (the container image builds and serves), and their hosted execution belongs to SC-015 with the founders&#39; accounts (SC-001).</p>
+<h2 id="1-supabase-project">1. Supabase project</h2>
+<ol>
+<li><p>Create a <strong>Pro</strong> organization and one project in the region you want, for example <code>us-east-1</code>. Keep the spend cap on. A separate <strong>Free</strong> organization holds staging.</p>
+</li>
+<li><p>Apply the schema from the repository root:</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm exec supabase link --project-ref &lt;project-ref&gt;
+</code></pre>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm exec supabase db push
+</code></pre>
+</li>
+<li><p>Give <code>desk_app</code> a long random password in the SQL editor: <code>alter role desk_app password &#39;&lt;generated&gt;&#39;;</code>. Store it only in Secret Manager.</p>
+</li>
+<li><p>Auth settings:</p>
+<ul>
+<li>turn off sign-ups;</li>
+<li>set the Site URL to the desk address and add it to the redirect URLs;</li>
+<li>set the minimum password length to 12;</li>
+<li>paste the magic-link template from <code>supabase/templates/magic_link.html</code> (subject &quot;Your Seafood Confidential desk sign-in link&quot;).</li>
+</ul>
+</li>
+<li><p><strong>Configure custom SMTP</strong> (your domain&#39;s mail provider). Supabase&#39;s built-in mailer is meant for testing and is heavily rate-limited, so magic links need your own SMTP in production.</p>
+</li>
+<li><p>Run the policy tests against staging before production: <code>pnpm exec supabase test db --db-url &quot;&lt;staging connection string&gt;&quot;</code>.</p>
+</li>
+<li><p>Create the first owner with the operator CLI. It refuses remote databases unless you pass <code>--allow-remote</code>. Put the project&#39;s secret key and database owner URL in <code>apps/desk/.env.ops.local</code> on a trusted machine only:</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm --filter @sc/desk staff add --email you@yourdomain --name &quot;Your Name&quot; --role owner --allow-remote
+</code></pre>
+</li>
+</ol>
+<p><strong>Connection string for the desk.</strong> Use the shared pooler, which is IPv4 and needs no add-on, in transaction mode for Cloud Run:</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-text">postgresql://desk_app.&lt;project-ref&gt;:&lt;password&gt;@&lt;pooler-host&gt;:6543/postgres
+</code></pre>
+<p>Set <code>DESK_DB_PREPARE=false</code> with this URL, because the shared pooler does not support prepared statements in transaction mode.</p>
+<h2 id="2-container-image">2. Container image</h2>
+<p>From the repository root:</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">docker build -f apps/desk/Dockerfile -t &lt;region&gt;-docker.pkg.dev/&lt;gcp-project&gt;/sc/desk:0.3.0 .
+</code></pre>
+<p>The build needs no secrets. Next.js generates the Server Actions encryption key during the build and embeds it, so every instance of one image agrees. Keep the registry private. Behind a TLS-inspecting proxy, add <code>--secret id=extra_ca,src=&lt;ca.pem&gt;</code>; the certificate is used only during the build and never stored in the image.</p>
+<h2 id="3-cloud-run">3. Cloud Run</h2>
+<ol>
+<li><p>Create an Artifact Registry repository next to Supabase (for example <code>us-east4</code> for Supabase <code>us-east-1</code>):</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">gcloud artifacts repositories create sc --repository-format=docker --location=us-east4
+</code></pre>
+</li>
+<li><p>Push the image:</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">docker push us-east4-docker.pkg.dev/&lt;gcp-project&gt;/sc/desk:0.3.0
+</code></pre>
+</li>
+<li><p>Store the secrets in Secret Manager (<code>desk-database-url</code>, <code>intake-hash-secret</code>, plus <code>otel-headers</code> if you export telemetry).</p>
+</li>
+<li><p>Deploy. The service is public because the desk has its own sign-in and serves the public pitch form:</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">gcloud run deploy sc-desk --image us-east4-docker.pkg.dev/&lt;gcp-project&gt;/sc/desk:0.3.0 --region us-east4 --port 8080 --min-instances 0 --max-instances 3 --allow-unauthenticated --set-env-vars DESK_SITE_URL=https://desk.&lt;your-domain&gt;,SUPABASE_URL=https://&lt;project-ref&gt;.supabase.co,SUPABASE_PUBLISHABLE_KEY=&lt;sb_publishable_…&gt;,DESK_DB_PREPARE=false,DESK_TRUSTED_PROXY_HOPS=1,GHOST_ADMIN_URL=https://&lt;your-ghost-site&gt;,LOG_LEVEL=info --set-secrets DESK_DATABASE_URL=desk-database-url:latest,INTAKE_HASH_SECRET=intake-hash-secret:latest
+</code></pre>
+</li>
+<li><p>Map the custom domain with Cloud Run domain mapping, in a region that supports it, or later through a load balancer. Do not use Firebase Hosting rewrites: they forward only the <code>__session</code> cookie and would break sign-in.</p>
+</li>
+</ol>
+<p>Never set <code>SUPABASE_SECRET_KEY</code> on the service: the desk refuses to start with it.</p>
+<h3 id="first-deployment-checks-part-of-sc-015">First-deployment checks (part of SC-015)</h3>
+<ul>
+<li><input disabled="" type="checkbox"> <code>GET /api/health</code> returns <code>ok</code> with the expected version.</li>
+<li><input disabled="" type="checkbox"> Sign-in works end to end with the production SMTP.</li>
+<li><input disabled="" type="checkbox"> A reader identity reaches <code>/no-access</code> (AT-03).</li>
+<li><input disabled="" type="checkbox"> The pooler accepts <code>desk_app.&lt;project-ref&gt;</code>, and role switching works in transaction mode. The ADR-003 review trigger is verified when pages load.</li>
+<li><input disabled="" type="checkbox"> <code>X-Forwarded-For</code> really contains the client address as its right-most entry. Submit two pitches from different networks and confirm their throttle buckets differ in the audit log.</li>
+<li><input disabled="" type="checkbox"> The nonce CSP and security headers are present (the end-to-end header test can run against the URL).</li>
+<li><input disabled="" type="checkbox"> The agent gateway answers 401 without a token, and the agent lab passes against staging.</li>
+</ul>
+<h2 id="4-alternative-a-hugging-face-docker-space">4. Alternative: a Hugging Face Docker Space</h2>
+<p>The same image runs on a Docker Space. This needs a paid Hugging Face plan; CPU Basic sleeps after 48 hours idle, and CPU Upgrade costs $0.03 an hour.</p>
+<ol>
+<li>Set <code>app_port: 8080</code> in the Space README front matter.</li>
+<li>Put the same variables and secrets in the Space settings, with <code>DESK_TRUSTED_PROXY_HOPS</code> set to match Hugging Face&#39;s proxy chain (verify it with the header check above).</li>
+<li>Keep the Space <strong>public</strong>: a private Space would require every staff member and contributor to have a Hugging Face login.</li>
+</ol>
+<h2 id="5-backups-to-cloud-storage">5. Backups to Cloud Storage</h2>
+<p>Planned with SC-014: a nightly job runs <code>pg_dump</code> of the <code>app</code> and <code>private</code> schemas as the database owner, encrypts the dump, and uploads it to a private bucket in a free-tier US region, with lifecycle rules (Nearline after 30 days, delete after a year). The restore procedure is tested before launch (AT-21).</p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/DEPLOYMENT.md">docs/DEPLOYMENT.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9fc2e76dedba66a77472cb42d1442d46e0f487fb">9fc2e76</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

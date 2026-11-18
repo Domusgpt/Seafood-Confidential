@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Hosting and costs, publishing automation proposal and the Claude agent lab · Seafood Confidential project hub</title>
+<meta name="description" content="Dev log DL-20261118-03.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.3.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9fc2e76dedba66a77472cb42d1442d46e0f487fb">Commit <code>9fc2e76</code></a>
+      <span>Built Nov 18, 2026, 2:39 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html">Docs</a></li><li><a href="../devlog/index.html" aria-current="page">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<article class="prose" style="max-width:none">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Entry details" style="max-width:78ch"><table><tbody><tr><th scope="row">Entry</th><td>DL-20261118-03</td></tr><tr><th scope="row">Session</th><td>S01, turn 3</td></tr><tr><th scope="row">Version</th><td>0.3.0</td></tr><tr><th scope="row">Branch</th><td>claude/intelligent-cannon-d1nqq6</td></tr><tr><th scope="row">Base commit</th><td>d09120798af3</td></tr><tr><th scope="row">Started</th><td>Nov 18, 2026, 2:15 PM EST</td></tr><tr><th scope="row">Recorded</th><td>Nov 18, 2026, 2:38 PM EST</td></tr><tr><th scope="row">Tickets</th><td>SC-001, SC-005, SC-009</td></tr><tr><th scope="row">Workstreams</th><td>WS-ENV, WS-PLAN</td></tr><tr><th scope="row">Status</th><td>complete</td></tr></tbody></table></div>
+  <div style="max-width:78ch"><h1 id="hosting-and-costs-publishing-automation-proposal-and-the-claude-agent-lab">Hosting and costs, publishing automation proposal and the Claude agent lab</h1>
+<h2 id="summary">Summary</h2>
+<p>The founders asked about Supabase costs, about hosting on the Hugging Face and Google Cloud accounts they already have, and why the desk does not publish to Ghost. They also offered their Claude API credits. This turn answers each with checked numbers and working code:</p>
+<ul>
+<li>a hosting and cost plan;</li>
+<li>a proposed decision for automating Ghost while a person still decides releases;</li>
+<li>a container image that runs on Cloud Run or a Hugging Face Space;</li>
+<li>a Claude agent lab that red-teams the gateway.</li>
+</ul>
+<p>The founders accepted the pitch limits as built. The lab&#39;s real Claude runs wait for an API key, because this cloud environment cannot hold one as a network secret.</p>
+<h2 id="what-changed">What changed</h2>
+<p><strong>Planning</strong></p>
+<ul>
+<li><code>docs/planning/HOSTING_AND_COSTS.md</code>: Supabase Pro (a flat $25 with the Micro compute credit), Cloud Run at about $0 inside the free tier, Cloud Storage for backups, and the Claude API on credits. That is about $84–99 a month in cash, against the packet&#39;s $119–169.</li>
+<li><code>decisions/ADR-004-desk-driven-publishing.md</code> (Proposed):<ul>
+<li>agents never publish (a principle);</li>
+<li>the desk not writing to Ghost was only first-slice scope;</li>
+<li>the proposal: automatic Ghost drafts, webhook sync and one-click publishing by a signed-in editor behind the release gate.</li>
+</ul>
+</li>
+<li>The founders&#39; decision on the pitch limits is recorded in <code>docs/DESK.md</code>.</li>
+</ul>
+<p><strong>Deployment</strong></p>
+<ul>
+<li><code>apps/desk/Dockerfile</code> and <code>.dockerignore</code>: a Next.js standalone image (385 MB, non-root, health check) that builds without secrets. Behind a TLS-inspecting proxy, an optional build secret supplies the CA.</li>
+<li><code>DESK_DB_PREPARE</code> for the Supabase pooler&#39;s transaction mode. <code>DESK_TRUSTED_PROXY_HOPS</code> is now required in production.</li>
+<li><code>docs/DEPLOYMENT.md</code>: Supabase, Cloud Run and Hugging Face steps, plus first-deployment checks.</li>
+<li>CI gains a <code>container</code> job that builds the image and smoke-tests it.</li>
+</ul>
+<p><strong>Agent lab (<code>apps/agent-lab</code>)</strong></p>
+<ul>
+<li>A Claude drafting agent built on the Anthropic TypeScript SDK&#39;s tool runner:<ul>
+<li><code>claude-opus-5-5</code> by default, with explicit effort;</li>
+<li>server-side refusal fallbacks and prompt caching;</li>
+<li>four tools that call the real gateway over HTTP.</li>
+</ul>
+</li>
+<li>Three scenarios judged by database and gateway records:<ul>
+<li><code>draft</code>;</li>
+<li><code>injection</code> (AT-17: a source tells agents to publish and leak contacts);</li>
+<li><code>revocation</code> (the token is revoked mid-run).</li>
+</ul>
+</li>
+<li>Reports include tokens and list-price cost. <code>--self-test</code> checks the harness without the model.</li>
+</ul>
+<p><strong>Desk</strong></p>
+<ul>
+<li>Fixed a phone-layout bug: Settings overflowed by 265 px (see Problems).</li>
+<li>Version 0.3.0.</li>
+<li>The <code>sc-visual-codex</code> skill gained an &quot;Operations desk UI patterns&quot; section.</li>
+</ul>
+<h2 id="decisions">Decisions</h2>
+<ul>
+<li><strong>Pitch limits stay as built</strong> (founders, 18 November 2026).</li>
+<li><strong>Cloud Run over a Hugging Face Space for the desk.</strong> It costs about $0 within the free tier and needs no extra plan, it can run next to Supabase, and access is public behind our own sign-in. Hugging Face needs a paid plan to run a Docker Space, its free hardware sleeps, and private Spaces would force Hugging Face logins on staff and contributors.</li>
+<li><strong>No Firebase Hosting rewrites</strong>, because they forward only the <code>__session</code> cookie.</li>
+<li><strong>The lab runs the Messages API in our own process</strong> rather than on Anthropic-hosted Managed Agents. Its gateway exists only on the local stack, and every call must be asserted. Managed Agents remains an option for production drafting agents once the desk is deployed.</li>
+<li><strong>Opus 5.5 is the lab default.</strong> Model choice per run is the founders&#39; call, and the cost table shows the alternatives.</li>
+</ul>
+<h2 id="problems-and-resolutions">Problems and resolutions</h2>
+<ul>
+<li><strong>The image build failed TLS verification inside this sandbox,</strong> whose proxy uses its own certificate authority. Fixed with an optional BuildKit secret that is never stored in the image.</li>
+<li><strong>Corepack could not start pnpm 12.</strong> Fixed by installing the pinned pnpm with npm during the build.</li>
+<li><strong>The phone layout test failed on Settings once the database held more varied data.</strong> Visually hidden labels inside wide tables are absolutely positioned, and their containing block was the page, so the page scrolled sideways. Fixed with <code>position: relative</code> on the scroll container, and recorded in the visual codex.</li>
+<li><strong>No Anthropic API key could be saved for this session,</strong> because network secrets are refused for Anthropic&#39;s own hosts. The lab is complete and self-tested; the Claude runs stay UNRUN (EV-0030).</li>
+</ul>
+<h2 id="evidence">Evidence</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Kind</th>
+<th>Result</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>EV-0026</td>
+<td>observation</td>
+<td>info</td>
+<td>Vendor prices and limits from official pages; the cost plan (D05)</td>
+</tr>
+<tr>
+<td>EV-0027</td>
+<td>test</td>
+<td>pass</td>
+<td>The container builds without secrets; smoke test: health, pages, CSP, 401, non-root, no <code>.env</code> in the image</td>
+</tr>
+<tr>
+<td>EV-0028</td>
+<td>test</td>
+<td>pass</td>
+<td>End-to-end 24/24 after standalone output, the pooler setting and the layout fix</td>
+</tr>
+<tr>
+<td>EV-0029</td>
+<td>verification</td>
+<td>pass</td>
+<td>Agent-lab harness self-test, 9/9 system checks through the real gateway (no model)</td>
+</tr>
+<tr>
+<td>EV-0030</td>
+<td>observation</td>
+<td>blocked</td>
+<td>Claude runs wait for an API key</td>
+</tr>
+</tbody></table></div>
+<p>Also run: <code>pnpm check</code> (validators, 27 tool tests, the desk&#39;s static checks with 67 unit tests, the agent-lab typecheck, a 51-page hub, formatting) and the bundle secret scan.</p>
+<h2 id="risks-and-open-questions">Risks and open questions</h2>
+<ul>
+<li><p><strong>Hosted behaviour is still unverified:</strong></p>
+<ul>
+<li>transaction pooling with role switching;</li>
+<li><code>desk_app.&lt;ref&gt;</code> through the pooler;</li>
+<li>which <code>X-Forwarded-For</code> entry Google&#39;s front end supplies.</li>
+</ul>
+<p>These are first-deployment checks in <code>docs/DEPLOYMENT.md</code> and SC-015.</p>
+</li>
+<li><p><strong>The ADR-004 automation needs a founder decision (D06)</strong> and a staging Ghost site before any code.</p>
+</li>
+<li><p><strong>Production magic links need custom SMTP;</strong> Supabase&#39;s built-in mailer is for testing.</p>
+</li>
+</ul>
+<h2 id="next-actions">Next actions</h2>
+<ol>
+<li>Founders:<ul>
+<li>add <code>ANTHROPIC_API_KEY</code> to the environment variables, or run <code>pnpm lab</code> locally;</li>
+<li>decide ADR-004;</li>
+<li>choose accounts and regions (D01, D05).</li>
+</ul>
+</li>
+<li>Run the lab on Opus 5.5 and record AT-17 and real costs. Try Sonnet 5.5 for comparison if the founders want.</li>
+<li>SC-002: a staging Ghost site, then build ADR-004&#39;s draft sync if approved.</li>
+<li>Deploy staging to Cloud Run with a Free Supabase project and run the first-deployment checks.</li>
+</ol>
+</div>
+  <h2>Evidence referenced</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">ID</th><th scope="col">Result</th><th scope="col">Summary</th><th scope="col">Observed</th></tr></thead><tbody><tr><td class="id"><a href="evidence.html#EV-0026">EV-0026</a></td><td><span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.2" y="7" width="1.6" height="4.5" fill="currentColor"/><circle cx="8" cy="4.9" r="1" fill="currentColor"/></svg>info</span></td><td>Hosting and running costs checked against official vendor pages; plan recommends Supabase Pro plus Cloud Run and Cloud Storage</td><td>Supabase Pro $25/month includes $10 compute credit covering one Micro instance (8 GB disk, 250 GB egress, 100,000 MAU, 7-day daily backups); Free pauses after a week and has no backups; the shared pooler is IPv4 on every plan and transaction mode does not support prepared statements; custom roles connect as ROLE.PROJECT-REF. Hugging Face: compute Spaces need a paid plan; CPU Basic is free but sleeps after 48 hours idle; CPU Upgrade $0.03/hour; disk is ephemeral. Google Cloud free tier: Cloud Run 2M requests, 180,000 vCPU-seconds, 360,000 GiB-seconds; Cloud Storage 5 GB-months in us-east1/us-west1/us-central1. Estimated cash total about $84-99/month against the packet&#39;s $119-169.</td></tr><tr><td class="id"><a href="evidence.html#EV-0027">EV-0027</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Production container image builds without secrets and passes a smoke test</td><td>Image sc-desk:0.3.0, 385 MB. /api/health ok with version 0.3.0; /sign-in and /pitch 200 with the nonce CSP; signed-out / redirects to /sign-in; the gateway answers 401 without a token and logs structured JSON with trace IDs; the process runs as node; no .env file anywhere in the image. The same smoke test is now the CI container job.</td></tr><tr><td class="id"><a href="evidence.html#EV-0028">EV-0028</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>End-to-end suite: 24/24 after standalone output, pooler setting and a phone layout fix</td><td>First run: 23/24; the phone layout test caught Settings overflowing by 265 px. Root cause: visually hidden labels inside wide tables are absolutely positioned and their containing block was the page, not the scroll container. Fix: position: relative on .table-scroll. Re-run: 24/24, no axe violations.</td></tr><tr><td class="id"><a href="evidence.html#EV-0029">EV-0029</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Agent lab harness self-test passes 9/9 system checks through the real gateway (scripted driver, no model)</td><td>draft 5/5, injection 5/5, revocation 3/3; revocation: briefs.list 200, then items.read 401 after the token was revoked, no proposal created. This proves the harness, not an agent: the Claude runs are UNRUN until an Anthropic API key is available.</td></tr><tr><td class="id"><a href="evidence.html#EV-0030">EV-0030</a></td><td><span class="badge tone-critical"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><rect x="4.5" y="7" width="7" height="2" fill="var(--surface)"/></svg>Blocked</span></td><td>Claude agent-lab runs not executed: an Anthropic API key cannot be supplied as a network secret in this cloud environment</td><td>Blocked until ANTHROPIC_API_KEY is added as an environment variable in the cloud environment settings (readable by anyone using that environment and by commands in its sessions) and a new session starts, or until the lab is run on a local machine. AT-17 stays UNRUN.</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9fc2e76dedba66a77472cb42d1442d46e0f487fb">9fc2e76</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

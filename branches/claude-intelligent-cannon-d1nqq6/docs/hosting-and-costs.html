@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Hosting and running costs · Seafood Confidential project hub</title>
+<meta name="description" content="Hosting and running costs (docs/planning/HOSTING_AND_COSTS.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.3.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9fc2e76dedba66a77472cb42d1442d46e0f487fb">Commit <code>9fc2e76</code></a>
+      <span>Built Nov 18, 2026, 2:39 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="desk.html">Operations desk</a></li><li><a href="deployment.html">Deploying the desk</a></li><li><a href="hosting-and-costs.html" aria-current="page">Hosting and running costs</a></li><li><a href="agent-lab.html">Agent lab (Claude against the gateway)</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li><li><a href="adr-003.html">ADR-003 operations desk foundation stack and data access</a></li><li><a href="adr-004.html">ADR-004 desk-driven Ghost drafts and one-click human publishing</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="hosting-and-running-costs-v030">Hosting and running costs (v0.3.0)</h1>
+<p>Prepared 18 November 2026 (session S01, turn 3) for the founders&#39; account and budget decisions (SC-001). Prices were checked against the vendors&#39; official pages on that date (sources at the end). Treat every figure as a planning estimate: vendors change prices, and usage-based lines depend on traffic.</p>
+<h2 id="recommendation-in-one-table">Recommendation in one table</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Choice</th>
+<th>Monthly cash</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Publishing</td>
+<td>Ghost(Pro) Publisher, annual (from the launch packet)</td>
+<td>$29</td>
+</tr>
+<tr>
+<td>Social</td>
+<td>Buffer Team, two channels (from the launch packet)</td>
+<td>$20</td>
+</tr>
+<tr>
+<td>Desk database and staff sign-in</td>
+<td><strong>Supabase Pro</strong>, one Micro project for production</td>
+<td><strong>$25</strong></td>
+</tr>
+<tr>
+<td>Staging database</td>
+<td>Supabase Free project in a separate organization</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>Desk hosting</td>
+<td><strong>Google Cloud Run</strong>, scale to zero, one container image</td>
+<td><strong>about $0</strong> (inside the free tier)</td>
+</tr>
+<tr>
+<td>Builds, images, secrets</td>
+<td>Cloud Build, Artifact Registry, Secret Manager</td>
+<td>about $0 (inside the free tier)</td>
+</tr>
+<tr>
+<td>Backups and exports</td>
+<td><strong>Google Cloud Storage</strong> bucket with lifecycle rules</td>
+<td>about $0 (inside the 5 GB free tier)</td>
+</tr>
+<tr>
+<td>AI drafting and testing</td>
+<td>Claude API on your monthly credits</td>
+<td>$0 cash (usage estimate below)</td>
+</tr>
+<tr>
+<td>Domain, mailboxes and sign-in email</td>
+<td>From the launch packet; magic links need your own SMTP (often included with the mailbox provider)</td>
+<td>$10–25</td>
+</tr>
+<tr>
+<td><strong>Total cash</strong></td>
+<td></td>
+<td><strong>about $84–99 a month</strong></td>
+</tr>
+</tbody></table></div>
+<p>The launch packet budgeted <strong>$119–169</strong> a month. The difference is Vercel Pro ($20) replaced by Cloud Run, and the $15–50 AI allowance covered by your Claude credits. Ghost and Buffer still need <strong>$588 upfront</strong> for their annual plans.</p>
+<h2 id="supabase">Supabase</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Plan</th>
+<th>What you get</th>
+<th>Fit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Free</td>
+<td>500 MB database, 50,000 monthly active users, 5 GB egress, 1 GB storage, 2 active projects. <strong>Paused after 1 week of inactivity. No backups.</strong> 1-day logs</td>
+<td>Staging and development only</td>
+</tr>
+<tr>
+<td><strong>Pro, $25/month</strong></td>
+<td>Includes <strong>$10 of compute credit, which covers one Micro instance</strong> (Micro is $10/month, Small $15). Per project: 8 GB disk (then $0.125/GB), 250 GB egress (then $0.09/GB), 100,000 monthly active users (then $0.00325 each), <strong>daily backups kept 7 days</strong>, 7-day logs. Spend cap on by default</td>
+<td><strong>Production</strong></td>
+</tr>
+<tr>
+<td>Team, $599/month</td>
+<td>14-day backups, 28-day logs, organization features</td>
+<td>Not needed</td>
+</tr>
+</tbody></table></div>
+<p>For the desk the Pro plan is a <strong>flat $25</strong>. The database will stay far below 8 GB for years, egress is tiny because pages render on the server, and the only signed-in users are a handful of staff. Keep the spend cap on.</p>
+<p>Add-ons you do <strong>not</strong> need:</p>
+<ul>
+<li>Point-in-time recovery ($100 a month for each 7 days of retention): daily backups plus our own nightly export to Cloud Storage cover a small newsroom.</li>
+<li>A custom domain ($10 a month per project): the Supabase address is used only server-side.</li>
+<li>The IPv4 add-on: connect through the shared pooler, which is IPv4 on every plan.</li>
+</ul>
+<p>A second Pro project for staging would add about $10 a month (another Micro), so use a Free project for staging and accept that it pauses when idle.</p>
+<p><strong>How the desk connects.</strong> On Cloud Run, which scales to zero, use the shared pooler in <strong>transaction mode (port 6543)</strong> with the user <code>desk_app.&lt;project-ref&gt;</code> and set <code>DESK_DB_PREPARE=false</code>, because prepared statements aren&#39;t supported there. Every desk request already runs inside one transaction that switches role and binds the caller, which is exactly what transaction pooling needs. A long-running server can use session mode (port 5432) instead and keep prepared statements on.</p>
+<h2 id="where-to-run-the-desk-cloud-run-versus-hugging-face-spaces">Where to run the desk: Cloud Run versus Hugging Face Spaces</h2>
+<p>The repository now builds one container image (<code>apps/desk/Dockerfile</code>, 385 MB, runs as a non-root user). The same image runs on either platform, so this choice stays reversible.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Google Cloud Run (recommended)</strong></th>
+<th>Hugging Face Docker Space</th>
+<th>Vercel Pro (packet default)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Monthly cost for this traffic</td>
+<td><strong>About $0.</strong> The free tier covers 2 million requests, 180,000 vCPU-seconds, 360,000 GiB-seconds and 1 GB of North America egress a month. Beyond that, usage is billed per second</td>
+<td>A paid plan to create the Space (<strong>PRO, $9 a month</strong>) plus either <strong>CPU Basic: free but sleeps after 48 hours idle</strong>, or <strong>CPU Upgrade: $0.03 an hour (about $22 a month)</strong>, always on</td>
+<td>$20 per deploying seat</td>
+</tr>
+<tr>
+<td>Cold starts</td>
+<td>A few seconds after an idle period, unless you pay to keep one instance warm</td>
+<td>A sleeping free Space has to boot again when someone visits</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>Privacy and access</td>
+<td>Public HTTPS endpoint behind our own sign-in; IAM and Secret Manager for configuration</td>
+<td>Spaces are built for public demos. Private Spaces need a Hugging Face login, which clashes with staff sign-in and the public pitch form</td>
+<td>Same as Cloud Run</td>
+</tr>
+<tr>
+<td>Database latency</td>
+<td>Pick the region next to Supabase (for example Cloud Run <code>us-east4</code> with Supabase <code>us-east-1</code>)</td>
+<td>Region not chosen by you</td>
+<td>Region selectable</td>
+</tr>
+<tr>
+<td>Disk</td>
+<td>Stateless, which the desk is</td>
+<td>Ephemeral; Storage Buckets for persistence</td>
+<td>Stateless</td>
+</tr>
+<tr>
+<td>Your accounts</td>
+<td>You already have Google Cloud</td>
+<td>You already have Hugging Face</td>
+<td>New account</td>
+</tr>
+</tbody></table></div>
+<p><strong>Recommendation:</strong> run the desk on <strong>Cloud Run</strong>, in the region next to the Supabase project, with minimum instances at 0. Use Cloud Run domain mapping for <code>desk.&lt;your-domain&gt;</code> in a region that supports it, or a load balancer later if needed.</p>
+<p>Don&#39;t put the desk behind <strong>Firebase Hosting rewrites</strong>: they pass only the <code>__session</code> cookie to the backend, which would break Supabase&#39;s sign-in cookies.</p>
+<p>Keep <strong>Hugging Face</strong> for what it is best at: demos, model experiments and public showcases (ZeroGPU is free on paid accounts), not the newsroom&#39;s private operations.</p>
+<h2 id="google-cloud-storage">Google Cloud Storage</h2>
+<p>Use one private bucket in a US free-tier region (<code>us-east1</code>, <code>us-west1</code> or <code>us-central1</code>) for:</p>
+<ul>
+<li>nightly logical backups of the desk database (the <code>app</code> and <code>private</code> schemas), which SC-014 turns into a tested restore procedure;</li>
+<li>archived agent-lab reports;</li>
+<li>later, signed permission documents for rights records.</li>
+</ul>
+<p>The free tier is 5 GB-months of regional storage, 5,000 Class A and 50,000 Class B operations, and 100 GB of North America egress a month. Beyond it, Standard storage is about $0.020 per GB-month. Add a lifecycle rule (Nearline after 30 days, delete after a year) and the bucket costs pennies at most.</p>
+<h2 id="claude-api-your-credits">Claude API (your credits)</h2>
+<p>List prices per million tokens, first-party API:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Input</th>
+<th>Output</th>
+<th>Cache read</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Claude Opus 5.5 (the lab&#39;s default)</td>
+<td>$4</td>
+<td>$20</td>
+<td>$0.20</td>
+</tr>
+<tr>
+<td>Claude Sonnet 5.5</td>
+<td>$2</td>
+<td>$10</td>
+<td>$0.10</td>
+</tr>
+<tr>
+<td>Claude Haiku 5.5</td>
+<td>$0.10</td>
+<td>$0.50</td>
+<td>$0.01</td>
+</tr>
+</tbody></table></div>
+<p><strong>Estimate, to be replaced by measurement.</strong> These figures assume one drafting task takes about six model turns, with about 25,000 input tokens across the turns and about 4,000 output tokens including reasoning.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th></th>
+<th>Opus 5.5</th>
+<th>Sonnet 5.5</th>
+<th>Haiku 5.5</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>One drafting task</td>
+<td>about $0.18</td>
+<td>about $0.09</td>
+<td>well under a cent</td>
+</tr>
+<tr>
+<td>One agent-lab run (three scenarios)</td>
+<td>about $0.40–0.60</td>
+<td>about $0.20–0.30</td>
+<td>about a cent</td>
+</tr>
+<tr>
+<td>A month of nightly lab runs plus 100 real drafts</td>
+<td>about $30–35</td>
+<td>about $15–18</td>
+<td>under $1</td>
+</tr>
+</tbody></table></div>
+<p>The agent lab prints the exact tokens and the list-price cost of every run, so the first real run replaces this estimate. Quality, not price, should decide the model: <code>--model</code> switches it per run.</p>
+<h2 id="what-changes-in-the-repository-for-this-plan">What changes in the repository for this plan</h2>
+<ul>
+<li><code>apps/desk/Dockerfile</code> and <code>.dockerignore</code>: a standalone Next.js image that builds without secrets and starts with <code>node apps/desk/server.js</code> on port 8080.</li>
+<li><code>DESK_DB_PREPARE</code>: turns prepared statements off for the shared pooler&#39;s transaction mode.</li>
+<li><code>DESK_TRUSTED_PROXY_HOPS</code> is required in production. On Cloud Run, Google&#39;s front end appends the client address, so set it to 1 and verify it on the first deployment (the intake throttle relies on it).</li>
+<li><code>docs/DEPLOYMENT.md</code>: step-by-step Supabase and Cloud Run setup.</li>
+</ul>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Supabase pricing: <a href="https://supabase.com/pricing">https://supabase.com/pricing</a> (plan limits, compute credits, add-ons)</li>
+<li>Supabase connections and pooler: <a href="https://supabase.com/docs/guides/database/connecting-to-postgres">https://supabase.com/docs/guides/database/connecting-to-postgres</a> and <a href="https://supabase.com/docs/guides/platform/ipv4-address">https://supabase.com/docs/guides/platform/ipv4-address</a></li>
+<li>Hugging Face pricing: <a href="https://huggingface.co/pricing">https://huggingface.co/pricing</a>; Spaces hardware, billing and sleep: <a href="https://huggingface.co/docs/hub/spaces-gpus">https://huggingface.co/docs/hub/spaces-gpus</a>; Spaces storage: <a href="https://huggingface.co/docs/hub/spaces-storage">https://huggingface.co/docs/hub/spaces-storage</a></li>
+<li>Google Cloud free tier (Cloud Run, Cloud Storage, Secret Manager, Artifact Registry, Cloud Build): <a href="https://docs.cloud.google.com/free/docs/free-cloud-features">https://docs.cloud.google.com/free/docs/free-cloud-features</a></li>
+<li>Cloud Run pricing beyond the free tier: <a href="https://cloud.google.com/run/pricing">https://cloud.google.com/run/pricing</a></li>
+<li>Cloud Storage pricing: <a href="https://cloud.google.com/storage/pricing">https://cloud.google.com/storage/pricing</a></li>
+<li>Claude API prices: the Claude API reference used in this session (cached 3 November 2026); current prices at <a href="https://platform.claude.com/docs/en/about-claude/pricing">https://platform.claude.com/docs/en/about-claude/pricing</a></li>
+<li>Launch packet cost table: <a href="launch-packet.html">docs/LAUNCH_PACKET.md</a></li>
+</ul>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/planning/HOSTING_AND_COSTS.md">docs/planning/HOSTING_AND_COSTS.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9fc2e76dedba66a77472cb42d1442d46e0f487fb">9fc2e76</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
