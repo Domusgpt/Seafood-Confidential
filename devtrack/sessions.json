@@ -3,8 +3,8 @@
   "sessions": [
     {
       "id": "S01",
-      "title": "Repository foundation, tooling and planning readiness",
-      "version": "0.1.0",
+      "title": "Repository foundation (turn 1) and operations desk foundation with its first vertical slice (turn 2)",
+      "version": "0.2.0",
       "branch": "claude/intelligent-cannon-d1nqq6",
       "baseCommit": "2eb97235e0ba517432ee213a2bbe1dff34931c03",
       "startedAt": "2026-11-18T10:43:00-05:00",
@@ -14,9 +14,10 @@
       "pullRequest": "https://github.com/Domusgpt/Seafood-Confidential/pull/1",
       "previewUrl": "https://domusgpt.github.io/Seafood-Confidential/branches/claude-intelligent-cannon-d1nqq6/",
       "status": "open",
-      "summary": "Unpacked and audited the launch packet; installed and verified the toolchain; built dev log, delivery tracking, validators, CI and the Pages project hub; researched current vendor facts; wrote the foundation planning brief for the next turn's plan mode.",
+      "summary": "Unpacked and audited the launch packet; installed and verified the toolchain; built dev log, delivery tracking, validators, CI and the Pages project hub; researched current vendor facts; wrote the foundation planning brief for the next turn's plan mode. Turn 2 (v0.2.0): built the operations desk foundation (SC-005) and its first vertical slice (SC-006 pitch intake with source and rights records, SC-007 editorial queue with Ghost references, first part of SC-009 agent gateway) on local Supabase, with database policy, unit, end-to-end, accessibility and bundle-secret tests.",
       "devlog": [
-        "devlog/entries/2026-11-18-s01-repository-foundation.md"
+        "devlog/entries/2026-11-18-s01-repository-foundation.md",
+        "devlog/entries/2026-11-18-s01-operations-desk-foundation-and-first-vertical-slice.md"
       ]
     }
   ]

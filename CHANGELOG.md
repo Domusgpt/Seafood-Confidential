@@ -4,6 +4,25 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-18 · Session S01, turn 2 · `claude/intelligent-cannon-d1nqq6`
+
+Operations desk foundation (SC-005) and its first vertical slice (SC-006, SC-007, first part of SC-009). Local Supabase only; nothing is deployed and nothing publishes.
+
+### Added
+- `apps/desk`: Next.js 16.4 operations desk. Magic-link staff sign-in (sign-up disabled), `/no-access` for identities without a staff role, Today (due, decisions, post-review placeholder, failures), Stories (list, commission, detail with one next action and the exact Ghost editor link), Contributors (pitch queue and decisions), Distribution (honest "not built yet"), Settings (staff, agents, tokens, audit trail). Working Waterfront tokens, self-hosted fonts, accessible forms.
+- Public `/pitch` intake: text only, consent-gated, throttled per client and overall, honeypot, receipt only.
+- `supabase/migrations/20261118180000_desk_foundation.sql`: principals, staff assignments, pitches, editorial items (content IDs `SC-YYYY-NNN`, unique Ghost post ID), sources (agent-processing flag, staff-only private columns), asset rights, agent grants, draft proposals, hashed agent credentials, append-only audit trail; Row Level Security on every table; `desk_app` role-switching data access (ADR-003).
+- Draft-only agent gateway `POST /api/agent/v1` on the kit contract: token auth inside the database, scopes, grants, redaction, idempotent `drafts.propose`, `jobs.read`, audit of every request.
+- Security middleware: nonce CSP, request IDs, hardening headers; OpenTelemetry instrumentation; pino logs with redaction.
+- Tests: 108 pgTAP assertions (mutation-tested), 67 unit tests, 24 Playwright end-to-end tests with axe WCAG 2.2 AA, client bundle secret scan; CI `desk` job running them against a local Supabase stack.
+- Independent security review (no Critical or High findings) with every Medium and Low finding fixed: column-level update grants, database-stamped reviewers and deciders, final agent revocation that revokes tokens, SQL-side source redaction for agents, audited sources, rights and refused actions, gateway flood guards and per-agent budget, strict request IDs, serialized intake throttling with trusted-proxy hops.
+- Operator CLIs (`staff`, `agent`), `apps/desk/.env.example`, `docs/DESK.md`, `packages/contracts` validator package.
+
+### Changed
+- ADR-003 records the decisions made during the build (Cache Components off, ESLint 9, OpenTelemetry API 1.9.1, global stylesheet on tokens, gateway scope).
+- Root scripts: `desk:*` and `db:*`; `pnpm check` includes the desk's static checks. Version 0.2.0.
+- CONTRIBUTING: minor version per milestone turn.
+
 ## [0.1.0] - 2026-11-18 · Session S01 · `claude/intelligent-cannon-d1nqq6`
 
 Repository foundation, tooling and planning readiness. No application code.

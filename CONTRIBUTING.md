@@ -11,7 +11,7 @@ These conventions apply to people and coding agents alike. [AGENTS.md](AGENTS.md
 
 ## Versions
 
-The repository uses semantic versioning in `package.json`. Before launch (0.x), each session that changes the repository bumps the minor version (0.1.0 → 0.2.0); fixes within a session bump the patch. Record every version in [CHANGELOG.md](CHANGELOG.md) and in `devtrack/sessions.json`.
+The repository uses semantic versioning in `package.json` (and `apps/desk/package.json` for the desk). Before launch (0.x), each turn that delivers a milestone bumps the minor version (0.1.0 → 0.2.0), whether or not it is a new session; fixes bump the patch. Record every version in [CHANGELOG.md](CHANGELOG.md), in `devtrack/sessions.json` and in the dev log entry, and state session, turn and version in the pull request description.
 
 ## Every turn
 

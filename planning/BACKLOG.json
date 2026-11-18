@@ -96,7 +96,7 @@
       "id": "SC-005",
       "priority": "P0",
       "title": "Private operations shell and auth",
-      "status": "planned",
+      "status": "in_progress",
       "hoursLow": 10,
       "hoursHigh": 12,
       "dependencies": [
@@ -114,7 +114,7 @@
       "id": "SC-006",
       "priority": "P0",
       "title": "Pitch intake and source and rights records",
-      "status": "planned",
+      "status": "in_progress",
       "hoursLow": 8,
       "hoursHigh": 10,
       "dependencies": [
@@ -132,7 +132,7 @@
       "id": "SC-007",
       "priority": "P0",
       "title": "Editorial queue and Ghost references",
-      "status": "planned",
+      "status": "in_progress",
       "hoursLow": 6,
       "hoursHigh": 8,
       "dependencies": [
@@ -170,7 +170,7 @@
       "id": "SC-009",
       "priority": "P0",
       "title": "Scoped agent draft gateway",
-      "status": "planned",
+      "status": "in_progress",
       "hoursLow": 12,
       "hoursHigh": 18,
       "dependencies": [

@@ -323,6 +323,156 @@
       "observed": "Installed under the supply-chain gates: typescript 6.0.3, typescript-eslint ^8.73.0, vitest ^5.1.0, @playwright/test 1.63.0, @opentelemetry/api ^1.10.0, @vercel/otel ^2.3.0, pino ^10.4.0 (alongside next 16.4.6, react 19.3.0, supabase-js 2.119.0, @supabase/ssr 0.12.7, @tryghost/admin-api 1.14.16, zod 4.6.7, MCP SDK 1.32.2). tsc 6.0.3 --noEmit clean; next build compiled. Source theme v1.7.6: MIT (Ghost Foundation), engines ghost >=5.0.0 and node >=22.12.0; gscan: 'Your theme is compatible with Ghost 6.x'. The package store is warm for the next turn.",
       "result": "pass",
       "location": "docs/planning/FOUNDATION_PLANNING_BRIEF.md#environment-feasibility"
+    },
+    {
+      "id": "EV-0019",
+      "recordedAt": "2026-11-18T14:09:19-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@e88eadfb68e15fe14d9f7998742e60ded9d19d2e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "AT-03",
+        "AT-04",
+        "AT-06",
+        "AT-07",
+        "AT-12",
+        "AT-13",
+        "AT-25"
+      ],
+      "kind": "test",
+      "summary": "Database policy suite: 108 pgTAP assertions pass on the local Supabase stack (Postgres 17.12)",
+      "steps": "pnpm db:reset; pnpm db:test (supabase test db runs pg_prove over supabase/tests/01-04_*.test.sql); then each file again with psql on a database already populated by end-to-end runs",
+      "observed": "Files=4, Tests=108, Result: PASS, also on the populated database. Covers: table and column grants, RLS on every table, no views, pinned search_path on definer functions, desk_app without privileges (AT-25); readers, unassigned, disabled and revoked staff see nothing (AT-03); agents cannot update items or insert proposals that look reviewed (AT-04); agents have no access to pitches, rights or the sources table and read sources only through SQL-side redaction (AT-06); a revoked agent is denied while another authenticates, revocation is final and revokes its tokens (AT-07); a duplicate idempotency key is rejected by the database (AT-12/AT-13 database layer); intake throttling, disposition, sequential content IDs, derived deciders and reviewers, and the append-only audit trail with request IDs.",
+      "result": "pass",
+      "location": "supabase/tests"
+    },
+    {
+      "id": "EV-0020",
+      "recordedAt": "2026-11-18T14:09:19-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@e88eadfb68e15fe14d9f7998742e60ded9d19d2e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "AT-25",
+        "SC-005"
+      ],
+      "kind": "test",
+      "summary": "Mutation test of the policy suite: all 11 deliberate breaks are caught by named assertions",
+      "steps": "For each mutation, inside a rolled-back transaction: apply it, run every test file with psql -At and count 'not ok' lines. Baseline without a mutation: 0 failures.",
+      "observed": "Caught: private_contact granted to desk_agent (4 assertions); agent item policy opened (3); staff pitch policy weakened to any signed-in user (5); whole-row UPDATE on pitches (2); reactivation guard dropped (1); revocation cascade dropped (1); credit-line constraint dropped (1); decider stamping dropped (1); idempotency unique constraint dropped (2); whole-row INSERT on proposals for agents (1); audit truncate guard dropped (1).",
+      "result": "pass",
+      "location": "supabase/tests"
+    },
+    {
+      "id": "EV-0021",
+      "recordedAt": "2026-11-18T14:09:19-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@e88eadfb68e15fe14d9f7998742e60ded9d19d2e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-007",
+        "SC-009",
+        "AT-04",
+        "AT-06",
+        "AT-12",
+        "AT-13"
+      ],
+      "kind": "test",
+      "summary": "Unit suite: 67 Vitest tests pass",
+      "steps": "pnpm --filter @sc/desk test",
+      "observed": "8 files, 67 tests: the next action for every status, overdue and blocked states (SC-007); CSP, request IDs and redirect safety; trusted-proxy client addresses; agent token generation and parsing; canonical payload hashing for idempotency (AT-12/AT-13); redaction shape (AT-06); cursors; in-process rate guards; form validation; every contract example behaves as labelled, including posts.publish and members.export rejected (AT-04).",
+      "result": "pass",
+      "location": "apps/desk/src/lib"
+    },
+    {
+      "id": "EV-0022",
+      "recordedAt": "2026-11-18T14:09:19-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@e88eadfb68e15fe14d9f7998742e60ded9d19d2e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-009",
+        "AT-03",
+        "AT-04",
+        "AT-06",
+        "AT-07",
+        "AT-12",
+        "AT-13",
+        "AT-18"
+      ],
+      "kind": "test",
+      "summary": "End-to-end suite: 24 Playwright tests pass against a production build, with no axe WCAG 2.2 AA violations",
+      "steps": "pnpm db:reset; pnpm desk:env; next build; next start; pnpm desk:e2e --trace off (Chromium desktop 1360x900 at 2x and Pixel 7); sign-in links read from the local Mailpit inbox",
+      "observed": "24 passed. Public pitch to decision to story with next action, Ghost link (a pasted editor URL is reduced to the ID; a second item cannot reuse it), sources, rights and the release gate (SC-006, SC-007). A reader identity and a disabled staff member are denied on the next request (AT-03, SC-005). posts.publish, members.export, a status field in draft content and a client-supplied principal are rejected (AT-04). items.read omits staff-only sources and private fields; redacted entries are explicit (AT-06). A retry returns the original draft; a changed body gets 409 and the original stays intact (AT-12, AT-13). Revoking the token in Settings denies the next request (AT-07). Hostile markup in public and agent intake renders as inert text and no file upload exists (AT-18, desk surfaces only; Ghost cards are out of scope). Security headers, nonce CSP, strict request IDs, prototype keys rejected, no horizontal overflow at phone width.",
+      "result": "pass",
+      "location": "apps/desk/e2e"
+    },
+    {
+      "id": "EV-0023",
+      "recordedAt": "2026-11-18T14:09:20-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@e88eadfb68e15fe14d9f7998742e60ded9d19d2e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "AT-23",
+        "SC-005"
+      ],
+      "kind": "test",
+      "summary": "No secrets or unnecessary private records in client bundles, gateway responses or logs",
+      "steps": "pnpm desk:build (apps/desk/scripts/scan-bundle.mjs over .next/static and prerendered payloads), a planted-secret control, a search of the server log captured during the end-to-end run, and gateway response assertions",
+      "observed": "44 shipped files against 11 rules, including the literal local secret values: no findings. Control: a planted INTAKE_HASH_SECRET value and an sb_secret_ string were both detected. Server log: 51 JSON lines with request and trace IDs and no emails, tokens, keys, database URLs or private contacts (agent requests log only the token prefix). items.read responses contain no private fields. The publishable key is also absent from browser bundles.",
+      "result": "pass",
+      "location": "apps/desk/scripts/scan-bundle.mjs"
+    },
+    {
+      "id": "EV-0024",
+      "recordedAt": "2026-11-18T14:09:30-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@e88eadfb68e15fe14d9f7998742e60ded9d19d2e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005",
+        "SC-009",
+        "AT-06",
+        "AT-23",
+        "AT-25"
+      ],
+      "kind": "review",
+      "summary": "Independent security review of the desk: no Critical or High findings; all 3 Medium and 5 Low findings fixed and re-tested",
+      "steps": "A separate agent reviewed the migration, data access, auth, gateway, actions and scripts adversarially, probing as an editor and as an agent in rolled-back transactions; each finding was fixed and covered by new pgTAP, unit or end-to-end assertions, then every suite was re-run",
+      "observed": "Medium: anonymous gateway traffic wrote permanent audit rows and held shared connections (fixed: no database work without a token shape, failed-auth limit per client, 4 concurrent gateway transactions, per-agent budget in the database); intake throttle keyed on client-controlled X-Forwarded-For and racy (fixed: trusted proxy hops required in production, shared buckets otherwise, advisory lock); staff could rewrite whole rows and several changes were unaudited (fixed: column-level UPDATE grants, database-stamped reviewers and deciders, credit-line constraint, audit triggers on sources and rights, audited refusals). Low: prototype keys passed the section allow-list (Object.hasOwn and a database check); docs overstated audit coverage (corrected); raw agent request IDs stored (strict IDs); revoked agents could be reactivated (final revocation that revokes tokens); agent rules looser than the gateway (column-level INSERT grants, SQL-side source redaction, agents limited to agent.* audit events).",
+      "result": "pass",
+      "location": "docs/DESK.md#security-model"
+    },
+    {
+      "id": "EV-0025",
+      "recordedAt": "2026-11-18T14:09:30-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@e88eadfb68e15fe14d9f7998742e60ded9d19d2e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005",
+        "SC-007"
+      ],
+      "kind": "observation",
+      "summary": "Visual review of desktop and phone screenshots: four defects found and fixed, then re-verified",
+      "steps": "Looked at every screenshot from the end-to-end runs (desktop 2x, Pixel 7) against the sc-visual-codex rules",
+      "observed": "Fixed: due dates rendered a day early (UTC dates formatted in New York time; now formatted as calendar dates); the rust wordmark rule spanned the whole masthead (now under the wordmark only); the rights status picker reverted after saving (React 19 form reset; remounted per status); the phone nav hid Settings off-screen (now wraps). Brand values come only from brand/tokens.json; status is always icon plus label; zero axe violations.",
+      "result": "info",
+      "location": "devlog/assets/2026-11-18-s01-t2"
     }
   ]
 }
