@@ -154,6 +154,31 @@ describe('buildSite', () => {
     expect(file(buildSite(snapshot([]), config, [asset]), '/index.html')).toContain('Coming soon');
   });
 
+  it('marks a preview build on every page and keeps it out of search engines', () => {
+    const text = (fs: typeof files, p: string) => fs.find((f) => f.path === p)!.body.toString('utf8');
+    const preview = buildSite(
+      snapshot([story()]),
+      { ...config, preview: 'Not launched yet <test>: stories here are tests.' },
+      [asset],
+    );
+    for (const page of [
+      '/index.html',
+      '/404.html',
+      '/stories/how-the-scallop-season-opened-2026-014/index.html',
+    ]) {
+      const html = text(preview, page);
+      expect(html).toContain('<meta name="robots" content="noindex, nofollow">');
+      expect(html).toContain(
+        '<strong>Preview.</strong> Not launched yet &lt;test&gt;: stories here are tests.',
+      );
+    }
+    expect(text(preview, '/robots.txt')).toBe('User-agent: *\nDisallow: /\n');
+    // The real site is unchanged.
+    expect(text(files, '/index.html')).not.toContain('noindex');
+    expect(text(files, '/index.html')).not.toContain('preview-banner');
+    expect(text(files, '/robots.txt')).toContain('Allow: /');
+  });
+
   it('refuses unsafe slugs', () => {
     expect(() => storyPath({ slug: '../etc' })).toThrow(/unsafe slug/);
   });

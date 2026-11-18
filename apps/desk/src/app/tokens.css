@@ -16,6 +16,8 @@
   --mark: #2C5A70;
   --mark-range: #9DBCCB;
   --progress: #2C5A70;
+  --notice: #FAB219;
+  --notice-text: #102B3A;
   --status-good: #0CA30C;
   --status-warning: #FAB219;
   --status-serious: #EC835A;
@@ -46,6 +48,8 @@
     --mark: #8DB8CC;
     --mark-range: #3F6F86;
     --progress: #8DB8CC;
+    --notice: #FAB219;
+    --notice-text: #102B3A;
   }
 }
 :root[data-theme='dark'] {
@@ -64,4 +68,6 @@
   --mark: #8DB8CC;
   --mark-range: #3F6F86;
   --progress: #8DB8CC;
+  --notice: #FAB219;
+  --notice-text: #102B3A;
 }

@@ -95,6 +95,21 @@ main:focus {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+/* Preview builds (SITE_PREVIEW_NOTICE): a full-width notice above the masthead, the same in both
+   themes (ink on the warning amber, about 8:1). */
+.preview-banner {
+  margin: 0;
+  padding: 8px var(--gutter);
+  background: var(--notice);
+  color: var(--notice-text);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  text-align: center;
+}
+.preview-banner strong {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
 .skip-link {
   position: absolute;
   left: var(--gutter);

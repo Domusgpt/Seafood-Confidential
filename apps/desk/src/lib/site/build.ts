@@ -55,6 +55,11 @@ export interface SiteConfig {
   /** Where readers pitch a story (the desk's public form); null hides the link. */
   pitchUrl: string | null;
   builtAt: string;
+  /**
+   * A preview build (staging, or a site shown before launch): every page carries this notice and
+   * asks search engines not to index it, and robots.txt disallows everything. Null for the real site.
+   */
+  preview?: string | null;
 }
 
 export interface SiteFile {
@@ -136,7 +141,9 @@ function layout(p: PageInput): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="${esc(SITE_CSP.replace("; frame-ancestors 'none'", ''))}">
-<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="referrer" content="strict-origin-when-cross-origin">${
+    config.preview ? '\n<meta name="robots" content="noindex, nofollow">' : ''
+  }
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#102B3A">
 <title>${esc(p.home ? `${config.siteName}: ${config.tagline}` : `${p.title} · ${config.siteName}`)}</title>
@@ -158,7 +165,11 @@ function layout(p: PageInput): string {
   }
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to the content</a>
+<a class="skip-link" href="#main">Skip to the content</a>${
+    config.preview
+      ? `\n<p class="preview-banner" role="note"><strong>Preview.</strong> ${esc(config.preview)}</p>`
+      : ''
+  }
 <header class="masthead${p.home ? ' masthead--home' : ''}">
   ${p.home ? '<canvas data-bathymetry aria-hidden="true"></canvas>' : ''}
   <div class="masthead-inner">
@@ -376,7 +387,9 @@ export function buildSite(snapshot: SiteSnapshot, config: SiteConfig, assets: Si
     text('/sitemap.xml', sitemap(ordered, config, sections), 'application/xml; charset=utf-8'),
     text(
       '/robots.txt',
-      `User-agent: *\nAllow: /\nSitemap: ${config.publicUrl}/sitemap.xml\n`,
+      config.preview
+        ? 'User-agent: *\nDisallow: /\n'
+        : `User-agent: *\nAllow: /\nSitemap: ${config.publicUrl}/sitemap.xml\n`,
       'text/plain; charset=utf-8',
     ),
     ...sections.map((s) =>

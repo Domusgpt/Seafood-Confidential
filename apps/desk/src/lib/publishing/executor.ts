@@ -70,6 +70,7 @@ export function siteConfig(): SiteConfig {
     kitFormId: config.KIT_FORM_ID ?? null,
     pitchUrl: `${config.DESK_SITE_URL.replace(/\/+$/, '')}/pitch`,
     builtAt: new Date().toISOString(),
+    preview: config.SITE_PREVIEW_NOTICE ?? null,
   };
 }
 

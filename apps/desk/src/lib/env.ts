@@ -15,6 +15,8 @@ const schema = z.object({
   // still publishes; only the newsletter is unavailable.
   SITE_PUBLIC_URL: z.url().default('http://127.0.0.1:4173'),
   SITE_DESTINATION: z.enum(['local', 'firebase']).default('local'),
+  // A staging or pre-launch site: shown on every page, and search engines are asked not to index it.
+  SITE_PREVIEW_NOTICE: z.string().trim().min(1).max(200).optional(),
   SITE_OUTPUT_DIR: z.string().min(1).default('.site-output'),
   SITE_ASSETS_DIR: z.string().min(1).default('site-static'),
   FIREBASE_SITE_ID: z
