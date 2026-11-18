@@ -858,6 +858,116 @@
       "steps": "docker build --secret id=extra_ca,src=<proxy CA> -f apps/desk/Dockerfile -t sc-desk:0.4.1 .; docker run with the CI placeholder settings; curl health, /pitch and POST /api/agent/v1",
       "observed": "health {status: ok, service: sc-desk, version: 0.4.1}; /pitch 200 with a nonce CSP; gateway without a token 401; whoami node; no error lines in the container log",
       "result": "pass"
+    },
+    {
+      "id": "EV-0045",
+      "recordedAt": "2026-11-18T18:18:00-05:00",
+      "session": "S01",
+      "environment": "Supabase Free, us-west-2, PostgreSQL 17.12",
+      "commit": "555102047503f0ca889adf45a9dacf06f00846cd",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-005",
+        "SC-009",
+        "AT-25"
+      ],
+      "kind": "verification",
+      "summary": "Hosted database matches the tested security model after both migrations were applied atomically through the Management API",
+      "steps": "Management API SQL: tables with RLS, desk roles, functions anon and desk_publisher can execute, PUBLIC execute, anon table grants, publishing defaults, lanes; PostgREST exposed schemas",
+      "observed": "17 tables, all with RLS; desk_agent, desk_app (login), desk_publisher, all noinherit; anon executes only app.submit_pitch; desk_publisher only the 6 publish functions; 0 PUBLIC execute; 0 anon table grants; agent publishing off, 0 of 6 lanes open; Data API exposes public, graphql_public only; migrations recorded in supabase_migrations.schema_migrations",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0046",
+      "recordedAt": "2026-11-18T18:18:00-05:00",
+      "session": "S01",
+      "environment": "Cloud Run sc-desk, us-west1, revision sc-desk-00002-fbg (image desk:5551020)",
+      "commit": "WORKTREE@555102047503f0ca889adf45a9dacf06f00846cd",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-005",
+        "SC-009",
+        "SC-015"
+      ],
+      "kind": "verification",
+      "summary": "Live desk serves health, sign-in and pitch with full security headers, and reaches the database through the pooler as desk_app",
+      "steps": "curl /api/health, /sign-in, /pitch, /; response headers; POST /api/agent/v1 with a well-formed unknown token, then read private.audit_events for its request ID",
+      "observed": "health ok, version 0.5.0; /sign-in and /pitch 200, / 307 to /sign-in; HSTS, X-Frame-Options DENY, nonce CSP, X-Robots-Tag noindex, nofollow; probe 401 and audited as agent.authenticate denied under req-launch-check-03 (and req-launch-check-02 on the first revision)",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0047",
+      "recordedAt": "2026-11-18T18:18:00-05:00",
+      "session": "S01",
+      "environment": "Firebase Hosting site seafood-confidential-preview",
+      "commit": "WORKTREE@555102047503f0ca889adf45a9dacf06f00846cd",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-003",
+        "SC-015"
+      ],
+      "kind": "verification",
+      "summary": "Public preview site released by the desk's own Firebase Hosting deploy code; banner, noindex, headers and 404 correct; 0 axe violations on six live views",
+      "steps": "buildSite + FirebaseHostingDestination.deploy (version, populateFiles, upload, finalize, release) with an empty snapshot and SITE_PREVIEW_NOTICE; curl pages and headers; Playwright with axe on desktop, dark, iPhone 13 and the desk sign-in",
+      "observed": "21 files released twice (versions 1e41e121…, 21a78299…); / 200 with the Preview banner and meta robots noindex; robots.txt Disallow: /; unknown story 404 with our page; CSP, nosniff, Referrer-Policy, Permissions-Policy, Cache-Control set; axe 0 violations and no horizontal overflow on site home (desktop, dark, mobile), section page, desk sign-in (desktop, mobile)",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0048",
+      "recordedAt": "2026-11-18T18:18:00-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@555102047503f0ca889adf45a9dacf06f00846cd",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-005"
+      ],
+      "kind": "test",
+      "summary": "Supabase default-template sign-in links (free plan) work in the requesting browser and fail safely in another",
+      "steps": "Local Supabase with the custom template switched off; Playwright: request a link, read it from Mailpit, open it in a different browser, then request again and open it in the same browser",
+      "observed": "Default-template link is /auth/v1/verify; another browser lands on /sign-in?error=link with 'open it in this same browser' (auth_error pkce_code_verifier_not_found); the requesting browser is signed in (log: sign-in code exchanged). Template restored afterwards",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0049",
+      "recordedAt": "2026-11-18T18:18:00-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@555102047503f0ca889adf45a9dacf06f00846cd",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-003",
+        "SC-005",
+        "SC-011",
+        "AT-08",
+        "AT-27",
+        "AT-28",
+        "AT-29",
+        "AT-30"
+      ],
+      "kind": "test",
+      "summary": "Final v0.5.0 code: Vitest 102/102, Playwright 30/30, pgTAP 229/229, validators 9/9, bundle scan clean",
+      "steps": "pnpm --filter @sc/desk test; pnpm desk:build; pnpm desk:e2e; pnpm db:test; node tools/validate/cli.mjs",
+      "observed": "All passed after the preview-mode, sign-in and coming-soon changes; e2e ran with our own email template restored",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0050",
+      "recordedAt": "2026-11-18T18:18:00-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@555102047503f0ca889adf45a9dacf06f00846cd",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-011",
+        "SC-004",
+        "SC-015"
+      ],
+      "kind": "observation",
+      "summary": "Not yet exercised on the live preview: a real-email sign-in, a publication from Cloud Run, and the newsletter",
+      "steps": "Creating a temporary account with an admin-generated sign-in link to test publishing was refused by the session's safety policy, correctly; Kit is not connected",
+      "observed": "Paul's first sign-in and first publication are the first live runs. The runtime account has Firebase Hosting Admin and the deploy code itself released the site twice from this session. A failed publication is recorded on /publishing with the reason and can be retried",
+      "result": "info"
     }
   ]
 }
