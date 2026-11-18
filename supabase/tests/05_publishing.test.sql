@@ -6,6 +6,16 @@ begin;
 \ir helpers/fixtures.psql
 select plan(76);
 
+-- This test owns the global publishing state inside its transaction (rolled back at the end), so
+-- it passes on a fresh database and on one the end-to-end suite has already used.
+update app.publishing_policy
+set agents_may_publish = false, agents_may_email = false, agent_daily_limit = 5, min_sources = 2;
+update app.publishing_lanes set agents_may_publish = false;
+update app.publish_jobs set status = 'cancelled', lease_until = null
+where status in ('queued', 'running', 'needs_attention');
+update app.publish_jobs set created_at = created_at - interval '2 days'
+where created_at > now() - interval '24 hours';
+
 -- People
 select tests.make_human('owner@example.test', array['owner']) as owner_uid \gset
 select tests.make_human('me@example.test', array['managing_editor']) as me_uid \gset
@@ -199,7 +209,9 @@ select is((select array_agg(x ->> 'sourceCode' order by x ->> 'sourceCode')
   array['SRC-PUB-01', 'SRC-PUB-02'], 'the snapshot lists the story''s citable sources');
 select ok((select (s ->> 'aiGenerated')::boolean from jsonb_array_elements(:'snap'::jsonb -> 'stories') s where s ->> 'contentId' = 'SC-2026-951')
   and (:'snap'::jsonb ->> 'disclosure') like 'An AI agent wrote%', 'AT-24: the agent story is labelled AI-generated, with the disclosure');
-select is(jsonb_array_length(:'snap'::jsonb -> 'stories'), 1, 'unpublished stories are not in the snapshot');
+select is((select count(*)::int from jsonb_array_elements(:'snap'::jsonb -> 'stories') s
+           where s ->> 'contentId' in ('SC-2026-952', 'SC-2026-953', 'SC-2026-954', 'SC-2026-955')), 0,
+  'unpublished stories are not in the snapshot');
 select throws_ok($$ select count(*) from app.publish_jobs $$, '42501', null, 'the publisher role has no table access of its own');
 select lives_ok(format($$ select app.complete_publish_job(%L, 'succeeded', true, 'http://127.0.0.1:4173/stories/how-the-scallop-season-opened-2026-951/', 'local-1', null, 'Published.') $$, :'job_a'),
   'the publisher records the outcome');
