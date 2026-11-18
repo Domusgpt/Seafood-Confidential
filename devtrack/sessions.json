@@ -11,11 +11,13 @@
       "endedAt": null,
       "agent": "Claude Code (cloud session) for Paul Phillips",
       "sessionUrl": "https://claude.ai/code/session_01UqrwabKwbwqBof6T64sqFU",
-      "pullRequest": null,
+      "pullRequest": "https://github.com/Domusgpt/Seafood-Confidential/pull/1",
       "previewUrl": "https://domusgpt.github.io/Seafood-Confidential/branches/claude-intelligent-cannon-d1nqq6/",
       "status": "open",
       "summary": "Unpacked and audited the launch packet; installed and verified the toolchain; built dev log, delivery tracking, validators, CI and the Pages project hub; researched current vendor facts; wrote the foundation planning brief for the next turn's plan mode.",
-      "devlog": ["devlog/entries/2026-11-18-s01-repository-foundation.md"]
+      "devlog": [
+        "devlog/entries/2026-11-18-s01-repository-foundation.md"
+      ]
     }
   ]
 }

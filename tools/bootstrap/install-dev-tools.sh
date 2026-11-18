@@ -17,6 +17,8 @@
 # Environment overrides: PREFIX (default /usr/local), NODE_LTS_DIR (default /opt/node24),
 # BOOTSTRAP_CACHE (default ~/.cache/seafood-confidential-bootstrap).
 set -euo pipefail
+# Apply errexit inside $(…) command substitutions too, so a failed download stops the script.
+shopt -s inherit_errexit
 
 # ---- Pins (recorded 2026-11-18; bump deliberately and re-verify) ---------------------------------
 # Node 24 "Krypton" (Maintenance LTS, EOL 2028-04-30) rather than 26: Ghost 6.78 requires
@@ -37,7 +39,8 @@ PREFIX="${PREFIX:-/usr/local}"
 NODE_LTS_DIR="${NODE_LTS_DIR:-/opt/node24}"
 CACHE="${BOOTSTRAP_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/seafood-confidential-bootstrap}"
 
-log()  { printf '\033[1;34m[bootstrap]\033[0m %s\n' "$*"; }
+# All messages go to stderr: stdout of helpers such as fetch() is captured as data.
+log()  { printf '\033[1;34m[bootstrap]\033[0m %s\n' "$*" >&2; }
 warn() { printf '\033[1;33m[bootstrap]\033[0m %s\n' "$*" >&2; }
 die()  { printf '\033[1;31m[bootstrap]\033[0m %s\n' "$*" >&2; exit 1; }
 
@@ -57,7 +60,7 @@ fetch() {
   mkdir -p "$CACHE"
   if [[ ! -f "$file" ]] || ! echo "$sha  $file" | sha256sum -c --status -; then
     log "download $(basename "$url")"
-    curl -fsSL --retry 4 --retry-delay 2 --max-time 600 -o "$file.part" "$url"
+    curl -fsSL --retry 4 --retry-delay 2 --max-time 600 -o "$file.part" "$url" || die "download failed: $url"
     mv "$file.part" "$file"
   fi
   echo "$sha  $file" | sha256sum -c --status - || { rm -f "$file"; die "checksum mismatch for $(basename "$url")"; }
@@ -68,26 +71,35 @@ has_version() { # has_version <cmd> <needle>
   command -v "$1" >/dev/null 2>&1 && "$1" --version 2>&1 | grep -qF "$2"
 }
 
+# verify_installed <cmd> <version>: fail loudly instead of reporting a tool that is not there.
+verify_installed() {
+  has_version "$1" "$2" || die "$1 $2 did not install correctly"
+  log "installed $1 $2"
+}
+
 install_binaries() {
   local tmp f
   tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' RETURN
 
   if has_version actionlint "$ACTIONLINT_VERSION"; then log "actionlint $ACTIONLINT_VERSION present"; else
     f="$(fetch "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" "$ACTIONLINT_SHA256")"
-    tar -xzf "$f" -C "$tmp" actionlint && $SUDO install -m 0755 "$tmp/actionlint" "$PREFIX/bin/actionlint"
-    log "installed actionlint $ACTIONLINT_VERSION"
+    tar -xzf "$f" -C "$tmp" actionlint
+    $SUDO install -m 0755 "$tmp/actionlint" "$PREFIX/bin/actionlint"
+    verify_installed actionlint "$ACTIONLINT_VERSION"
   fi
 
   if has_version gitleaks "$GITLEAKS_VERSION"; then log "gitleaks $GITLEAKS_VERSION present"; else
     f="$(fetch "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" "$GITLEAKS_SHA256")"
-    tar -xzf "$f" -C "$tmp" gitleaks && $SUDO install -m 0755 "$tmp/gitleaks" "$PREFIX/bin/gitleaks"
-    log "installed gitleaks $GITLEAKS_VERSION"
+    tar -xzf "$f" -C "$tmp" gitleaks
+    $SUDO install -m 0755 "$tmp/gitleaks" "$PREFIX/bin/gitleaks"
+    verify_installed gitleaks "$GITLEAKS_VERSION"
   fi
 
   if has_version shellcheck "$SHELLCHECK_VERSION"; then log "shellcheck $SHELLCHECK_VERSION present"; else
     f="$(fetch "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" "$SHELLCHECK_SHA256")"
-    tar -xJf "$f" -C "$tmp" && $SUDO install -m 0755 "$tmp/shellcheck-v${SHELLCHECK_VERSION}/shellcheck" "$PREFIX/bin/shellcheck"
-    log "installed shellcheck $SHELLCHECK_VERSION"
+    tar -xJf "$f" -C "$tmp"
+    $SUDO install -m 0755 "$tmp/shellcheck-v${SHELLCHECK_VERSION}/shellcheck" "$PREFIX/bin/shellcheck"
+    verify_installed shellcheck "$SHELLCHECK_VERSION"
   fi
 }
 
@@ -97,9 +109,12 @@ install_node_lts() {
   fi
   local f
   f="$(fetch "https://nodejs.org/dist/v${NODE_LTS_VERSION}/node-v${NODE_LTS_VERSION}-linux-x64.tar.xz" "$NODE_LTS_SHA256")"
-  $SUDO rm -rf "$NODE_LTS_DIR.new" && $SUDO mkdir -p "$NODE_LTS_DIR.new"
+  $SUDO rm -rf "$NODE_LTS_DIR.new"
+  $SUDO mkdir -p "$NODE_LTS_DIR.new"
   $SUDO tar -xJf "$f" -C "$NODE_LTS_DIR.new" --strip-components=1
-  $SUDO rm -rf "$NODE_LTS_DIR" && $SUDO mv "$NODE_LTS_DIR.new" "$NODE_LTS_DIR"
+  $SUDO rm -rf "$NODE_LTS_DIR"
+  $SUDO mv "$NODE_LTS_DIR.new" "$NODE_LTS_DIR"
+  [[ "$("$NODE_LTS_DIR/bin/node" --version)" == "v${NODE_LTS_VERSION}" ]] || die "Node.js v${NODE_LTS_VERSION} did not install correctly"
   log "installed Node.js v${NODE_LTS_VERSION} side-by-side at $NODE_LTS_DIR (system default node unchanged)"
   log "use it with: export PATH=\"$NODE_LTS_DIR/bin:\$PATH\""
 }

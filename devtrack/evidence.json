@@ -249,6 +249,42 @@
       "observed": "actionlint: no findings; shellcheck: no findings after fixing SC2015; glslang: both shaders valid GLSL ES 3.00; gitleaks: no leaks in the working tree (generated paths excluded) or in the 2 existing commits.",
       "result": "pass",
       "location": ".github/workflows/; .gitleaks.toml"
+    },
+    {
+      "id": "EV-0015",
+      "recordedAt": "2026-11-18T11:59:56-05:00",
+      "session": "S01",
+      "environment": "GitHub Actions ubuntu-latest (CI run 44352965914); reproduction in a clean ubuntu:24.04 container with host networking",
+      "commit": "WORKTREE@79bbae5c2b0acf41df39ab4de81f6789923d90a5",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-ENV",
+        "WS-TRACK"
+      ],
+      "kind": "verification",
+      "summary": "CI run 1 failed in the tool bootstrap; root cause fixed and verified in a clean container",
+      "steps": "Read the failed job log; reproduced with an empty download cache in ubuntu:24.04; patched tools/bootstrap/install-dev-tools.sh; re-ran install, an idempotent second run, and a negative run with downloads blocked.",
+      "observed": "Root cause: log() printed to stdout inside fetch(), whose stdout is captured as the file path; with a cold cache the log line corrupted the tar path. tar && install masked the failure under set -e, so the script falsely reported 'installed' and exited 0 (actionlint: command not found at the next step). Fix: messages to stderr, shopt -s inherit_errexit, separate tar and install steps, verify_installed after each tool, explicit download failure. After the fix: all three tools install with their versions verified; re-run reports 'present'; blocked downloads exit 1 with 'download failed'. Local runs had passed only because the cache was warm.",
+      "result": "pass",
+      "location": "tools/bootstrap/install-dev-tools.sh",
+      "defect": "CI-0001 (fixed in S01)"
+    },
+    {
+      "id": "EV-0016",
+      "recordedAt": "2026-11-18T11:59:56-05:00",
+      "session": "S01",
+      "environment": "GitHub Actions ubuntu-latest (Pages previews run 44352966146)",
+      "commit": "WORKTREE@79bbae5c2b0acf41df39ab4de81f6789923d90a5",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-HUB"
+      ],
+      "kind": "verification",
+      "summary": "Pages previews workflow published the branch hub to gh-pages on GitHub",
+      "steps": "Push of 79bbae5 triggered .github/workflows/pages.yml; inspected origin/gh-pages afterwards.",
+      "observed": "Run concluded success. gh-pages created with .nojekyll, index.html, latest/, previews.json and branches/claude-intelligent-cannon-d1nqq6/ (68 files); previews.json records commit 79bbae5, version 0.1.0, 1 in-progress and 15 planned tickets, 26 UNRUN. https://domusgpt.github.io/Seafood-Confidential/ returns 404 until the owner enables Pages from the gh-pages branch.",
+      "result": "pass",
+      "location": ".github/workflows/pages.yml; branch gh-pages"
     }
   ]
 }

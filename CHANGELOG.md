@@ -22,5 +22,8 @@ Repository foundation, tooling and planning readiness. No application code.
 - `README.md` keeps the original description and adds navigation.
 - `planning/BACKLOG.json` and `.csv`: SC-001 status `planned` → `in_progress` (repository, dev environment and vendor feasibility work begun; founder decisions outstanding).
 
+### Fixed
+- `tools/bootstrap/install-dev-tools.sh`: log output no longer corrupts captured download paths; install failures can no longer pass silently (found by CI run 1, EV-0015).
+
 ### Removed
 - `Seafood_Confidential_Launch_Packet.zip` from the working tree (sha256 `4871128f…fd934b04`); recoverable with `git show 2eb9723:Seafood_Confidential_Launch_Packet.zip > Seafood_Confidential_Launch_Packet.zip`.

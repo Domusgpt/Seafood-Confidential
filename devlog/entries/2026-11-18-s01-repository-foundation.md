@@ -7,11 +7,11 @@ version: 0.1.0
 branch: claude/intelligent-cannon-d1nqq6
 baseCommit: 2eb97235e0ba517432ee213a2bbe1dff34931c03
 startedAt: 2026-11-18T10:43:00-05:00
-recordedAt: 2026-11-18T11:55:00-05:00
+recordedAt: 2026-11-18T12:05:00-05:00
 author: "Claude Code (cloud session) for Paul Phillips"
 tickets: [SC-001]
 workstreams: [WS-REPO, WS-ENV, WS-TRACK, WS-HUB, WS-PLAN]
-evidence: [EV-0001, EV-0002, EV-0003, EV-0004, EV-0005, EV-0006, EV-0007, EV-0008, EV-0009, EV-0010, EV-0011, EV-0012, EV-0013, EV-0014]
+evidence: [EV-0001, EV-0002, EV-0003, EV-0004, EV-0005, EV-0006, EV-0007, EV-0008, EV-0009, EV-0010, EV-0011, EV-0012, EV-0013, EV-0014, EV-0015, EV-0016]
 status: complete
 tags: [foundation, tooling, project-hub, planning]
 ---
@@ -77,11 +77,12 @@ The launch packet that arrived as a zip is now a working repository. The develop
 | Chart text too small or too large | SVG text scales with the viewBox | Bars rebuilt in HTML/CSS |
 | 24 `<h1>`s on the launch-packet page | One top-level heading per PDF page | Multi-H1 documents are demoted under a single page title |
 | Pages simulation failures | A fixed `../pages` worktree path; `hub:check` rejecting the intentional previews link | `mktemp` worktree; a single exemption via `build.json` (EV-0013) |
+| **CI run 1 failed** in the tool bootstrap (actionlint not found) | `log()` wrote to stdout inside `fetch()`, whose output is captured as the download path; with a cold cache the log line corrupted the path, and `tar && install` hid the failure from `set -e` | Messages go to stderr, `inherit_errexit`, separate steps, a version check after every install; verified in a clean `ubuntu:24.04` container, including a negative run (EV-0015). Local runs had passed only because the cache was warm |
 | Two skills cite files that don't exist | `shader-projects-assistant` and `dev-blog-automator` ship only SKILL.md (template TODOs remain) | Used Khronos `glslangValidator` instead; reported as an agent-setup improvement |
 
 ## Evidence
 
-EV-0001 to EV-0014 are in [the evidence log](../../devtrack/evidence.json). All passed except EV-0009 and EV-0010, which are informational.
+EV-0001 to EV-0016 are in [the evidence log](../../devtrack/evidence.json). All passed except EV-0009 and EV-0010, which are informational. EV-0015 records the CI defect found after the first push and its verified fix. EV-0016 records the first real Pages publication to `gh-pages`.
 
 | Screens (final verification round, EV-0012) | |
 |---|---|
