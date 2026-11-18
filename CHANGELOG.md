@@ -4,6 +4,26 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-18 · Session S01, turn 3 · `claude/intelligent-cannon-d1nqq6`
+
+Hosting and cost plan, a proposal to automate Ghost while people still decide releases, a production container, and a Claude agent lab.
+
+### Added
+- `docs/planning/HOSTING_AND_COSTS.md`: verified prices for Supabase, Google Cloud (Cloud Run, Cloud Storage) and Hugging Face Spaces. Recommends Supabase Pro plus Cloud Run, about $84–99 a month in cash.
+- `decisions/ADR-004-desk-driven-publishing.md` (Proposed): automatic Ghost drafts, webhook sync and one-click human publishing behind the release gate; agents still never publish.
+- `apps/desk/Dockerfile`, `.dockerignore` and `docs/DEPLOYMENT.md`: a Next.js standalone image for Cloud Run or a Hugging Face Space; CI `container` job with a smoke test.
+- `apps/agent-lab`: a Claude agent (Anthropic SDK tool runner, Opus 5.5 by default, refusal fallbacks, prompt caching) that drafts through the real gateway. Scenarios: drafting, prompt injection (AT-17) and mid-run revocation, judged by database and gateway records, with token and cost reports and a `--self-test` mode.
+- `DESK_DB_PREPARE` for the Supabase pooler's transaction mode.
+- "Operations desk UI patterns" in the `sc-visual-codex` skill.
+
+### Changed
+- `DESK_TRUSTED_PROXY_HOPS` is required in production.
+- The founders' decision to keep the intake limits as built is recorded in `docs/DESK.md`.
+- Version 0.3.0.
+
+### Fixed
+- Settings no longer scrolls sideways on phones: table scroll containers now contain their visually hidden labels.
+
 ## [0.2.0] - 2026-11-18 · Session S01, turn 2 · `claude/intelligent-cannon-d1nqq6`
 
 Operations desk foundation (SC-005) and its first vertical slice (SC-006, SC-007, first part of SC-009). Local Supabase only; nothing is deployed and nothing publishes.

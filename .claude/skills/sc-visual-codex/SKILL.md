@@ -59,3 +59,16 @@ Show real people and working places, with fisheries and aquaculture at equal sta
 ## Checklist for visual changes
 
 1. Edit tokens, never raw hex. 2. `pnpm hub:build` (contrast gate). 3. `pnpm hub:shots` (desktop 2×, iPhone 13, dark, reduced motion; axe WCAG 2.2 AA). 4. Look at the screenshots yourself. 5. Record evidence and a dev log entry.
+
+## Operations desk UI patterns (from the desk build, v0.2.0–0.3.0)
+
+Reusable for any private tool in this brand. Live reference: `apps/desk/src/app/globals.css`, `apps/desk/src/components/`.
+
+- **Status = icon + label + tone token.** One `StatusBadge` with tones `good / warning / serious / critical / info / neutral` mapped to the status colors (info uses `mark`). Never color alone. Icon glyph strokes use the masthead ink or salt so they keep contrast in both themes.
+- **One next action per record.** A callout with a 5px tone bar, the action as the title, then the owner, due date and the single link that moves the work (for example the exact Ghost editor URL).
+- **Forms:** a visible label, an "(optional)" marker, a hint linked with `aria-describedby`, and an error with `aria-invalid`. Form errors go in a `role="alert"` summary and successes in `role="status"`. Inputs are at least 44px tall; pressed buttons are disabled with `aria-disabled`.
+- **No inline `style` attributes.** A nonce-based CSP blocks them; use classes and SVG presentation attributes only.
+- **Tables on phones:** wrap every table in a horizontal scroll container that is `position: relative`. Otherwise absolutely positioned visually-hidden labels inside a wide table stretch the whole page sideways (found by the phone layout test).
+- **Calendar dates** (Postgres `date`) are formatted as dates in UTC, never as instants in the newsroom zone; otherwise they show a day early.
+- **Masthead rule** sits under the wordmark only (`justify-self: start` on grid layouts), not across the bar.
+- **Fonts:** `@fontsource-variable` registers `Fraunces Variable` and `Source Sans 3 Variable`; put those names before the token families when compiling tokens for an app.

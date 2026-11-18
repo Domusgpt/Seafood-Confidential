@@ -32,3 +32,6 @@ apps/desk/playwright-report/
 apps/desk/test-results/
 supabase/.temp/
 supabase/.branches/
+
+# Agent lab run reports (generated, git-ignored)
+apps/agent-lab/reports/

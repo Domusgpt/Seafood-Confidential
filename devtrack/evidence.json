@@ -473,6 +473,95 @@
       "observed": "Fixed: due dates rendered a day early (UTC dates formatted in New York time; now formatted as calendar dates); the rust wordmark rule spanned the whole masthead (now under the wordmark only); the rights status picker reverted after saving (React 19 form reset; remounted per status); the phone nav hid Settings off-screen (now wraps). Brand values come only from brand/tokens.json; status is always icon plus label; zero axe violations.",
       "result": "info",
       "location": "devlog/assets/2026-11-18-s01-t2"
+    },
+    {
+      "id": "EV-0026",
+      "recordedAt": "2026-11-18T14:37:23-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@d09120798af3ca967b65655aeb7811ea2bb9ea2c",
+      "operator": "unspecified operator",
+      "subjects": [
+        "D05",
+        "SC-001"
+      ],
+      "kind": "observation",
+      "summary": "Hosting and running costs checked against official vendor pages; plan recommends Supabase Pro plus Cloud Run and Cloud Storage",
+      "steps": "Read supabase.com/pricing, the Supabase connection and IPv4 docs, huggingface.co/pricing and the Spaces hardware, billing and storage docs, and Google Cloud's free-tier page; compared them with the launch packet's cost table",
+      "observed": "Supabase Pro $25/month includes $10 compute credit covering one Micro instance (8 GB disk, 250 GB egress, 100,000 MAU, 7-day daily backups); Free pauses after a week and has no backups; the shared pooler is IPv4 on every plan and transaction mode does not support prepared statements; custom roles connect as ROLE.PROJECT-REF. Hugging Face: compute Spaces need a paid plan; CPU Basic is free but sleeps after 48 hours idle; CPU Upgrade $0.03/hour; disk is ephemeral. Google Cloud free tier: Cloud Run 2M requests, 180,000 vCPU-seconds, 360,000 GiB-seconds; Cloud Storage 5 GB-months in us-east1/us-west1/us-central1. Estimated cash total about $84-99/month against the packet's $119-169.",
+      "result": "info",
+      "location": "docs/planning/HOSTING_AND_COSTS.md"
+    },
+    {
+      "id": "EV-0027",
+      "recordedAt": "2026-11-18T14:37:23-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@d09120798af3ca967b65655aeb7811ea2bb9ea2c",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005",
+        "AT-23"
+      ],
+      "kind": "test",
+      "summary": "Production container image builds without secrets and passes a smoke test",
+      "steps": "docker build -f apps/desk/Dockerfile (Next.js standalone output, Node 24, non-root); run with placeholder configuration and against the local stack; check health, pages, CSP, gateway refusal, user and image contents",
+      "observed": "Image sc-desk:0.3.0, 385 MB. /api/health ok with version 0.3.0; /sign-in and /pitch 200 with the nonce CSP; signed-out / redirects to /sign-in; the gateway answers 401 without a token and logs structured JSON with trace IDs; the process runs as node; no .env file anywhere in the image. The same smoke test is now the CI container job.",
+      "result": "pass",
+      "location": "apps/desk/Dockerfile"
+    },
+    {
+      "id": "EV-0028",
+      "recordedAt": "2026-11-18T14:37:23-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@d09120798af3ca967b65655aeb7811ea2bb9ea2c",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005",
+        "SC-007"
+      ],
+      "kind": "test",
+      "summary": "End-to-end suite: 24/24 after standalone output, pooler setting and a phone layout fix",
+      "steps": "next build (standalone); next start; pnpm desk:e2e --trace off (desktop and Pixel 7) with a database already holding lab and earlier test data",
+      "observed": "First run: 23/24; the phone layout test caught Settings overflowing by 265 px. Root cause: visually hidden labels inside wide tables are absolutely positioned and their containing block was the page, not the scroll container. Fix: position: relative on .table-scroll. Re-run: 24/24, no axe violations.",
+      "result": "pass",
+      "location": "apps/desk/e2e"
+    },
+    {
+      "id": "EV-0029",
+      "recordedAt": "2026-11-18T14:37:23-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@d09120798af3ca967b65655aeb7811ea2bb9ea2c",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-009"
+      ],
+      "kind": "verification",
+      "summary": "Agent lab harness self-test passes 9/9 system checks through the real gateway (scripted driver, no model)",
+      "steps": "pnpm --filter @sc/agent-lab lab --self-test against the running desk and local stack: synthetic fixtures per scenario, the lab's four tools over HTTP, judges reading the database and gateway records",
+      "observed": "draft 5/5, injection 5/5, revocation 3/3; revocation: briefs.list 200, then items.read 401 after the token was revoked, no proposal created. This proves the harness, not an agent: the Claude runs are UNRUN until an Anthropic API key is available.",
+      "result": "pass",
+      "location": "apps/agent-lab/README.md"
+    },
+    {
+      "id": "EV-0030",
+      "recordedAt": "2026-11-18T14:37:23-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v24.22.3",
+      "commit": "WORKTREE@d09120798af3ca967b65655aeb7811ea2bb9ea2c",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-009",
+        "AT-17"
+      ],
+      "kind": "observation",
+      "summary": "Claude agent-lab runs not executed: an Anthropic API key cannot be supplied as a network secret in this cloud environment",
+      "steps": "Requested the key through the session's secure credential form for api.anthropic.com; the platform refuses network secrets for Anthropic's own hosts",
+      "observed": "Blocked until ANTHROPIC_API_KEY is added as an environment variable in the cloud environment settings (readable by anyone using that environment and by commands in its sessions) and a new session starts, or until the lab is run on a local machine. AT-17 stays UNRUN.",
+      "result": "blocked",
+      "location": "apps/agent-lab/README.md#in-a-claude-code-cloud-session"
     }
   ]
 }

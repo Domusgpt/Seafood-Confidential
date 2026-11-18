@@ -23,23 +23,24 @@ Ghost(Pro) runs the public publication, contributors and newsletter. A small pri
 
 ## Repository map
 
-| Path         | Contents                                                                                                                                     |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/desk/` | The private operations desk (Next.js 16): staff sign-in, pitch queue, stories, sources, rights, agent gateway ([docs/DESK.md](docs/DESK.md)) |
-| `supabase/`  | Database migrations, local stack configuration and pgTAP policy tests                                                                        |
-| `packages/`  | Shared workspace packages (`@sc/contracts`: the agent request validator)                                                                     |
-| `packet/`    | Founder originals (PDF, DOCX, XLSX, cover note) with SHA-256 checksums                                                                       |
-| `docs/`      | Product spec, architecture, acceptance tests, sprint plan, runbook, launch packet text, implementation status, kit audit, planning brief     |
-| `decisions/` | Architecture decision records                                                                                                                |
-| `planning/`  | Backlog (canonical JSON + CSV view), workbook notes and decision register                                                                    |
-| `editorial/` | Brand guide, editorial playbook, six-week calendar, templates                                                                                |
-| `contracts/` | Draft-only agent request contract and executable examples                                                                                    |
-| `fixtures/`  | Clearly fictional test data (never publishable)                                                                                              |
-| `brand/`     | Concept board, web derivatives and design tokens (visual codex)                                                                              |
-| `devlog/`    | Timestamped log of every working turn                                                                                                        |
-| `devtrack/`  | Sessions, workstreams and evidence records with schemas                                                                                      |
-| `tools/`     | Validators, tracking CLIs, project hub generator, tool bootstrap                                                                             |
-| `.github/`   | CI, Pages previews, templates and ownership                                                                                                  |
+| Path              | Contents                                                                                                                                     |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/desk/`      | The private operations desk (Next.js 16): staff sign-in, pitch queue, stories, sources, rights, agent gateway ([docs/DESK.md](docs/DESK.md)) |
+| `apps/agent-lab/` | Claude-powered agents that exercise and red-team the gateway ([README](apps/agent-lab/README.md))                                            |
+| `supabase/`       | Database migrations, local stack configuration and pgTAP policy tests                                                                        |
+| `packages/`       | Shared workspace packages (`@sc/contracts`: the agent request validator)                                                                     |
+| `packet/`         | Founder originals (PDF, DOCX, XLSX, cover note) with SHA-256 checksums                                                                       |
+| `docs/`           | Product spec, architecture, acceptance tests, sprint plan, runbook, launch packet text, implementation status, kit audit, planning brief     |
+| `decisions/`      | Architecture decision records                                                                                                                |
+| `planning/`       | Backlog (canonical JSON + CSV view), workbook notes and decision register                                                                    |
+| `editorial/`      | Brand guide, editorial playbook, six-week calendar, templates                                                                                |
+| `contracts/`      | Draft-only agent request contract and executable examples                                                                                    |
+| `fixtures/`       | Clearly fictional test data (never publishable)                                                                                              |
+| `brand/`          | Concept board, web derivatives and design tokens (visual codex)                                                                              |
+| `devlog/`         | Timestamped log of every working turn                                                                                                        |
+| `devtrack/`       | Sessions, workstreams and evidence records with schemas                                                                                      |
+| `tools/`          | Validators, tracking CLIs, project hub generator, tool bootstrap                                                                             |
+| `.github/`        | CI, Pages previews, templates and ownership                                                                                                  |
 
 ## Working on the repository
 

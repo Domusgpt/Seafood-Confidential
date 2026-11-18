@@ -34,7 +34,14 @@ export const DOC_GROUPS = [
     docs: [
       { src: 'docs/PRODUCT_SPEC.md', slug: 'product-spec', title: 'Product specification' },
       { src: 'docs/ARCHITECTURE.md', slug: 'architecture', title: 'Architecture' },
-      { src: 'docs/DESK.md', slug: 'desk', title: 'Operations desk (v0.2.0)' },
+      { src: 'docs/DESK.md', slug: 'desk', title: 'Operations desk' },
+      { src: 'docs/DEPLOYMENT.md', slug: 'deployment', title: 'Deploying the desk' },
+      {
+        src: 'docs/planning/HOSTING_AND_COSTS.md',
+        slug: 'hosting-and-costs',
+        title: 'Hosting and running costs',
+      },
+      { src: 'apps/agent-lab/README.md', slug: 'agent-lab', title: 'Agent lab (Claude against the gateway)' },
       { src: 'docs/ACCEPTANCE_TESTS.md', slug: 'acceptance-tests', title: 'Acceptance tests' },
       { src: 'docs/RUNBOOK.md', slug: 'runbook', title: 'Runbook' },
       { src: 'contracts/README.md', slug: 'agent-contract', title: 'Agent request contract' },
