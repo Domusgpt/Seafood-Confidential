@@ -39,6 +39,9 @@ const eslintConfig = defineConfig([
     'next-env.d.ts',
     'playwright-report/**',
     'test-results/**',
+    // Generated public-site assets and local publishing output (scripts/build-site-assets.mjs).
+    'site-static/**',
+    '.site-output/**',
   ]),
 ]);
 

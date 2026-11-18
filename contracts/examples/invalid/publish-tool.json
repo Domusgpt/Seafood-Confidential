@@ -1,11 +1,13 @@
 {
-  "why": "No publish operation exists in v1; a publish tool name is rejected before any vendor call.",
+  "why": "Agents publish only through drafts.publish with a proposal ID (ADR-005); a generic posts.publish tool aimed at the vendor is rejected before any vendor call.",
   "acceptance": ["AT-04"],
   "request": {
     "schemaVersion": "1.0",
     "requestId": "req-2026-0101",
     "idempotencyKey": "idem-publish-attempt",
     "tool": "posts.publish",
-    "arguments": { "postId": "demo-item-001" }
+    "arguments": {
+      "postId": "demo-item-001"
+    }
   }
 }

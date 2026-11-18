@@ -1,0 +1,593 @@
+/* Seafood Confidential public site · Working Waterfront (sc-visual-codex).
+   Color and type variables come from tokens.css, compiled from brand/tokens.json. */
+
+@font-face {
+  font-family: 'Fraunces';
+  src: url('fonts/fraunces-latin-full-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fraunces';
+  src: url('fonts/fraunces-latin-full-italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('fonts/source-sans-3-latin-wght-normal.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('fonts/source-sans-3-latin-wght-italic.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --rule: color-mix(in srgb, var(--ink) 14%, transparent);
+  --rule-strong: color-mix(in srgb, var(--ink) 30%, transparent);
+  --radius: 10px;
+  --gutter: 16px;
+  --measure: 72ch;
+  --wide: 1180px;
+  --shadow:
+    0 1px 0 color-mix(in srgb, var(--ink) 6%, transparent),
+    0 10px 28px -18px color-mix(in srgb, var(--ink) 45%, transparent);
+}
+@media (min-width: 720px) {
+  :root {
+    --gutter: 28px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+}
+img,
+svg {
+  max-width: 100%;
+}
+a {
+  color: var(--link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+main:focus {
+  outline: none;
+}
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: -100px;
+  z-index: 10;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 8px 14px;
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+.skip-link:focus {
+  top: 12px;
+}
+.small {
+  font-size: 0.875rem;
+}
+
+/* ---------- Masthead ---------- */
+.masthead {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--masthead-text);
+  background:
+    radial-gradient(
+      120% 140% at 85% 0%,
+      color-mix(in srgb, var(--masthead-line) 22%, transparent),
+      transparent 60%
+    ),
+    var(--masthead-background);
+}
+.masthead canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  display: block;
+}
+.masthead.gl-fallback canvas {
+  display: none;
+}
+.masthead--home::after {
+  /* Scrim keeps the wordmark at full contrast whatever the contour lines do. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--masthead-background) 92%, transparent) 0%,
+    color-mix(in srgb, var(--masthead-background) 70%, transparent) 46%,
+    transparent 78%
+  );
+  pointer-events: none;
+}
+.masthead-inner {
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: 22px var(--gutter) 18px;
+  display: grid;
+  gap: 10px;
+}
+.masthead--home .masthead-inner {
+  padding-top: 40px;
+  padding-bottom: 32px;
+}
+.wordmark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 860;
+  font-variation-settings:
+    'SOFT' 0,
+    'WONK' 0,
+    'opsz' 144;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 0.92;
+  font-size: clamp(1.7rem, 5.6vw, 2.6rem);
+}
+.masthead--home .wordmark {
+  font-size: clamp(2.1rem, 7.6vw, 4.4rem);
+}
+.wordmark a {
+  color: inherit;
+  text-decoration: none;
+}
+.masthead-rule {
+  justify-self: start;
+  height: 2px;
+  width: min(100%, 620px);
+  background: var(--masthead-rule);
+  border: 0;
+  margin: 2px 0 0;
+}
+.tagline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 420;
+  font-variation-settings: 'opsz' 36;
+  font-size: clamp(1rem, 2.4vw, 1.35rem);
+}
+.masthead :focus-visible {
+  outline-color: var(--masthead-text);
+}
+
+/* ---------- Section navigation ---------- */
+.sections {
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+}
+.sections ul {
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  list-style: none;
+  display: flex;
+  gap: 2px 20px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.sections a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  white-space: nowrap;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.sections a:hover {
+  border-bottom-color: var(--accent);
+}
+
+/* ---------- Layout ---------- */
+main {
+  display: block;
+  padding: 28px 0 48px;
+}
+.wrap {
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+.page-title {
+  margin: 4px 0 18px;
+  font-family: var(--font-display);
+  font-weight: 720;
+  line-height: 1.1;
+  font-size: clamp(1.9rem, 4.4vw, 2.8rem);
+}
+.lede {
+  max-width: var(--measure);
+  font-size: 1.1875rem;
+  color: var(--ink-2);
+}
+.rule-heading {
+  margin: 36px 0 16px;
+  padding-top: 12px;
+  border-top: 2px solid var(--ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+}
+.eyebrow {
+  margin: 0 0 6px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.eyebrow a {
+  color: inherit;
+  text-decoration: none;
+}
+.eyebrow a:hover {
+  text-decoration: underline;
+}
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+  background: var(--surface);
+  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+}
+.label__icon {
+  width: 14px;
+  height: 14px;
+  color: var(--mark);
+  flex: none;
+}
+.ico-stroke {
+  stroke: var(--surface);
+}
+.ico-fill {
+  fill: var(--surface);
+}
+.meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.meta span:first-child {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+/* ---------- Story cards ---------- */
+.grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1080px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 20px 20px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+.card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.18;
+  font-size: 1.3rem;
+}
+.card__title a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.card__title a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+.card__dek {
+  margin: 0;
+  color: var(--ink-2);
+}
+.card--lead {
+  padding: 24px 26px 26px;
+  border-top: 4px solid var(--accent);
+}
+.card--lead .card__title {
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  font-weight: 740;
+  line-height: 1.08;
+  max-width: 28ch;
+}
+.card--lead .card__dek {
+  font-size: 1.1875rem;
+  max-width: 60ch;
+}
+
+/* ---------- Story page ---------- */
+.story {
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+.story__header {
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
+}
+.story__title {
+  margin: 4px 0 10px;
+  font-family: var(--font-display);
+  font-weight: 720;
+  line-height: 1.08;
+  font-size: clamp(2rem, 5.4vw, 3.1rem);
+  text-wrap: balance;
+}
+.story__dek {
+  margin: 0 0 14px;
+  font-size: 1.25rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.meta__updated {
+  color: var(--muted);
+}
+.story__body {
+  font-size: 1.125rem;
+  line-height: 1.68;
+}
+.story__body p {
+  margin: 0 0 1.1em;
+}
+.story__body h2,
+.story__body h3,
+.story__body h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 1.6em 0 0.5em;
+}
+.story__body h2 {
+  font-size: 1.55rem;
+}
+.story__body h3 {
+  font-size: 1.3rem;
+}
+.story__body ul,
+.story__body ol {
+  padding-left: 1.3em;
+  margin: 0 0 1.1em;
+}
+.story__body li + li {
+  margin-top: 0.35em;
+}
+.story__body blockquote {
+  margin: 1.4em 0;
+  padding: 2px 0 2px 18px;
+  border-left: 3px solid var(--accent);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--ink-2);
+}
+.story__body code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--surface-2);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+.story__body hr {
+  border: 0;
+  border-top: 1px solid var(--rule-strong);
+  margin: 2em 0;
+}
+.story__body table {
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+  font-variant-numeric: tabular-nums;
+}
+.story__body th,
+.story__body td {
+  border-bottom: 1px solid var(--rule);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.disclosure {
+  margin: 28px 0 0;
+  padding: 14px 18px 16px;
+  border: 1px solid var(--rule);
+  border-left: 5px solid var(--mark);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.disclosure p {
+  margin: 0;
+}
+.disclosure__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  margin-bottom: 4px !important;
+}
+.disclosure .label__icon {
+  width: 18px;
+  height: 18px;
+}
+
+.sources {
+  margin: 28px 0 0;
+  padding-top: 16px;
+  border-top: 2px solid var(--ink);
+}
+.sources h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+.sources ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+.sources li {
+  margin: 0 0 6px;
+}
+.sources__meta {
+  display: block;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* ---------- Newsletter signup ---------- */
+.signup {
+  margin: 32px 0 0;
+  padding: 18px 20px 20px;
+  border-radius: var(--radius);
+  background: var(--masthead-background);
+  color: var(--masthead-text);
+}
+.signup__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+.signup__note {
+  margin: 4px 0 12px;
+  color: color-mix(in srgb, var(--masthead-text) 86%, transparent);
+}
+.signup__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.signup__input {
+  flex: 1 1 220px;
+  min-height: 46px;
+  padding: 0 12px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: 8px;
+}
+.signup__button {
+  min-height: 46px;
+  padding: 0 20px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--masthead-background);
+  background: var(--masthead-text);
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.signup :focus-visible {
+  outline-color: var(--masthead-text);
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--rule);
+  background: var(--surface);
+}
+.site-footer__inner {
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: 8px var(--gutter) 28px;
+  display: grid;
+  gap: 14px;
+}
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  font-weight: 600;
+}
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.site-footer__inner > p {
+  margin: 0;
+  color: var(--muted);
+}

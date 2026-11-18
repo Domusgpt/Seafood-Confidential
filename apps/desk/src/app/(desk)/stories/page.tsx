@@ -27,7 +27,7 @@ export default async function StoriesPage({ searchParams }: PageProps<'/stories'
       <PageHeader
         eyebrow="Editorial queue"
         title="Stories"
-        description="Every editorial item, its owner and the one thing that moves it forward. Drafting and publishing happen in Ghost."
+        description="Every editorial item, its owner and the one thing that moves it forward. Stories are written and published from here."
         actions={
           <Link className="button" href="/stories/new">
             Commission a story

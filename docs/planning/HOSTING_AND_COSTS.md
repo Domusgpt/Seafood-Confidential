@@ -1,105 +1,163 @@
-# Hosting and running costs (v0.3.0)
+# Hosting and running costs (v0.4.0, Ghost-free start)
 
-Prepared 18 November 2026 (session S01, turn 3) for the founders' account and budget decisions (SC-001). Prices were checked against the vendors' official pages on that date (sources at the end). Treat every figure as a planning estimate: vendors change prices, and usage-based lines depend on traffic.
+Prepared 18 November 2026 (session S01, turn 4) after the founders asked whether every service was needed, then chose a Ghost-free start ([ADR-005](../../decisions/ADR-005-desk-publishing-without-ghost.md)). Every price below was checked that day on the vendor's official page; the sources are at the end. Treat the figures as planning estimates: vendors change prices, and usage-based lines depend on traffic.
 
-## Recommendation in one table
+## The answer in one table
 
-| Line | Choice | Monthly cash |
-| --- | --- | --- |
-| Publishing | Ghost(Pro) Publisher, annual (from the launch packet) | $29 |
-| Social | Buffer Team, two channels (from the launch packet) | $20 |
-| Desk database and staff sign-in | **Supabase Pro**, one Micro project for production | **$25** |
-| Staging database | Supabase Free project in a separate organization | $0 |
-| Desk hosting | **Google Cloud Run**, scale to zero, one container image | **about $0** (inside the free tier) |
-| Builds, images, secrets | Cloud Build, Artifact Registry, Secret Manager | about $0 (inside the free tier) |
-| Backups and exports | **Google Cloud Storage** bucket with lifecycle rules | about $0 (inside the 5 GB free tier) |
-| AI drafting and testing | Claude API on your monthly credits | $0 cash (usage estimate below) |
-| Domain, mailboxes and sign-in email | From the launch packet; magic links need your own SMTP (often included with the mailbox provider) | $10–25 |
-| **Total cash** |  | **about $84–99 a month** |
+| Line | What it does | Needed? | Choice | Cash per month |
+| --- | --- | --- | --- | --- |
+| Domain and DNS | Our address; email reputation | **Yes** | Cloudflare Registrar (sold at cost, no markup) and Cloudflare DNS (free) | about $1 (paid yearly, typically about $10–12 a year for a .com) |
+| Public website | Stories, sections, feed, sitemap | **Yes** | Built by the desk and deployed to **Firebase Hosting** | **$0** (free allowance; see below) |
+| Newsletter | Signup, sending, unsubscribe and consent | **Yes**, when the first issue goes out | **Kit free plan**: up to 10,000 subscribers, API included | **$0** |
+| Desk database and staff sign-in | Private operations, articles and revisions | **Yes** | **Supabase Free** while building; Pro ($25) once real sources and contacts live there | **$0**, then $25 |
+| Desk server | The desk and the agent gateway | **Yes** | **Google Cloud Run**, scaling to zero | **$0** (free tier) |
+| Sign-in emails for staff | Magic links | **Yes** | **Resend free**: 3,000 a month, 100 a day, used as Supabase's SMTP | **$0** |
+| Role mailboxes (editor@, tips@) | Reading mail sent to the publication | Yes, but not as paid mailboxes | **Cloudflare Email Routing** forwards to your existing inboxes | **$0** |
+| AI agents | Drafting and publishing within the switches | Optional | Claude API on Paul's credits | $0 cash (usage below) |
+| Social scheduling | LinkedIn and Facebook posts | **No** | Post or schedule natively on LinkedIn and Facebook; Buffer's free plan (3 channels, includes the API) later | **$0** |
+| Password manager | Shared account access | Yes (security) | Bitwarden free organization (exactly two people) | **$0** |
+| Code and previews | Repository, CI, project hub | Yes | GitHub Free (the repository is **public**, so Actions and Pages are free) | **$0** |
+| Podcast hosting | | Not until there is a podcast | | $0 |
+| **Total to start** | | | | **about $1 a month** |
 
-The launch packet budgeted **$119–169** a month. The difference is Vercel Pro ($20) replaced by Cloud Run, and the $15–50 AI allowance covered by your Claude credits. Ghost and Buffer still need **$588 upfront** for their annual plans.
+**From the first real operations data:** add Supabase Pro at **$25 a month**. It gives daily backups for 7 days and the project never pauses. The alternative is to finish the free nightly backup to Cloud Storage first (SC-014). The launch packet budgeted $119–169 a month plus $588 upfront; this plan needs neither the upfront payment nor Ghost, Buffer or Vercel.
 
-## Supabase
+## What each service does, and the catches
 
-| Plan | What you get | Fit |
-| --- | --- | --- |
-| Free | 500 MB database, 50,000 monthly active users, 5 GB egress, 1 GB storage, 2 active projects. **Paused after 1 week of inactivity. No backups.** 1-day logs | Staging and development only |
-| **Pro, $25/month** | Includes **$10 of compute credit, which covers one Micro instance** (Micro is $10/month, Small $15). Per project: 8 GB disk (then $0.125/GB), 250 GB egress (then $0.09/GB), 100,000 monthly active users (then $0.00325 each), **daily backups kept 7 days**, 7-day logs. Spend cap on by default | **Production** |
-| Team, $599/month | 14-day backups, 28-day logs, organization features | Not needed |
+### Website: Firebase Hosting (free)
 
-For the desk the Pro plan is a **flat $25**. The database will stay far below 8 GB for years, egress is tiny because pages render on the server, and the only signed-in users are a handful of staff. Keep the spend cap on.
+- **Publishing:** the desk renders the whole site on every publication and deploys it through the Firebase Hosting API. Cloud Run's own service account does the deploy, so no key file is involved.
+- **Cost:** free, with a CDN, SSL and our own domain. On the pay-as-you-go plan (the same Google billing account as Cloud Run), traffic beyond the free allowance is billed per GB. A text-first site uses little bandwidth.
+- **Why static:** the public site stays up even when the desk or its database is down or paused.
+- **Status:** verified with protocol fakes in this turn. The first live deploy is part of SC-015.
 
-Add-ons you do **not** need:
-- Point-in-time recovery ($100 a month for each 7 days of retention): daily backups plus our own nightly export to Cloud Storage cover a small newsroom.
-- A custom domain ($10 a month per project): the Supabase address is used only server-side.
-- The IPv4 add-on: connect through the shared pooler, which is IPv4 on every plan.
+### Newsletter: Kit free plan
 
-A second Pro project for staging would add about $10 a month (another Micro), so use a Free project for staging and accept that it pauses when idle.
+Kit's pricing page lists the free plan with:
+- up to 10,000 subscribers;
+- API access ("Get access to Kit's API to build your own integration");
+- one-time broadcasts;
+- landing pages on our own domain;
+- paid newsletters, at 3.5% plus 30¢ per transaction.
 
-**How the desk connects.** On Cloud Run, which scales to zero, use the shared pooler in **transaction mode (port 6543)** with the user `desk_app.<project-ref>` and set `DESK_DB_PREPARE=false`, because prepared statements aren't supported there. Every desk request already runs inside one transaction that switches role and binds the caller, which is exactly what transaction pooling needs. A long-running server can use session mode (port 5432) instead and keep prepared statements on.
+How the desk uses it:
+- **Signup:** the public site's signup form posts straight to Kit, so Kit handles consent and unsubscribing.
+- **Sending:** the desk schedules a broadcast a few minutes after publication, and only when someone chose to email the story.
+- **Never twice:** the desk never sends twice; an uncertain result asks an editor to check Kit.
 
-## Where to run the desk: Cloud Run versus Hugging Face Spaces
+Alternatives checked:
+- **Beehiiv:** the free plan has no custom domain; paid plans start at $49/month.
+- **MailerLite:** the free plan is 250 subscribers and cannot send through the API.
+- **Buttondown:** free only to 100 subscribers; an archive on our own domain costs +$29/month.
 
-The repository now builds one container image (`apps/desk/Dockerfile`, 385 MB, runs as a non-root user). The same image runs on either platform, so this choice stays reversible.
+### Desk database: Supabase Free now, Pro later
 
-| | **Google Cloud Run (recommended)** | Hugging Face Docker Space | Vercel Pro (packet default) |
-| --- | --- | --- | --- |
-| Monthly cost for this traffic | **About $0.** The free tier covers 2 million requests, 180,000 vCPU-seconds, 360,000 GiB-seconds and 1 GB of North America egress a month. Beyond that, usage is billed per second | A paid plan to create the Space (**PRO, $9 a month**) plus either **CPU Basic: free but sleeps after 48 hours idle**, or **CPU Upgrade: $0.03 an hour (about $22 a month)**, always on | $20 per deploying seat |
-| Cold starts | A few seconds after an idle period, unless you pay to keep one instance warm | A sleeping free Space has to boot again when someone visits | Minimal |
-| Privacy and access | Public HTTPS endpoint behind our own sign-in; IAM and Secret Manager for configuration | Spaces are built for public demos. Private Spaces need a Hugging Face login, which clashes with staff sign-in and the public pitch form | Same as Cloud Run |
-| Database latency | Pick the region next to Supabase (for example Cloud Run `us-east4` with Supabase `us-east-1`) | Region not chosen by you | Region selectable |
-| Disk | Stateless, which the desk is | Ephemeral; Storage Buckets for persistence | Stateless |
-| Your accounts | You already have Google Cloud | You already have Hugging Face | New account |
+| Plan | What matters |
+| --- | --- |
+| Free | 500 MB database, 50,000 monthly active users, 2 active projects. **"Free projects are paused after 1 week of inactivity"**: a project is inactive when it does not receive enough database activity; a paused project can be restored for up to a year. **No automatic backups.** |
+| Pro, $25/month | Includes $10 of compute credit, "enough to cover one Micro instance". 8 GB disk, daily backups kept 7 days, never paused. |
 
-**Recommendation:** run the desk on **Cloud Run**, in the region next to the Supabase project, with minimum instances at 0. Use Cloud Run domain mapping for `desk.<your-domain>` in a region that supports it, or a load balancer later if needed.
+For the desk:
+- **Before launch:** Free is fine while building and piloting. Staff use the desk daily, so it stays active.
+- **What happens if it pauses:** the public site is static and stays up through a pause; only the desk and the gateway stop.
+- **Before real data goes in:** before real sources, contacts or pitches go in, either move to Pro or switch on our own nightly backup to Cloud Storage (SC-014, free tier).
 
-Don't put the desk behind **Firebase Hosting rewrites**: they pass only the `__session` cookie to the backend, which would break Supabase's sign-in cookies.
+**Sign-in email needs your own SMTP.** Supabase's built-in mailer sends only to your own team's addresses, at two messages an hour. Use **Resend's free tier** (3,000 a month, 100 a day). Its documentation covers Supabase's custom SMTP: host `smtp.resend.com`, port 465, user `resend`, and the API key as the password, with a verified domain.
 
-Keep **Hugging Face** for what it is best at: demos, model experiments and public showcases (ZeroGPU is free on paid accounts), not the newsroom's private operations.
+### Desk server: Cloud Run (free tier)
 
-## Google Cloud Storage
+- **Free tier:** 2 million requests, 180,000 vCPU-seconds and 360,000 GiB-seconds a month cover a newsroom desk at no cost.
+- **Domain mapping:** Cloud Run domain mapping is available in us-east4 but is marked **Preview, not production-ready**. Google's recommended load balancer costs about $18 a month, so start with the service's own `run.app` address for the staff-only desk. The public site lives on Firebase Hosting under our domain.
+- **Artifact Registry:** 0.5 GB of image storage is free, about two desk images. Keep a cleanup rule.
+- **Cloud Scheduler:** 3 jobs are free, enough for a nightly backup.
 
-Use one private bucket in a US free-tier region (`us-east1`, `us-west1` or `us-central1`) for:
-- nightly logical backups of the desk database (the `app` and `private` schemas), which SC-014 turns into a tested restore procedure;
-- archived agent-lab reports;
-- later, signed permission documents for rights records.
+### Mail for people
 
-The free tier is 5 GB-months of regional storage, 5,000 Class A and 50,000 Class B operations, and 100 GB of North America egress a month. Beyond it, Standard storage is about $0.020 per GB-month. Add a lifecycle rule (Nearline after 30 days, delete after a year) and the bucket costs pennies at most.
+- **Role addresses:** **Cloudflare Email Routing** is free. It forwards editor@ and tips@ to the founders' existing inboxes (200 rules, 25 MiB per message).
+- **If you want real business mailboxes:**
+  - Zoho Mail Lite is $1 per user per month, billed yearly.
+  - Google Workspace Business Starter is $7 per user per month yearly, or $8.40 monthly.
+
+### Things not needed to start
+
+| Item | Why not now |
+| --- | --- |
+| Ghost(Pro) | $29/month yearly ($35 monthly), $46 past 1,000 members. The desk now publishes the site, and Kit sends the newsletter. Starter ($15–18) cannot be used: it has one staff seat and no API. |
+| Buffer | LinkedIn Pages and Meta Business Suite schedule posts natively. Buffer's free plan (3 channels, 10 scheduled posts each, 1 user) includes its API for later. Team ($10 per channel per month yearly) only matters when both founders need their own logins. |
+| Vercel | Cloud Run covers the desk. |
+| Supabase point-in-time recovery, custom domain, IPv4 add-on | Not needed (backups as above; the pooler is IPv4). |
+| 1Password Teams | $24.95/month yearly. Bitwarden's free organization covers two people. |
 
 ## Claude API (your credits)
 
-List prices per million tokens, first-party API:
+List prices per million tokens on the first-party API (platform.claude.com pricing page, checked 18 November 2026):
 
-| Model | Input | Output | Cache read |
+| Model | Input | Output | Batch input / output (50% off) |
 | --- | --- | --- | --- |
-| Claude Opus 5.5 (the lab's default) | $4 | $20 | $0.20 |
-| Claude Sonnet 5.5 | $2 | $10 | $0.10 |
-| Claude Haiku 5.5 | $0.10 | $0.50 | $0.01 |
+| Claude Opus 5.5 (the lab's default) | $4 | $20 | $2 / $10 |
+| Claude Sonnet 5.5 | $2 | $10 | $1 / $5 |
+| Claude Haiku 5.5 (prompts up to 100k tokens) | $0.10 | $0.50 | $0.05 / $0.25 |
 
-**Estimate, to be replaced by measurement.** These figures assume one drafting task takes about six model turns, with about 25,000 input tokens across the turns and about 4,000 output tokens including reasoning.
+**Estimate, to be replaced by measurement.** These figures assume a drafting task takes about six model turns, roughly 25,000 input and 4,000 output tokens.
 
-| | Opus 5.5 | Sonnet 5.5 | Haiku 5.5 |
-| --- | --- | --- | --- |
-| One drafting task | about $0.18 | about $0.09 | well under a cent |
-| One agent-lab run (three scenarios) | about $0.40–0.60 | about $0.20–0.30 | about a cent |
-| A month of nightly lab runs plus 100 real drafts | about $30–35 | about $15–18 | under $1 |
+| Work | Cost |
+| --- | --- |
+| One drafting task | about $0.18 on Opus, $0.09 on Sonnet |
+| One agent-lab run (four scenarios) | about $0.50–0.80 on Opus |
+| A month of nightly lab runs plus 100 real drafts | about $30–35 on Opus, $15–18 on Sonnet |
 
-The agent lab prints the exact tokens and the list-price cost of every run, so the first real run replaces this estimate. Quality, not price, should decide the model: `--model` switches it per run.
+Scheduled, non-urgent work can use the Batch API at half price. `pnpm --filter @sc/agent-lab lab --check-key` confirms a key and billing for well under a cent before any run.
 
-## What changes in the repository for this plan
+## A note on the public repository
 
-- `apps/desk/Dockerfile` and `.dockerignore`: a standalone Next.js image that builds without secrets and starts with `node apps/desk/server.js` on port 8080.
-- `DESK_DB_PREPARE`: turns prepared statements off for the shared pooler's transaction mode.
-- `DESK_TRUSTED_PROXY_HOPS` is required in production. On Cloud Run, Google's front end appends the client address, so set it to 1 and verify it on the first deployment (the intake throttle relies on it).
-- `docs/DEPLOYMENT.md`: step-by-step Supabase and Cloud Run setup.
+The GitHub repository is **public**: that is why Actions minutes and Pages previews cost nothing. It also means the planning documents, costs, ADRs and code are readable by anyone.
+- **What's not in it:** no secret values; the bundle scan and `.gitignore` enforce this.
+- **If the plans should be private:** make the repository private and take GitHub Pro ($4/month). On GitHub Free, a private repository has about 2,000 Actions minutes a month, then $0.006 a minute, and no Pages.
 
-## Sources
+## Sources (official pages, checked 18 November 2026)
 
-- Supabase pricing: https://supabase.com/pricing (plan limits, compute credits, add-ons)
-- Supabase connections and pooler: https://supabase.com/docs/guides/database/connecting-to-postgres and https://supabase.com/docs/guides/platform/ipv4-address
-- Hugging Face pricing: https://huggingface.co/pricing; Spaces hardware, billing and sleep: https://huggingface.co/docs/hub/spaces-gpus; Spaces storage: https://huggingface.co/docs/hub/spaces-storage
-- Google Cloud free tier (Cloud Run, Cloud Storage, Secret Manager, Artifact Registry, Cloud Build): https://docs.cloud.google.com/free/docs/free-cloud-features
-- Cloud Run pricing beyond the free tier: https://cloud.google.com/run/pricing
-- Cloud Storage pricing: https://cloud.google.com/storage/pricing
-- Claude API prices: the Claude API reference used in this session (cached 3 November 2026); current prices at https://platform.claude.com/docs/en/about-claude/pricing
-- Launch packet cost table: [docs/LAUNCH_PACKET.md](../LAUNCH_PACKET.md)
+- **Ghost:**
+  - https://ghost.org/pricing/
+  - https://ghost.org/help/what-happens-when-my-ghost-pro-trial-ends/
+- **Kit:** https://kit.com/pricing
+- **Kit API:** https://developers.kit.com/api-reference/broadcasts/create-a-broadcast
+- **Beehiiv:** https://www.beehiiv.com/pricing
+- **MailerLite:** https://www.mailerlite.com/pricing
+- **Buttondown:** https://buttondown.com/pricing
+- **Buffer:**
+  - https://buffer.com/pricing
+  - https://buffer.com/api
+- **Native scheduling:**
+  - LinkedIn Pages: https://www.linkedin.com/help/linkedin/answer/a1419179
+  - Facebook: https://www.facebook.com/help/389849807718635
+- **Supabase:**
+  - https://supabase.com/pricing
+  - https://supabase.com/docs/guides/platform/free-project-pausing
+  - https://supabase.com/docs/guides/platform/backups
+  - https://supabase.com/docs/guides/auth/auth-smtp
+- **Email delivery:**
+  - Resend: https://resend.com/pricing
+  - Resend with Supabase SMTP: https://resend.com/docs/send-with-supabase-smtp
+  - Brevo: https://www.brevo.com/pricing/
+  - Postmark: https://postmarkapp.com/pricing
+  - Amazon SES: https://aws.amazon.com/ses/pricing/
+- **Mail and domain:**
+  - Google Workspace: https://workspace.google.com/business/
+  - Zoho Mail: https://www.zoho.com/mail/zohomail-pricing.html
+  - Cloudflare Email Routing limits: https://developers.cloudflare.com/email-routing/limits/
+  - Cloudflare Registrar: https://developers.cloudflare.com/registrar/faq/
+  - Cloudflare DNS: https://developers.cloudflare.com/dns/
+- **Password managers:**
+  - https://bitwarden.com/pricing/
+  - https://1password.com/product/teams-small-business-password-manager
+- **GitHub:**
+  - https://docs.github.com/en/billing/concepts/product-billing/github-actions
+  - https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages
+- **Google Cloud:**
+  - Cloud Run domain mapping: https://docs.cloud.google.com/run/docs/mapping-custom-domains
+  - Artifact Registry: https://cloud.google.com/artifact-registry/pricing
+  - Cloud Scheduler: https://cloud.google.com/scheduler/pricing
+  - Free tier: https://docs.cloud.google.com/free/docs/free-cloud-features
+- **Firebase Hosting:** https://firebase.google.com/docs/hosting/api-deploy
+- **Claude API:** https://platform.claude.com/docs/en/about-claude/pricing
+- **Launch packet cost table, for comparison:** [docs/LAUNCH_PACKET.md](../LAUNCH_PACKET.md)

@@ -5,18 +5,28 @@ import schema from '../../../contracts/agent-tools.schema.json' with { type: 'js
 
 export const agentRequestSchema = schema;
 
-/** Every tool the v1 contract defines. Nothing here publishes, sends, approves or exports. */
+/**
+ * Every tool the v1 contract defines. drafts.publish publishes an agent's own proposal under the
+ * desk's publishing policy (ADR-005); nothing here sends email directly, approves, changes
+ * permissions or exports subscribers.
+ */
 export const AGENT_TOOLS = Object.freeze([
   'briefs.list',
   'items.read',
   'drafts.propose',
   'drafts.revise',
+  'drafts.publish',
   'social.propose',
   'jobs.read',
 ]);
 
 /** Tools that change state; each requires an idempotency key (enforced by the schema). */
-export const WRITE_TOOLS = Object.freeze(['drafts.propose', 'drafts.revise', 'social.propose']);
+export const WRITE_TOOLS = Object.freeze([
+  'drafts.propose',
+  'drafts.revise',
+  'drafts.publish',
+  'social.propose',
+]);
 
 let compiled;
 function validator() {

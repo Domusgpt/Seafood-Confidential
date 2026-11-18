@@ -1,6 +1,6 @@
 # ADR 001 managed publishing foundation
 
-Date: November 17, 2026. Status: proposed default for founder confirmation at kickoff.
+Date: November 17, 2026. Status: proposed default for founder confirmation at kickoff. **Superseded in part by [ADR-005](ADR-005-desk-publishing-without-ghost.md) (18 November 2026): no Ghost at launch; the desk publishes the site, Kit sends the newsletter, and agents may publish under policy.**
 
 ## Context
 

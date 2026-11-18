@@ -10,9 +10,11 @@ import { signOut } from '../(auth)/actions';
 export default async function DeskLayout({ children }: LayoutProps<'/'>) {
   const session = await requireStaff();
   const counts = await staffTx(async (tx) => {
-    const [row] = await tx<{ pitches: number; proposals: number }[]>`
+    const [row] = await tx<{ pitches: number; proposals: number; attention: number }[]>`
       select (select count(*)::int from app.pitches where status in ('new', 'needs_info')) as pitches,
-             (select count(*)::int from app.draft_proposals where status = 'proposed') as proposals
+             (select count(*)::int from app.draft_proposals where status = 'proposed') as proposals,
+             (select count(*)::int from app.publish_jobs where status in ('needs_attention', 'failed')
+                and created_at > now() - interval '7 days') as attention
     `;
     return row;
   });
@@ -36,7 +38,9 @@ export default async function DeskLayout({ children }: LayoutProps<'/'>) {
               </button>
             </form>
           </div>
-          <DeskNav counts={{ Contributors: counts.pitches, Stories: counts.proposals }} />
+          <DeskNav
+            counts={{ Contributors: counts.pitches, Stories: counts.proposals, Publishing: counts.attention }}
+          />
         </div>
       </header>
       <main id="main" className="page" tabIndex={-1}>
@@ -45,7 +49,7 @@ export default async function DeskLayout({ children }: LayoutProps<'/'>) {
       <footer className="site-footer">
         <div className="site-footer__inner">
           <span>Seafood Confidential operations desk v{DESK_VERSION}</span>
-          <span>Agents propose. People decide and publish in Ghost.</span>
+          <span>People write and publish. Agents publish only where Settings allows.</span>
         </div>
       </footer>
     </>

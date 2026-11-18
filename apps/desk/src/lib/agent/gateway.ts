@@ -1,20 +1,25 @@
 import 'server-only';
 import { validateAgentRequest, type AgentRequest } from '@sc/contracts';
 import { parseAuthorization } from '../agent-tokens';
-import { withAgent, type AgentBinding, type Tx } from '../db';
+import { pgCode, withAgent, type AgentBinding, type Tx } from '../db';
 import { env } from '../env';
 import { logger } from '../logger';
+import { runPublishJob } from '../publishing/executor';
 import { API_CSP, clientAddressFrom, isValidRequestId, resolveRequestId } from '../security';
 import { SECTIONS } from '../vocab';
 import { Semaphore, WindowCounter } from './limits';
 import {
   decodeCursor,
   encodeCursor,
+  failedChecks,
   isContentId,
   JOB_STATES,
   payloadHash,
+  PUBLISH_JOB_STATES,
   toAgentSources,
+  UUID,
   type AgentSourceRow,
+  type GateResult,
 } from './shape';
 
 // Draft-only agent gateway v1 (first slice of SC-009). Layers, in order:
@@ -22,8 +27,10 @@ import {
 //   2. authentication: bearer token verified inside the database (revocation is immediate)
 //   3. contract: the kit's JSON Schema (unknown tools such as posts.publish never get further)
 //   4. authorization: token scopes, then Row Level Security for every object
-//   5. tool: reads with server-side redaction; drafts.propose with durable idempotency
-// Every outcome is written to the audit trail in the same transaction as the work.
+//   5. tool: reads with server-side redaction; drafts.propose with durable idempotency;
+//      drafts.publish through the database's publishing policy and checks (ADR-005)
+// Every outcome is written to the audit trail in the same transaction as the work. A publication
+// is sent to Ghost only after that transaction commits (the job is durable first).
 
 const MAX_BODY_BYTES = 512 * 1024;
 const SCHEMA_VERSION = '1.0';
@@ -37,6 +44,8 @@ interface Result {
   code?: string;
   subject?: string;
   headers?: Record<string, string>;
+  /** Work that must happen only after the request's transaction committed (a queued publication). */
+  afterCommit?: () => Promise<{ status: number; body: Record<string, unknown> }>;
 }
 
 class GatewayError extends Error {
@@ -334,6 +343,16 @@ export async function handleAgentRequest(request: Request): Promise<Response> {
     release();
   }
 
+  if (result.afterCommit) {
+    try {
+      const next = await result.afterCommit();
+      result = { ...result, status: next.status, body: next.body };
+    } catch (error) {
+      logger.error({ request_id: requestId, err: (error as Error).message }, 'post-commit step failed');
+      // The job is durable; the agent can follow it with jobs.read.
+    }
+  }
+
   logger.info(
     {
       request_id: requestId,
@@ -532,10 +551,127 @@ async function runTool(tx: Tx, agent: AgentBinding, req: AgentRequest): Promise<
       );
     }
 
+    case 'drafts.publish': {
+      const { draftId } = req.arguments;
+      const sendEmail = req.arguments.sendEmail ?? false;
+      if (!UUID.test(draftId))
+        throw new GatewayError(404, 'not_found', 'No such proposal belongs to this agent.');
+      const hash = payloadHash(req.tool, { draftId, sendEmail });
+      let row: { jobId: string; jobStatus: string; replayed: boolean; gateResults: GateResult[] } | undefined;
+      try {
+        [row] = await tx<
+          { jobId: string; jobStatus: string; replayed: boolean; gateResults: GateResult[] }[]
+        >`
+          select job_id, job_status, replayed, gate_results
+          from app.agent_request_publish(${draftId}, ${sendEmail}, ${req.idempotencyKey}, ${hash}, ${req.requestId})
+        `;
+      } catch (error) {
+        const code = pgCode(error);
+        if (code === 'P0002')
+          throw new GatewayError(404, 'not_found', 'No such proposal belongs to this agent.');
+        if (code === 'SC409')
+          throw new GatewayError(
+            409,
+            'idempotency_conflict',
+            'This idempotency key was already used with a different request. Use a new key for a new request.',
+          );
+        if (code === '23505')
+          throw new GatewayError(
+            409,
+            'publish_in_progress',
+            'A publication of this story is already in progress.',
+          );
+        if (code === '42501')
+          throw new GatewayError(403, 'insufficient_scope', 'This token is not allowed to publish.');
+        throw error;
+      }
+      const job = row!;
+      if (job.jobStatus === 'refused') {
+        throw new GatewayError(
+          422,
+          'publish_refused',
+          'The publishing checks refused this proposal. Nothing was sent. Fix the failed checks and submit a new proposal.',
+          { jobId: job.jobId, failedChecks: failedChecks(job.gateResults) },
+        );
+      }
+      const accepted = {
+        status: job.replayed ? 200 : 202,
+        outcome: 'allowed' as const,
+        code: job.replayed ? 'replayed' : undefined,
+        subject: job.jobId,
+        body: ok(req.requestId, req.tool, {
+          jobId: job.jobId,
+          state: PUBLISH_JOB_STATES[job.jobStatus as keyof typeof PUBLISH_JOB_STATES]?.state ?? job.jobStatus,
+          replayed: job.replayed,
+        }),
+      };
+      if (job.jobStatus !== 'queued') return accepted;
+      return {
+        ...accepted,
+        afterCommit: async () => {
+          const run = await runPublishJob(
+            job.jobId,
+            { kind: 'agent', principalId: agent.principalId },
+            req.requestId,
+          );
+          const state =
+            run.status === 'not_claimed' || run.status === 'busy'
+              ? 'queued'
+              : PUBLISH_JOB_STATES[run.status].state;
+          return {
+            status: run.status === 'succeeded' ? 201 : 202,
+            body: ok(req.requestId, req.tool, {
+              jobId: job.jobId,
+              state,
+              message: run.message,
+              publicUrl: run.publicUrl,
+              replayed: false,
+            }),
+          };
+        },
+      };
+    }
+
     case 'jobs.read': {
       const jobId = req.arguments.jobId;
-      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(jobId)) {
+      if (!UUID.test(jobId)) {
         throw new GatewayError(404, 'not_found', 'No such job is visible to this agent.');
+      }
+      const [publication] = await tx<
+        {
+          id: string;
+          status: keyof typeof PUBLISH_JOB_STATES;
+          outcomeMessage: string | null;
+          publicUrl: string | null;
+          gateResults: GateResult[];
+          createdAt: Date;
+          startedAt: Date | null;
+          finishedAt: Date | null;
+        }[]
+      >`
+        select id, status, outcome_message, public_url, gate_results, created_at, started_at, finished_at
+        from app.publish_jobs where id = ${jobId}
+      `;
+      if (publication) {
+        const state = PUBLISH_JOB_STATES[publication.status];
+        return {
+          status: 200,
+          outcome: 'allowed',
+          subject: publication.id,
+          body: ok(req.requestId, req.tool, {
+            jobId: publication.id,
+            kind: 'publication',
+            state: state.state,
+            message: publication.outcomeMessage ?? state.message,
+            publicUrl: publication.publicUrl,
+            failedChecks: failedChecks(publication.gateResults),
+            updatedAt: (
+              publication.finishedAt ??
+              publication.startedAt ??
+              publication.createdAt
+            ).toISOString(),
+          }),
+        };
       }
       const [job] = await tx<
         { id: string; status: keyof typeof JOB_STATES; reviewedAt: Date | null; createdAt: Date }[]

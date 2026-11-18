@@ -1,0 +1,15 @@
+{
+  "why": "drafts.publish takes only a proposal ID: content, HTML, status or a destination cannot be smuggled in at publish time.",
+  "acceptance": ["AT-04", "AT-18"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0303",
+    "idempotencyKey": "idem-publish-0003",
+    "tool": "drafts.publish",
+    "arguments": {
+      "draftId": "4f6c2d1e-8b7a-4c3d-9e2f-1a0b9c8d7e6f",
+      "html": "<script>alert(1)</script>",
+      "status": "published"
+    }
+  }
+}

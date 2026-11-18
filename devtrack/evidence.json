@@ -562,6 +562,153 @@
       "observed": "Blocked until ANTHROPIC_API_KEY is added as an environment variable in the cloud environment settings (readable by anyone using that environment and by commands in its sessions) and a new session starts, or until the lab is run on a local machine. AT-17 stays UNRUN.",
       "result": "blocked",
       "location": "apps/agent-lab/README.md#in-a-claude-code-cloud-session"
+    },
+    {
+      "id": "EV-0031",
+      "recordedAt": "2026-11-18T16:06:00-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@7f6a37ced83bc6f4a26be271bbb669f19c34a76b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-011",
+        "SC-017",
+        "SC-018",
+        "AT-04",
+        "AT-08",
+        "AT-12",
+        "AT-13",
+        "AT-14",
+        "AT-25",
+        "AT-27",
+        "AT-28",
+        "AT-29",
+        "AT-30"
+      ],
+      "kind": "test",
+      "summary": "Database policy tests 184/184, 74 of them new for ADR-005 publishing (supabase/tests/05_publishing.test.sql)",
+      "steps": "pnpm exec supabase db reset; pnpm exec supabase test db",
+      "observed": "All pass. Articles: stale saves refused (SC409), revisions append-only, no direct staff writes. Agents: no drafts.publish scope refused; master switch and closed lane refuse with named gates; every content gate refuses alone (quote, phone, private contact from a staff-only source, image, redacted or uncitable source, too few sources, length, raw HTML, opinion format, a story a person wrote); daily limit; email permission. Idempotent replay and SC409 conflicts; one job in flight per story; one site build at a time (busy). Publisher role only: claim, snapshot, mark email attempt, complete; no table access. Stop switch by any staff cancels queued agent jobs. Uncertain email outcome needs attention and a retry knows the email may have gone out. The structure test caught new functions inheriting PUBLIC execute; fixed by revoking all privileges on them.",
+      "result": "pass",
+      "location": "supabase/tests/05_publishing.test.sql"
+    },
+    {
+      "id": "EV-0032",
+      "recordedAt": "2026-11-18T16:06:01-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@7f6a37ced83bc6f4a26be271bbb669f19c34a76b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-004",
+        "SC-011",
+        "AT-14",
+        "AT-15",
+        "AT-18",
+        "AT-24"
+      ],
+      "kind": "test",
+      "summary": "Unit tests 87/87, including the static site build, local and Firebase Hosting deploys and the Kit client against protocol fakes",
+      "steps": "pnpm --filter @sc/desk test",
+      "observed": "Markdown escapes raw HTML and drops javascript: links; pages, feed, sitemap and 404 are built; AI label and disclosure only on agent stories; opinion label shown. Local deploy swaps atomically and refuses path escapes. Firebase: version, populateFiles with SHA-256 of gzip, upload only required hashes, finalize, release; a failed release is uncertain, an earlier failure certain. Kit: X-Kit-Api-Key, scheduled non-public broadcast, optional segment; 422 is certain, a lost connection uncertain (never resent). Live Firebase and Kit calls are UNRUN.",
+      "result": "pass",
+      "location": "apps/desk/src/lib/site/site.test.ts"
+    },
+    {
+      "id": "EV-0033",
+      "recordedAt": "2026-11-18T16:06:01-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@7f6a37ced83bc6f4a26be271bbb669f19c34a76b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-017",
+        "SC-018",
+        "AT-08",
+        "AT-23",
+        "AT-27",
+        "AT-28",
+        "AT-29",
+        "AT-30"
+      ],
+      "kind": "test",
+      "summary": "End-to-end tests 30/30 (24 existing plus 6 publishing) against the production build, local Supabase and the local public site",
+      "steps": "pnpm desk:build; pnpm --filter @sc/desk exec playwright test --trace off",
+      "observed": "Owner opens the trade lane and issues a token with drafts.publish; the agent reads, proposes and publishes (201, succeeded) and the public page shows the AI label, the disclosure and the citable sources; feed lists it; a story a person wrote is refused (brief_untouched_by_people); a stale save from a second browser is refused and the newer text kept; a person publishes after acknowledging an uncleared-photo warning, updates and unpublishes (page 404); an editor stops agent publishing and the next agent request is refused (master_switch). Public pages pass axe WCAG 2.2 AA; the site sends its CSP header. Two harness fixes: magic-link sign-in now waits for a fresh email (a throttled second request reused a spent link) and local auth rate limits were raised for test runs.",
+      "result": "pass",
+      "location": "apps/desk/e2e/publishing.spec.ts"
+    },
+    {
+      "id": "EV-0034",
+      "recordedAt": "2026-11-18T16:06:01-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@7f6a37ced83bc6f4a26be271bbb669f19c34a76b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-009",
+        "SC-017"
+      ],
+      "kind": "verification",
+      "summary": "Agent lab harness self-test 18/18 checks (13 system) including the new publish scenario; scripted driver, not an agent result",
+      "steps": "pnpm --filter @sc/desk site:serve; next start; pnpm --filter @sc/agent-lab lab --self-test",
+      "observed": "draft 5/5, injection 5/5, revocation 3/3, publish 5/5: the scripted run proposed and published through the gateway, the public page carried the AI label and disclosure, nothing private leaked, and the owner's settings were restored after the run. Real Claude runs remain UNRUN until a session has the key.",
+      "result": "pass",
+      "location": "apps/agent-lab/README.md"
+    },
+    {
+      "id": "EV-0035",
+      "recordedAt": "2026-11-18T16:06:02-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@7f6a37ced83bc6f4a26be271bbb669f19c34a76b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-015",
+        "AT-23"
+      ],
+      "kind": "verification",
+      "summary": "Container image 0.4.0 builds (387 MB) and serves health, the pitch form with CSP and the gateway's 401; site assets are inside the image",
+      "steps": "docker build -f apps/desk/Dockerfile -t sc-desk:0.4.0 .; docker run with local settings",
+      "observed": "Runs as node; no .env files in the image; /api/health reports 0.4.0; /pitch 200 with a nonce CSP; POST /api/agent/v1 without a token 401 (one earlier 500 on the very first request could not be reproduced in two cold starts; CI repeats the check); SITE_ASSETS_DIR points at the bundled fonts, styles and motif. Bundle scan: 45 shipped files, no findings.",
+      "result": "pass",
+      "location": "apps/desk/Dockerfile"
+    },
+    {
+      "id": "EV-0036",
+      "recordedAt": "2026-11-18T16:06:02-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@7f6a37ced83bc6f4a26be271bbb669f19c34a76b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003"
+      ],
+      "kind": "review",
+      "summary": "Visual check of the public site: desktop light and dark and iPhone 13, home, agent story and person story",
+      "steps": "Rendered sample stories with the real assets, served them with scripts/serve-site.mjs, captured screenshots and ran axe WCAG 2.2 AA",
+      "observed": "0 axe violations in 9 views after fixing one footer rule that dimmed the newsletter box text (2.44:1); no horizontal overflow; WebGL bathymetry running on the home masthead; self-hosted Fraunces and Source Sans 3 loaded; AI label, disclosure, sources and signup render as designed.",
+      "result": "pass",
+      "location": ".claude/skills/sc-visual-codex/SKILL.md"
+    },
+    {
+      "id": "EV-0037",
+      "recordedAt": "2026-11-18T16:06:03-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@7f6a37ced83bc6f4a26be271bbb669f19c34a76b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-001"
+      ],
+      "kind": "observation",
+      "summary": "Startup stack prices and limits checked on official vendor pages (18 Nov 2026) for the Ghost-free plan",
+      "steps": "Official pricing and documentation pages for Ghost(Pro), Buffer, Supabase, Resend, Brevo, Postmark, Amazon SES, Google Workspace, Zoho Mail, Cloudflare, Bitwarden, 1Password, GitHub, Google Cloud, Claude API, Kit, Beehiiv, MailerLite and Buttondown",
+      "observed": "See docs/planning/HOSTING_AND_COSTS.md. Key facts: Kit free to 10,000 subscribers with API; Supabase Free pauses after a week of low activity and has no backups; Supabase's built-in mailer is not usable for real sign-ins (custom SMTP such as Resend free 3,000/month); Cloud Run domain mapping is a preview; GitHub repository is public, so Actions and Pages are free and everything in it is public.",
+      "result": "pass",
+      "location": "docs/planning/HOSTING_AND_COSTS.md"
     }
   ]
 }

@@ -29,12 +29,24 @@ export default defineConfig({
     },
     { name: 'mobile', use: { ...devices['Pixel 7'] }, testMatch: /responsive\.spec\.ts/ },
   ],
-  webServer: {
-    command: `pnpm exec next start --hostname 127.0.0.1 --port ${PORT}`,
-    url: `${BASE_URL}/api/health`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
-    stdout: 'ignore',
-    stderr: 'pipe',
-  },
+  webServer: [
+    {
+      command: `pnpm exec next start --hostname 127.0.0.1 --port ${PORT}`,
+      url: `${BASE_URL}/api/health`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+      stdout: 'ignore',
+      stderr: 'pipe',
+    },
+    {
+      // The public site the desk publishes into (SITE_DESTINATION=local).
+      command: 'node scripts/serve-site.mjs',
+      url: 'http://127.0.0.1:4173/__health',
+      reuseExistingServer: !process.env.CI,
+      timeout: 30_000,
+      stdout: 'ignore',
+      stderr: 'pipe',
+      env: { SITE_OUTPUT_DIR: '.site-output', SITE_PORT: '4173' },
+    },
+  ],
 });

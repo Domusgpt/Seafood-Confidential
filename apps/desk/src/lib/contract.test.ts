@@ -22,8 +22,26 @@ describe('agent request contract', () => {
     expect(validateAgentRequest(example.request).ok).toBe(false);
   });
 
-  it('defines no publish, send, approve or export tool', () => {
-    for (const tool of AGENT_TOOLS) expect(tool).not.toMatch(/publish|send|approve|export|delete|member/);
+  it('defines no send, approve, export, delete or member tool', () => {
+    for (const tool of AGENT_TOOLS) expect(tool).not.toMatch(/send|approve|export|delete|member/);
+  });
+
+  it('allows exactly one publish tool, which takes only a proposal ID and an email choice (ADR-005)', () => {
+    expect(AGENT_TOOLS.filter((t) => t.includes('publish'))).toEqual(['drafts.publish']);
+    const base = {
+      schemaVersion: '1.0',
+      requestId: 'req-2026-0401',
+      idempotencyKey: 'idem-0401-abcd',
+      tool: 'drafts.publish',
+    };
+    expect(validateAgentRequest({ ...base, arguments: { draftId: 'p1', sendEmail: true } }).ok).toBe(true);
+    for (const extra of [
+      { status: 'published' },
+      { html: '<p>x</p>' },
+      { url: 'https://x.test' },
+      { itemId: 'SC-2026-001' },
+    ])
+      expect(validateAgentRequest({ ...base, arguments: { draftId: 'p1', ...extra } }).ok).toBe(false);
   });
 
   it('rejects non-object bodies', () => {

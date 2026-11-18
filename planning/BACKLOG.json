@@ -5,8 +5,8 @@
   "createdOn": "2026-11-17",
   "currency": "USD",
   "engineeringHours": {
-    "low": 107,
-    "high": 149,
+    "low": 123,
+    "high": 175,
     "reserve": 11
   },
   "sprintAssumptions": {
@@ -41,7 +41,7 @@
     {
       "id": "SC-002",
       "priority": "P0",
-      "title": "Ghost publication and role foundation",
+      "title": "Public site hosting and publishing roles (ADR-005: Firebase Hosting, no Ghost)",
       "status": "planned",
       "hoursLow": 4,
       "hoursHigh": 6,
@@ -49,25 +49,25 @@
         "SC-001"
       ],
       "owner": "Developer",
-      "scope": "Configure Ghost publication and staff permissions with founders and a test invited Contributor.",
+      "scope": "Create the Firebase Hosting site on the Google project, allow the desk service account to deploy it, connect the domain, and confirm who may publish (owners and managing editors) and that contributors and readers cannot.",
       "acceptance": [
-        "Contributor can create own draft and cannot publish or edit another contributor draft",
-        "Reader identity cannot access staff admin",
-        "Site title, timezone and reply address are owner reviewed"
+        "Only the desk service account can deploy the site; founders hold the project",
+        "Contributors and reader identities cannot publish or reach the desk",
+        "Site title, time zone and reply address are owner reviewed"
       ]
     },
     {
       "id": "SC-003",
       "priority": "P0",
-      "title": "Existing theme and core public pages",
-      "status": "planned",
+      "title": "Public site pages from the desk (ADR-005)",
+      "status": "in_progress",
       "hoursLow": 8,
       "hoursHigh": 12,
       "dependencies": [
         "SC-002"
       ],
       "owner": "Developer with founder content",
-      "scope": "Adapt an existing licensed theme to the chosen brand; implement home, story, sections, author, about and contribute routes.",
+      "scope": "Render home, section, story, feed, sitemap and 404 pages from published articles in the Working Waterfront design; full-snapshot deploys.",
       "acceptance": [
         "Core routes readable on phone and desktop",
         "Clear heading structure, contrast, focus state, image alt text and article metadata",
@@ -77,15 +77,15 @@
     {
       "id": "SC-004",
       "priority": "P0",
-      "title": "Newsletter and reader account journey",
-      "status": "planned",
+      "title": "Newsletter signup and sending with Kit (ADR-005)",
+      "status": "in_progress",
       "hoursLow": 4,
       "hoursHigh": 6,
       "dependencies": [
         "SC-002"
       ],
       "owner": "Developer and editor",
-      "scope": "Configure signup, preference management, confirmation and test-send workflow using native Ghost.",
+      "scope": "Kit free plan: signup form on the public site, broadcast per publication only when chosen, at most once; consent and unsubscribe handled by Kit.",
       "acceptance": [
         "Consented test signup and unsubscribe complete",
         "Web publication does not silently send newsletter",
@@ -131,7 +131,7 @@
     {
       "id": "SC-007",
       "priority": "P0",
-      "title": "Editorial queue and Ghost references",
+      "title": "Editorial queue and next actions",
       "status": "in_progress",
       "hoursLow": 6,
       "hoursHigh": 8,
@@ -207,8 +207,8 @@
     {
       "id": "SC-011",
       "priority": "P0",
-      "title": "Durable draft jobs and change reconciliation",
-      "status": "planned",
+      "title": "Durable publish jobs and reconciliation",
+      "status": "in_progress",
       "hoursLow": 10,
       "hoursHigh": 12,
       "dependencies": [
@@ -216,7 +216,7 @@
         "SC-009"
       ],
       "owner": "Developer",
-      "scope": "Use Postgres jobs/outbox for draft operations, webhook ingestion and bounded periodic reconciliation; no auto-publication or bulk sends.",
+      "scope": "Idempotent publish jobs with one site build at a time, leases, retries that redeploy the same snapshot, and newsletter sends that are never repeated after an uncertain outcome.",
       "acceptance": [
         "Repeated request does not create duplicate local work",
         "Same key plus different payload returns conflict",
@@ -322,6 +322,44 @@
         "Friend completes the daily workflow without source-code access",
         "Accounts, costs, handoff documents and support contact recorded",
         "A founder authorizes actual launch only after reviewing staging results"
+      ]
+    },
+    {
+      "id": "SC-017",
+      "priority": "P0",
+      "title": "Agent publishing under owner switches and automated checks (ADR-005)",
+      "status": "in_progress",
+      "hoursLow": 10,
+      "hoursHigh": 16,
+      "dependencies": [
+        "SC-009",
+        "SC-011"
+      ],
+      "owner": "Developer and owner",
+      "scope": "drafts.publish for an agent's own proposal: master switch, section lanes, publish scope, people-first rule, content checks in the database, daily cap, email permission, disclosure label, audit and an off switch for all staff.",
+      "acceptance": [
+        "An agent publishes only inside an open lane with every check passing (AT-27)",
+        "Every refusal names the failed checks and nothing is published (AT-28)",
+        "A person's text is never overwritten by an agent (AT-29); the off switch cancels queued agent jobs (AT-30)"
+      ]
+    },
+    {
+      "id": "SC-018",
+      "priority": "P0",
+      "title": "Story text written in the desk with revisions (ADR-005)",
+      "status": "in_progress",
+      "hoursLow": 6,
+      "hoursHigh": 10,
+      "dependencies": [
+        "SC-005",
+        "SC-007"
+      ],
+      "owner": "Developer and editor",
+      "scope": "Markdown story editor in the desk with revision history, stale-save protection, adopting agent proposals as the starting text, and citable-source selection.",
+      "acceptance": [
+        "A save from an outdated page is refused and the newer text kept (AT-08)",
+        "Every save is kept as an append-only revision",
+        "Adopted agent text stays labelled as AI-written on the public site (AT-24)"
       ]
     }
   ]

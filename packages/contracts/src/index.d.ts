@@ -1,7 +1,13 @@
 // Types for the v1 agent request contract (contracts/agent-tools.schema.json).
 
 export type AgentTool =
-  'briefs.list' | 'items.read' | 'drafts.propose' | 'drafts.revise' | 'social.propose' | 'jobs.read';
+  | 'briefs.list'
+  | 'items.read'
+  | 'drafts.propose'
+  | 'drafts.revise'
+  | 'drafts.publish'
+  | 'social.propose'
+  | 'jobs.read';
 
 export interface DraftFields {
   title: string;
@@ -28,6 +34,7 @@ export type AgentRequest = Base &
         idempotencyKey: string;
         arguments: { draftId: string; expectedRevision: string; content: DraftFields };
       }
+    | { tool: 'drafts.publish'; idempotencyKey: string; arguments: { draftId: string; sendEmail?: boolean } }
     | {
         tool: 'social.propose';
         idempotencyKey: string;

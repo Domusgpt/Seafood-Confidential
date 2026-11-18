@@ -71,7 +71,7 @@ test('backlog: CSV drift from JSON is caught', async () => {
   const csv = await readFile(repo.abs('planning/BACKLOG.csv'), 'utf8');
   await writeFile(
     repo.abs('planning/BACKLOG.csv'),
-    csv.replace('Ghost publication and role foundation', 'Ghost setup'),
+    csv.replace('Public site hosting and publishing roles', 'Hosting setup'),
   );
   assert.match((await C.checkBacklog(repo)).errors.join('\n'), /SC-002 Title/);
 });
@@ -102,8 +102,8 @@ test('acceptance: PASS without a test record is rejected', async () => {
   await writeFile(
     repo.abs('docs/ACCEPTANCE_TESTS.md'),
     md.replace(
-      '| AT-02 | Guest contributor attempts publish | Denied by native role and internal route | UNRUN |',
-      '| AT-02 | Guest contributor attempts publish | Denied by native role and internal route | PASS |',
+      '| AT-02 | Guest contributor or editor attempts publish | Denied: contributors have no desk role, and only owners and managing editors publish (ADR-005) | UNRUN |',
+      '| AT-02 | Guest contributor or editor attempts publish | Denied: contributors have no desk role, and only owners and managing editors publish (ADR-005) | PASS |',
     ),
   );
   assert.match(

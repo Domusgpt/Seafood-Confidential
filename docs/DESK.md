@@ -1,10 +1,34 @@
-# Operations desk (v0.3.0)
+# Operations desk (v0.4.0)
 
-The private operations desk for Seafood Confidential: staff sign-in, the guest pitch queue, editorial items with one next action each, source and rights records, links to the native Ghost editor, and a draft-only agent gateway. Code lives in [`apps/desk`](../apps/desk); the database lives in [`supabase/`](../supabase). Decisions: [ADR-001](../decisions/ADR-001-managed-publishing.md) (Ghost publishes, the desk operates) and [ADR-003](../decisions/ADR-003-desk-foundation-stack.md) (stack and data access).
+The operations desk for Seafood Confidential:
+- staff sign-in;
+- the guest pitch queue;
+- editorial items with one next action each;
+- source and rights records;
+- **story text written in the desk**;
+- **publishing to the public static site**, with the newsletter on Kit;
+- an agent gateway in which agents publish only under the owner's switches and automated checks.
 
-**What it is not.** In this version the desk never publishes, sends, schedules or changes anything in Ghost. [ADR-004](../decisions/ADR-004-desk-driven-publishing.md) (Proposed) explains why agents never publish and how drafts, syncing and one-click human publishing could be automated next. Hosting and costs: [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md); deployment: [DEPLOYMENT.md](DEPLOYMENT.md).
+Code lives in [`apps/desk`](../apps/desk); the database lives in [`supabase/`](../supabase). Decisions:
+- [ADR-003](../decisions/ADR-003-desk-foundation-stack.md): stack and data access.
+- [ADR-005](../decisions/ADR-005-desk-publishing-without-ghost.md): a Ghost-free start, agent publishing under policy. It supersedes ADR-004 and the Ghost part of ADR-001.
 
-**What it is not, in detail.** The desk never publishes, sends, schedules or changes anything in Ghost. People publish in Ghost; the desk stores the Ghost post ID and links to its editor. Newsletter and social distribution are later tickets (SC-004, SC-008, SC-010) and the Distribution page says so.
+Hosting and costs: [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md); deployment: [DEPLOYMENT.md](DEPLOYMENT.md).
+
+## Publishing (v0.4.0, ADR-005)
+
+- **Writing.** Every staff member writes the story text on the story page, in Markdown. Every save is kept as a revision. A save from a page opened before someone else's save is refused, and the newer text is kept (AT-08). An agent proposal can be adopted as the starting text; it stays labelled as AI-written.
+- **Publishing.** Owners and managing editors publish, update and unpublish from the Publishing panel. The desk rebuilds the whole public site and deploys it: a local folder in development (`pnpm --filter @sc/desk site:serve`), Firebase Hosting in production. Warnings (no sources, uncleared assets, quotes or contact details in agent text) come back first, and one click goes ahead anyway.
+- **Newsletter.** Ticking "Also email it" schedules a Kit broadcast a few minutes later, at most once. An uncertain result asks a person to check Kit; the desk never resends.
+- **Agents.** With the `drafts.publish` scope, an agent can publish its own proposal, but only when all of the following hold:
+  - the owner switched agent publishing on in Settings;
+  - the story's section is open;
+  - nobody has written or taken over the story;
+  - every check in the database passes: citable sources, no quotes, no contact details, no images, no HTML, length, the daily cap, and email only if allowed.
+
+  Refusals list the failed checks. Agent stories carry an "AI agent" label and the owner's disclosure.
+- **Stopping agents.** Anyone on staff can press **Stop agent publishing** (Publishing page or Settings). It cancels queued agent jobs immediately.
+- **Publishing log.** `/publishing` lists every publication by people and agents, with refused checks, acknowledged warnings and anything that needs attention.
 
 ## Scope delivered in this version
 
@@ -158,3 +182,5 @@ CI runs all of it in the `desk` job of [`.github/workflows/ci.yml`](../.github/w
 - **Founder decision, 18 November 2026: the intake limits stay as built** (5 pitches per client per hour, 200 an hour overall, no challenge). Revisit if spam appears; a privacy-respecting challenge can be added later.
 - Review snapshots and stale detection (SC-008) before any social or newsletter work.
 - Hosted Supabase verification of the role-membership grants and transaction pooling (ADR-003 review triggers, SC-015).
+- Live Firebase Hosting deploys and Kit broadcasts are verified only against protocol fakes; their first live runs are part of SC-015. Scheduled publication, a public corrections note and images in stories are not built yet.
+- The legacy "link a Ghost post" form and `ghost_post_id` column remain in the code and schema but are unused (ADR-005).

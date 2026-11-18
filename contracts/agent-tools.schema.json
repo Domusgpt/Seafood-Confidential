@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:seafood-confidential:agent-request:1",
   "title": "Proposed Seafood Confidential internal agent request contract",
-  "description": "Planning schema only. Not a vendor API contract or live endpoint. Authentication supplies the principal and scopes; a request cannot choose its own authority. No publish or send operation exists.",
+  "description": "Planning schema, implemented by the desk gateway. Authentication supplies the principal and scopes; a request cannot choose its own authority. Publication exists only as drafts.publish, which publishes the agent's own existing proposal under the desk's publishing policy and automated checks (ADR-005). No send, approve, permission or subscriber-export operation exists.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -26,6 +26,7 @@
         "items.read",
         "drafts.propose",
         "drafts.revise",
+        "drafts.publish",
         "social.propose",
         "jobs.read"
       ]
@@ -201,6 +202,37 @@
               },
               "content": {
                 "$ref": "#/$defs/draftFields"
+              }
+            }
+          }
+        },
+        "required": [
+          "idempotencyKey"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "drafts.publish"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "draftId"
+            ],
+            "properties": {
+              "draftId": {
+                "$ref": "#/$defs/objectId"
+              },
+              "sendEmail": {
+                "type": "boolean"
               }
             }
           }

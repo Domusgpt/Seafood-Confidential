@@ -126,6 +126,7 @@ export const PROPOSAL_STATUSES = {
   proposed: { label: 'Waiting for review', tone: 'info' },
   accepted: { label: 'Accepted', tone: 'good' },
   rejected: { label: 'Rejected', tone: 'neutral' },
+  published: { label: 'Published', tone: 'good' },
 } as const satisfies Record<string, { label: string; tone: Tone }>;
 export type ProposalStatus = keyof typeof PROPOSAL_STATUSES;
 
@@ -139,6 +140,7 @@ export const AGENT_SCOPES = {
   'briefs.list': 'List granted briefs',
   'items.read': 'Read granted items (redacted)',
   'drafts.propose': 'Propose drafts',
+  'drafts.publish': 'Publish its own proposals (only where Settings allows)',
   'drafts.revise': 'Revise drafts (not available in v1)',
   'social.propose': 'Propose social copy (not available in v1)',
   'jobs.read': 'Read job status',
@@ -155,3 +157,53 @@ export function labelForFormat(format: Format): 'reporting' | 'opinion' | 'spons
 export function keysOf<T extends Record<string, unknown>>(record: T) {
   return Object.keys(record) as [keyof T & string, ...(keyof T & string)[]];
 }
+
+/** Publish job states (ADR-005). */
+export const PUBLISH_JOB_STATUSES = {
+  queued: { label: 'Queued', tone: 'info' },
+  running: { label: 'Running', tone: 'info' },
+  succeeded: { label: 'Done', tone: 'good' },
+  failed: { label: 'Failed', tone: 'critical' },
+  needs_attention: { label: 'Needs attention', tone: 'serious' },
+  refused: { label: 'Refused by checks', tone: 'warning' },
+  cancelled: { label: 'Cancelled', tone: 'neutral' },
+} as const satisfies Record<string, { label: string; tone: Tone }>;
+export type PublishJobStatus = keyof typeof PUBLISH_JOB_STATUSES;
+
+export const PUBLISH_ACTIONS = {
+  publish: 'Publish',
+  republish: 'Update',
+  unpublish: 'Unpublish',
+} as const;
+export type PublishAction = keyof typeof PUBLISH_ACTIONS;
+
+/** Staff publishing warnings: shown before a person confirms, never a block. */
+export const PUBLISH_WARNINGS: Record<string, string> = {
+  no_sources_recorded: 'No sources are recorded for this story.',
+  assets_not_cleared: 'At least one image or other asset is not cleared for use.',
+  text_direct_quote: 'The agent-written text contains a direct quotation; check it against the source.',
+  text_contact_details:
+    'The text contains what looks like an email address, phone number or private contact.',
+  text_embedded_image: 'The text embeds an image; confirm you have the rights.',
+  text_raw_html: 'The text contains HTML, which will be shown as plain text.',
+};
+
+/** Agent publishing checks, in the order the database evaluates them (ADR-005). */
+export const AGENT_GATES: Record<string, string> = {
+  master_switch: 'Agent publishing is switched on',
+  section_lane: 'The section is open to agents',
+  item_granted: 'The brief is assigned to the agent',
+  own_open_proposal: "The proposal is the agent's own and still open",
+  brief_untouched_by_people: 'No person has written or taken over the story',
+  nothing_in_flight: 'No other publish job is open',
+  reporting_format: 'An explainer or reported feature',
+  enough_sources: 'Enough sources cited',
+  sources_publishable: 'Every cited source is readable and citable',
+  no_direct_quotes: 'No direct quotations',
+  no_contact_details: 'No contact details',
+  no_images: 'No images',
+  no_raw_html: 'No HTML',
+  length: 'Length within limits',
+  daily_limit: 'Under the daily limit',
+  newsletter: 'Email allowed if requested',
+};

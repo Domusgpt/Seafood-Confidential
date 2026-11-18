@@ -10,14 +10,20 @@ interface MailpitSummary {
   Created: string;
 }
 
-/** Wait for a magic-link email to `email` newer than `since`, and return the link. */
-async function waitForMagicLink(email: string, since: number): Promise<string> {
-  for (let attempt = 0; attempt < 40; attempt++) {
-    const res = await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:${email}`)}&limit=5`);
+async function newestMessageId(email: string): Promise<string | null> {
+  const res = await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:${email}`)}&limit=1`);
+  const data = (await res.json()) as { messages: MailpitSummary[] };
+  return data.messages[0]?.ID ?? null;
+}
+
+/** Wait for a magic-link email to `email` that is newer than `previousId`, and return the link. */
+async function waitForMagicLink(email: string, previousId: string | null): Promise<string | null> {
+  for (let attempt = 0; attempt < 16; attempt++) {
+    const res = await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:${email}`)}&limit=1`);
     const data = (await res.json()) as { messages: MailpitSummary[] };
-    const fresh = data.messages.find((m) => new Date(m.Created).getTime() >= since - 1000);
-    if (fresh) {
-      const message = (await (await fetch(`${MAILPIT}/api/v1/message/${fresh.ID}`)).json()) as {
+    const newest = data.messages[0];
+    if (newest && newest.ID !== previousId) {
+      const message = (await (await fetch(`${MAILPIT}/api/v1/message/${newest.ID}`)).json()) as {
         HTML: string;
         Text: string;
       };
@@ -26,18 +32,29 @@ async function waitForMagicLink(email: string, since: number): Promise<string> {
     }
     await new Promise((r) => setTimeout(r, 250));
   }
-  throw new Error(`no magic link arrived for ${email}`);
+  return null;
 }
 
-/** Sign in through the real flow: request a link, read it from Mailpit, open it. */
+/**
+ * Sign in through the real flow: request a link, read it from Mailpit, open it. Only a link from an
+ * email that arrived after the request is used; when the auth service throttles a quick second
+ * request for the same address (it sends nothing), the request is repeated.
+ */
 export async function signIn(page: Page, email: string) {
-  await page.goto('/sign-in');
-  const since = Date.now();
-  await page.getByLabel('Work email').fill(email);
-  await page.getByRole('button', { name: 'Email me a sign-in link' }).click();
-  await expect(page.getByRole('status')).toContainText('If that address belongs to a desk account');
-  const link = await waitForMagicLink(email, since);
-  await page.goto(link);
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await page.goto('/sign-in');
+    const previousId = await newestMessageId(email);
+    await page.getByLabel('Work email').fill(email);
+    await page.getByRole('button', { name: 'Email me a sign-in link' }).click();
+    await expect(page.getByRole('status')).toContainText('If that address belongs to a desk account');
+    const link = await waitForMagicLink(email, previousId);
+    if (link) {
+      await page.goto(link);
+      return;
+    }
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+  throw new Error(`no magic link arrived for ${email}`);
 }
 
 /** WCAG 2.2 AA scan (axe); fails the test on any violation. */
@@ -68,9 +85,8 @@ export function uniqueSuffix() {
   return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 }
 
-export function randomGhostId() {
-  return Array.from({ length: 24 }, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
-}
+/** The local public site the desk publishes to during tests (scripts/serve-site.mjs). */
+export const SITE = process.env.SITE_PUBLIC_URL ?? 'http://127.0.0.1:4173';
 
 /** Open a <details> disclosure by its summary text (idempotent: never toggles it closed). */
 export async function openDetails(page: Page, summary: string) {

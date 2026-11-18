@@ -1,6 +1,6 @@
 # ADR 004 desk-driven Ghost drafts and one-click human publishing
 
-Date: November 18, 2026. Status: **Proposed** (session S01, turn 3). Founders decide; nothing in this ADR is built yet.
+Date: November 18, 2026. Status: **Superseded** by [ADR-005](ADR-005-desk-publishing-without-ghost.md) (session S01, turn 4): the founders chose a Ghost-free start and agent publishing under policy. Kept for the reasoning about irreversible risks, which ADR-005's checks answer.
 
 ## Context
 

@@ -1,5 +1,7 @@
 # Product specification
 
+> **Update, 18 November 2026 ([ADR-005](../decisions/ADR-005-desk-publishing-without-ghost.md)):** the founders chose a Ghost-free start. Stories are written and published from the operations desk to a static public site (Firebase Hosting), the newsletter runs on Kit's free plan, and agents may publish their own proposals only inside the owner's switches and automated checks. Where this specification names Ghost, Ghost roles or Buffer as the place of publication, read the desk equivalent described in ADR-005; the rest of the specification stands.
+
 ## Product promise
 
 Seafood Confidential turns the practical knowledge of seafood professionals into useful, source-aware reporting, explanation and conversation about wild fisheries, aquaculture, markets, food and the rules affecting them. The initial editorial focus is industry practitioners and curious serious readers, in English, with worldwide scope handled story by story.

@@ -11,6 +11,23 @@ const schema = z.object({
   DESK_DATABASE_URL: z.string().regex(/^postgres(ql)?:\/\//, 'must be a postgres connection URL'),
   INTAKE_HASH_SECRET: z.string().min(32, 'use at least 32 random characters'),
   GHOST_ADMIN_URL: z.url().optional(),
+  // Publishing (ADR-005): the desk builds the public site and deploys it. Without a Kit key the site
+  // still publishes; only the newsletter is unavailable.
+  SITE_PUBLIC_URL: z.url().default('http://127.0.0.1:4173'),
+  SITE_DESTINATION: z.enum(['local', 'firebase']).default('local'),
+  SITE_OUTPUT_DIR: z.string().min(1).default('.site-output'),
+  SITE_ASSETS_DIR: z.string().min(1).default('site-static'),
+  FIREBASE_SITE_ID: z
+    .string()
+    .regex(/^[a-z0-9-]{3,63}$/)
+    .optional(),
+  KIT_API_KEY: z.string().min(16, 'use the Kit v4 API key').optional(),
+  KIT_FORM_ID: z
+    .string()
+    .regex(/^[0-9]{1,12}$/, 'the numeric ID of a Kit form')
+    .optional(),
+  KIT_SEGMENT_ID: z.coerce.number().int().positive().optional(),
+  KIT_EMAIL_TEMPLATE_ID: z.coerce.number().int().positive().optional(),
   DESK_DB_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
   // Supabase's shared pooler in transaction mode (port 6543) does not support prepared statements.
   DESK_DB_PREPARE: z
@@ -47,4 +64,4 @@ export function env(): DeskEnv {
   return cached;
 }
 
-export const DESK_VERSION = '0.3.0';
+export const DESK_VERSION = '0.4.0';

@@ -97,16 +97,17 @@ export async function updateItem(_prev: FormState, formData: FormData): Promise<
   try {
     return await staffTx(async (tx, session) => {
       if (RELEASE_STATES.has(v.status)) {
-        // Release gate: Ghost link, at least one source, every asset cleared with a credit line.
-        const [gate] = await tx<{ ghost: boolean; sources: number; uncleared: number }[]>`
-          select (i.ghost_post_id is not null) as ghost,
+        // Release gate for marking by hand: story text, at least one source, every asset cleared
+        // with a credit line. (Publishing itself warns instead of blocking; ADR-005.)
+        const [gate] = await tx<{ text: boolean; sources: number; uncleared: number }[]>`
+          select exists (select 1 from app.articles a where a.item_id = i.id) as text,
                  (select count(*)::int from app.sources s where s.item_id = i.id) as sources,
                  (select count(*)::int from app.asset_rights r where r.item_id = i.id
                     and (r.status <> 'cleared' or coalesce(btrim(r.credit_line), '') = '')) as uncleared
           from app.editorial_items i where i.id = ${v.itemId}
         `;
         const problems = [
-          gate && !gate.ghost ? 'link the Ghost post' : null,
+          gate && !gate.text ? 'write the story text' : null,
           gate && gate.sources === 0 ? 'record at least one source' : null,
           gate && gate.uncleared > 0 ? `clear rights and credit lines for ${gate.uncleared} asset(s)` : null,
         ].filter(Boolean);
@@ -200,11 +201,12 @@ export async function addSource(_prev: FormState, formData: FormData): Promise<F
       const rows = await tx`
         insert into app.sources (
           item_id, source_code, source_type, title, publisher, url, published_on, accessed_on, claim_supported,
-          location_in_source, agent_processing, private_contact, private_notes, created_by
+          location_in_source, agent_processing, private_contact, private_notes, public_citation, created_by
         ) values (
           ${s.itemId}, ${s.sourceCode}, ${s.sourceType}, ${s.title}, ${s.publisher ?? null}, ${s.url ?? null},
           ${s.publishedOn ?? null}, ${s.accessedOn ?? null}, ${s.claimSupported ?? null}, ${s.locationInSource ?? null},
-          ${s.agentProcessing}, ${s.privateContact ?? null}, ${s.privateNotes ?? null}, app.current_staff_principal()
+          ${s.agentProcessing}, ${s.privateContact ?? null}, ${s.privateNotes ?? null}, ${s.publicCitation},
+          app.current_staff_principal()
         )
         returning (select content_id from app.editorial_items where id = item_id) as content_id
       `;
@@ -341,6 +343,18 @@ export async function revokeAgentGrant(formData: FormData): Promise<void> {
         return refuseIn(tx, 'revokeAgentGrant', itemId, 'role');
       await tx`delete from app.agent_item_grants where principal_id = ${principalId} and item_id = ${itemId}`;
     }),
+  );
+  revalidatePath(`/stories/${contentId}`);
+}
+
+/** Mark a source as citable on the public site, or take it off (ADR-005). */
+export async function setSourceCitation(formData: FormData) {
+  const sourceId = String(formData.get('sourceId') ?? '');
+  const contentId = String(formData.get('contentId') ?? '');
+  const citable = formData.get('citable') === 'true';
+  if (!/^[0-9a-f-]{36}$/.test(sourceId)) return;
+  await quietly('source.citation', sourceId, () =>
+    staffTx((tx) => tx`update app.sources set public_citation = ${citable} where id = ${sourceId}`),
   );
   revalidatePath(`/stories/${contentId}`);
 }

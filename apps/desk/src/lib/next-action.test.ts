@@ -4,7 +4,8 @@ import { nextAction, newsroomToday, type NextActionInput } from './next-action';
 const base: NextActionInput = {
   status: 'commissioned',
   assignedEditorName: 'Morgan Owner',
-  ghostPostId: '0123456789abcdef01234567',
+  textRevision: 1,
+  publishedRevision: null,
   dueOn: null,
   sourceCount: 1,
   rightsPending: 0,
@@ -23,9 +24,9 @@ describe('nextAction (SC-007: one next action with a named owner)', () => {
     expect(a.owner).toBeNull();
   });
 
-  it('asks to create and link the Ghost draft first', () => {
-    expect(act({ ghostPostId: null }).key).toBe('link_ghost');
-    expect(act({ ghostPostId: null }).target).toBe('ghost_new');
+  it('asks for the story text first', () => {
+    expect(act({ textRevision: 0 }).key).toBe('write');
+    expect(act({ textRevision: 0 }).target).toBe('text');
   });
 
   it('puts agent proposals ahead of drafting work, but never after publication', () => {
@@ -34,12 +35,20 @@ describe('nextAction (SC-007: one next action with a named owner)', () => {
     expect(act({ status: 'published', proposalsWaiting: 3 }).key).toBe('watch');
   });
 
-  it('walks the workflow with the exact Ghost editor as the target', () => {
+  it('walks the workflow to the text, then to the publishing panel', () => {
     expect(act({}).key).toBe('start_draft');
-    expect(act({}).target).toBe('ghost_editor');
+    expect(act({}).target).toBe('text');
     expect(act({ status: 'drafting' }).key).toBe('finish_draft');
     expect(act({ status: 'changes_requested' }).key).toBe('revise');
     expect(act({ status: 'ready_for_release' }).key).toBe('publish');
+    expect(act({ status: 'ready_for_release' }).target).toBe('publishing');
+  });
+
+  it('asks for an update when the text changed after publication', () => {
+    expect(act({ status: 'published', textRevision: 3, publishedRevision: 3 }).key).toBe('watch');
+    const update = act({ status: 'published', textRevision: 4, publishedRevision: 3 });
+    expect(update.key).toBe('update_live');
+    expect(update.target).toBe('publishing');
   });
 
   it('requires sources before review and blocks review without them', () => {

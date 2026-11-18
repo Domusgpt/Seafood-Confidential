@@ -119,6 +119,10 @@ export const sourceSchema = z.object({
   agentProcessing: z.enum(keysOf(AGENT_PROCESSING), { error: 'Choose who may process this source.' }),
   privateContact: optionalText(500, 'Private contact'),
   privateNotes: optionalText(4000, 'Private notes'),
+  publicCitation: z
+    .literal('on')
+    .optional()
+    .transform((v) => v === 'on'),
 });
 
 export const rightsSchema = z.object({

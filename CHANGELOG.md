@@ -4,6 +4,37 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-18 · Session S01, turn 4 · `claude/intelligent-cannon-d1nqq6`
+
+Ghost-free publishing from the desk, with agents that may publish under the owner's switches and automated checks (ADR-005), and a cost plan that starts at about $1 a month.
+
+### Added
+- **Story text in the desk** (`app.articles`): Markdown editor and append-only revisions. Saves from an outdated page are refused (AT-08). Agent proposals can be adopted as the starting text and stay labelled AI-written.
+- **Public static site** built by the desk from published stories: home, sections, stories, RSS, sitemap and 404. It uses the Working Waterfront design with self-hosted fonts and the WebGL bathymetry motif on the home page. It has a strict CSP and passes WCAG 2.2 AA (axe).
+- **Site deploys:** to a local folder for development and tests (`pnpm --filter @sc/desk site:serve`), or to Firebase Hosting through its REST API in production. Every deploy is a full snapshot, and only one site build runs at a time.
+- **Newsletter on Kit** (v4 API): a broadcast is scheduled only when chosen, at most once, and an uncertain result needs a person.
+- **Publishing workflow:**
+  - Durable publish jobs (`app.publish_jobs`): publish, update and unpublish, with idempotency keys, leases and retries.
+  - The Publishing panel on every story; staff warnings that never block.
+  - The `/publishing` log, with a stop switch for every staff member.
+  - Owner settings for agent publishing: master switch, section lanes, daily cap, minimum sources, agent email and disclosure text.
+- **Agent publishing:** gateway tool `drafts.publish` (contract and examples). It checks scope, grant, master switch, lane, people-first, citable sources, no quotes, contact details, images or HTML, length, the daily cap and email permission, all in the database, and refusals list the failed checks.
+- **Database:** new role `desk_publisher` (claim, snapshot and complete only). Sources gain a "citable" flag.
+- **Agent lab:**
+  - A `publish` scenario and `publish_draft` tool.
+  - `--check-key`, which checks the key, model and billing for well under a cent.
+  - It now reads `SC_AGENT_LAB_API_KEY` first.
+- **Docs:** ADR-005; AGENTS.md updated; acceptance tests AT-27 to AT-30; backlog tickets SC-017 and SC-018, with SC-002, SC-003, SC-004 and SC-011 re-scoped. HOSTING_AND_COSTS rewritten with verified prices.
+
+### Changed
+- Next actions point to the story text and the Publishing panel instead of Ghost. Marking a story ready by hand now needs its text instead of a Ghost link.
+- The contract test now allows exactly one publish tool (`drafts.publish`, which takes a proposal ID only) and still forbids send, approve, export, delete and member tools.
+- The local Supabase auth rate limits were raised for test runs. The end-to-end sign-in helper waits for a fresh magic link.
+- The container image includes the public site assets (0.4.0, 387 MB).
+
+### Removed
+- Ghost as the launch publishing platform (ADR-005). A Ghost adapter was prototyped and verified against Ghost 6.78, then dropped before commit. Its findings are recorded in ADR-005.
+
 ## [0.3.0] - 2026-11-18 · Session S01, turn 3 · `claude/intelligent-cannon-d1nqq6`
 
 Hosting and cost plan, a proposal to automate Ghost while people still decide releases, a production container, and a Claude agent lab.

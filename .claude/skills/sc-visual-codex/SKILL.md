@@ -72,3 +72,26 @@ Reusable for any private tool in this brand. Live reference: `apps/desk/src/app/
 - **Calendar dates** (Postgres `date`) are formatted as dates in UTC, never as instants in the newsroom zone; otherwise they show a day early.
 - **Masthead rule** sits under the wordmark only (`justify-self: start` on grid layouts), not across the bar.
 - **Fonts:** `@fontsource-variable` registers `Fraunces Variable` and `Source Sans 3 Variable`; put those names before the token families when compiling tokens for an app.
+
+## Public site patterns (from the desk-built static site, v0.4.0)
+
+Reusable for any static publication in this brand. Live reference: `apps/desk/site-src/site.css`, `apps/desk/src/lib/site/build.ts`.
+
+- **Masthead:** an ink band with the wordmark, a rust rule under it and the italic tagline. Only the home page carries the WebGL bathymetry canvas, with the scrim; inner pages use the static radial gradient.
+- **Section bar:** a horizontal scroller with 44px targets. Section names are links, never buttons.
+- **Cards:** a raised surface card per story, holding:
+  - an eyebrow line (rust-text, uppercase, 0.08em letter spacing) with the section;
+  - the story's labels as pills: Opinion, Sponsored, and an **AI-written pill with the info icon**;
+  - a Fraunces headline, the dek, then the byline and date.
+
+  The lead story gets a 4px rust top rule and a larger headline.
+
+- **Story page:** one 72ch column, with the title at Fraunces 720 and `text-wrap: balance`. Body text is 18px with a 1.68 line height, and story headings start at h2 (the title is the only h1). Blockquotes are Fraunces italic with a rust rule.
+- **AI disclosure:** an aside with a 5px `mark` left bar, titled "How this story was written", showing the owner's disclosure text. It appears on every AI-generated story and is never hidden.
+- **Sources:** a list under a 2px ink rule. Each title links to its source; publisher and date sit in muted text below.
+- **Newsletter box:** an ink card with salt text and a full-height input and button. Scope muted footer text to direct children only: a broad `footer p` rule once dimmed the box text to 2.44:1.
+- **Security and performance:**
+  - no inline script or style; only `/assets/*` and the motif script on the home page;
+  - a CSP in a meta tag mirrored as a hosting header (`frame-ancestors` lives only in the header);
+  - fonts preloaded and self-hosted with their OFL files.
+- **Checks before shipping:** axe WCAG 2.2 AA on home, an AI story and a person's story, each in light, dark and phone views, with no horizontal overflow.

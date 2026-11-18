@@ -11,6 +11,8 @@ import type {
   PitchStatus,
   ProposalStatus,
   Provenance,
+  PublishAction,
+  PublishJobStatus,
   RightsStatus,
   Section,
   SourceType,
@@ -36,6 +38,13 @@ export interface ItemRow {
   region: string[];
   species: string[];
   ghostPostId: string | null;
+  slug: string | null;
+  publishedAt: Date | null;
+  publishedVia: 'staff' | 'agent' | null;
+  publishedByName: string | null;
+  publishedRevision: number | null;
+  publicUrl: string | null;
+  textRevision: number;
   pitchId: string | null;
   pitchReceipt: string | null;
   updatedAt: Date;
@@ -49,7 +58,10 @@ export interface ItemRow {
 const ITEM_SELECT = (tx: Tx) => tx`
   select i.id, i.content_id, i.title, i.summary, i.section, i.format, i.label, i.focus, i.status,
          i.due_on, i.assigned_editor_id, e.display_name as assigned_editor_name, i.author_display,
-         i.region, i.species, i.ghost_post_id, i.pitch_id, p.receipt_code as pitch_receipt, i.updated_at,
+         i.region, i.species, i.ghost_post_id, i.slug, i.published_at, i.published_via,
+         pb.display_name as published_by_name, i.published_revision, i.public_url,
+         coalesce((select a.revision from app.articles a where a.item_id = i.id), 0) as text_revision,
+         i.pitch_id, p.receipt_code as pitch_receipt, i.updated_at,
          (select count(*)::int from app.sources s where s.item_id = i.id) as source_count,
          (select count(*)::int from app.asset_rights r where r.item_id = i.id and r.status = 'pending') as rights_pending,
          (select count(*)::int from app.asset_rights r where r.item_id = i.id and r.status in ('restricted', 'rejected')) as rights_blocked,
@@ -58,6 +70,7 @@ const ITEM_SELECT = (tx: Tx) => tx`
          (select count(*)::int from app.draft_proposals d where d.item_id = i.id and d.status = 'proposed') as proposals_waiting
   from app.editorial_items i
   left join app.principals e on e.id = i.assigned_editor_id
+  left join app.principals pb on pb.id = i.published_by
   left join app.pitches p on p.id = i.pitch_id
 `;
 
@@ -94,12 +107,13 @@ export interface SourceRow {
   agentProcessing: AgentProcessing;
   privateContact: string | null;
   privateNotes: string | null;
+  publicCitation: boolean;
 }
 
 export function listSources(tx: Tx, itemId: string) {
   return tx<SourceRow[]>`
     select id, source_code, source_type, title, publisher, url, published_on, accessed_on, claim_supported,
-           location_in_source, agent_processing, private_contact, private_notes
+           location_in_source, agent_processing, private_contact, private_notes, public_citation
     from app.sources where item_id = ${itemId} order by source_code
   `;
 }
@@ -270,4 +284,93 @@ export function listCredentials(tx: Tx) {
   return tx<CredentialRow[]>`
     select *, (expires_at is not null and expires_at <= now()) as expired from app.list_agent_credentials()
   `;
+}
+
+export interface ArticleRow {
+  title: string;
+  dek: string | null;
+  bodyMarkdown: string;
+  byline: string | null;
+  sourceCodes: string[];
+  aiGenerated: boolean;
+  revision: number;
+  humanEditedAt: Date | null;
+  updatedAt: Date;
+  updatedByName: string;
+}
+
+export async function getArticle(tx: Tx, itemId: string): Promise<ArticleRow | null> {
+  const rows = await tx<ArticleRow[]>`
+    select a.title, a.dek, a.body_markdown, a.byline, a.source_codes, a.ai_generated, a.revision,
+           a.human_edited_at, a.updated_at, p.display_name as updated_by_name
+    from app.articles a join app.principals p on p.id = a.updated_by
+    where a.item_id = ${itemId}
+  `;
+  return rows[0] ?? null;
+}
+
+export interface PublishJobRow {
+  id: string;
+  contentId: string;
+  itemTitle: string;
+  action: PublishAction;
+  status: PublishJobStatus;
+  requestedVia: 'staff' | 'agent';
+  requesterName: string;
+  sendEmail: boolean;
+  outcomeMessage: string | null;
+  publicUrl: string | null;
+  gateResults: { gate: string; pass: boolean; detail: string }[];
+  acknowledgedWarnings: string[];
+  attempts: number;
+  createdAt: Date;
+  finishedAt: Date | null;
+}
+
+export function listPublishJobs(tx: Tx, opts: { itemId?: string; limit?: number } = {}) {
+  return tx<PublishJobRow[]>`
+    select j.id, i.content_id, i.title as item_title, j.action, j.status, j.requested_via,
+           r.display_name as requester_name, j.send_email, j.outcome_message, j.public_url, j.gate_results,
+           j.acknowledged_warnings, j.attempts, j.created_at, j.finished_at
+    from app.publish_jobs j
+    join app.editorial_items i on i.id = j.item_id
+    join app.principals r on r.id = j.requested_by
+    where (${opts.itemId ?? null}::uuid is null or j.item_id = ${opts.itemId ?? null})
+    order by j.created_at desc
+    limit ${opts.limit ?? 50}
+  `;
+}
+
+export interface PublishingPolicy {
+  agentsMayPublish: boolean;
+  agentsMayEmail: boolean;
+  agentDailyLimit: number;
+  minSources: number;
+  disclosureText: string;
+  updatedAt: Date;
+  updatedByName: string | null;
+  lanes: { section: Section; agentsMayPublish: boolean }[];
+  agentPublishedToday: number;
+  openJobs: number;
+  needsAttention: number;
+  publishedStories: number;
+}
+
+export async function getPublishingPolicy(tx: Tx): Promise<PublishingPolicy> {
+  const [policy] = await tx<Omit<PublishingPolicy, 'lanes'>[]>`
+    select p.agents_may_publish, p.agents_may_email, p.agent_daily_limit, p.min_sources, p.disclosure_text,
+           p.updated_at, u.display_name as updated_by_name,
+           (select count(*)::int from app.publish_jobs j where j.requested_via = 'agent'
+              and j.status in ('queued', 'running', 'succeeded', 'needs_attention')
+              and j.created_at > now() - interval '24 hours') as agent_published_today,
+           (select count(*)::int from app.publish_jobs j where j.status in ('queued', 'running')) as open_jobs,
+           (select count(*)::int from app.publish_jobs j where j.status = 'needs_attention') as needs_attention,
+           (select count(*)::int from app.editorial_items i where i.status = 'published') as published_stories
+    from app.publishing_policy p left join app.principals u on u.id = p.updated_by
+  `;
+  const lanes = await tx<{ section: Section; agentsMayPublish: boolean }[]>`
+    select section, agents_may_publish from app.publishing_lanes
+    order by array_position(array['on_the_water','at_the_farm','the_trade','rules_and_reality','at_the_table','voices'], section)
+  `;
+  return { ...policy, lanes };
 }

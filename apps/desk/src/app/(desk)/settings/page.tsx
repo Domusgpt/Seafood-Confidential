@@ -1,25 +1,37 @@
 import type { Metadata } from 'next';
-import { ActionForm, CheckboxGroup, Hidden, SubmitButton, TextField } from '@/components/form';
+import {
+  ActionForm,
+  CheckboxField,
+  CheckboxGroup,
+  Hidden,
+  SubmitButton,
+  TextAreaField,
+  TextField,
+} from '@/components/form';
 import { Card, EmptyState, PageHeader, StatusBadge, formatDateTime } from '@/components/ui';
 import { hasRole, staffTx } from '@/lib/auth';
+import { env } from '@/lib/env';
 import {
   listAgents,
   listCredentials,
+  getPublishingPolicy,
   listStaff,
   recentAudit,
   type AuditRow,
   type CredentialRow,
 } from '@/lib/queries';
-import { AGENT_SCOPES, STAFF_ROLES } from '@/lib/vocab';
+import { AGENT_SCOPES, SECTIONS, STAFF_ROLES } from '@/lib/vocab';
+import { savePublishingPolicy, stopAgentPublishing } from '../publishing/actions';
 import { createAgent, issueToken, revokeCredential, setAgentStatus } from './actions';
 
 export const metadata: Metadata = { title: 'Settings' };
 
-// Scopes the v1 gateway serves; the others exist in the contract but answer "not available".
+// Scopes the gateway serves; the others exist in the contract but answer "not available".
 const V1_SCOPES = {
   'briefs.list': AGENT_SCOPES['briefs.list'],
   'items.read': AGENT_SCOPES['items.read'],
   'drafts.propose': AGENT_SCOPES['drafts.propose'],
+  'drafts.publish': AGENT_SCOPES['drafts.publish'],
   'jobs.read': AGENT_SCOPES['jobs.read'],
 };
 
@@ -27,20 +39,30 @@ export default async function SettingsPage() {
   const data = await staffTx(async (tx, session) => {
     const isOwner = hasRole(session, 'owner');
     const canAudit = hasRole(session, 'owner', 'managing_editor');
-    const [staff, agents] = await Promise.all([listStaff(tx), listAgents(tx)]);
+    const [staff, agents, publishing] = await Promise.all([
+      listStaff(tx),
+      listAgents(tx),
+      getPublishingPolicy(tx),
+    ]);
     let credentials: CredentialRow[] = [];
     let audit: AuditRow[] = [];
     if (canAudit) [credentials, audit] = await Promise.all([listCredentials(tx), recentAudit(tx, 100)]);
-    return { session, isOwner, canAudit, staff, agents, credentials, audit };
+    return { session, isOwner, canAudit, staff, agents, credentials, audit, publishing };
   });
-  const { session, isOwner, canAudit, staff, agents, credentials, audit } = data;
+  const { session, isOwner, canAudit, staff, agents, credentials, audit, publishing } = data;
+  const config = env();
+  const site = {
+    publicUrl: config.SITE_PUBLIC_URL,
+    destination: config.SITE_DESTINATION,
+    newsletter: Boolean(config.KIT_API_KEY),
+  };
 
   return (
     <>
       <PageHeader
         eyebrow="Desk administration"
         title="Settings"
-        description="People, agents and the audit trail."
+        description="People, publishing, agents and the audit trail."
       />
 
       <Card title="Your account">
@@ -52,6 +74,104 @@ export default async function SettingsPage() {
           <dt>Roles</dt>
           <dd>{session.principal.roles.map((r) => STAFF_ROLES[r]).join(', ')}</dd>
         </dl>
+      </Card>
+
+      <Card
+        id="publishing"
+        title="Publishing"
+        note="Where stories go and what agents may publish on their own. People can always write and publish; these switches only govern agents."
+        actions={
+          publishing.agentsMayPublish ? (
+            <form action={stopAgentPublishing}>
+              <button type="submit" className="button button--danger button--small">
+                Stop agent publishing now
+              </button>
+            </form>
+          ) : null
+        }
+      >
+        <dl className="facts">
+          <dt>Public site</dt>
+          <dd>
+            <a className="external" href={site.publicUrl} target="_blank" rel="noopener noreferrer">
+              {site.publicUrl}
+            </a>{' '}
+            ({site.destination === 'firebase' ? 'Firebase Hosting' : 'a local folder, for development'})
+          </dd>
+          <dt>Newsletter</dt>
+          <dd>
+            {site.newsletter
+              ? 'Kit is connected; publishing can email subscribers when asked.'
+              : 'Not connected (set KIT_API_KEY). Publishing never sends email.'}
+          </dd>
+          <dt>Agent publishing</dt>
+          <dd>
+            <StatusBadge
+              tone={publishing.agentsMayPublish ? 'good' : 'neutral'}
+              label={publishing.agentsMayPublish ? 'On' : 'Off'}
+            />{' '}
+            {publishing.agentPublishedToday} of {publishing.agentDailyLimit} agent publications in the last 24
+            hours · open sections:{' '}
+            {publishing.lanes
+              .filter((l) => l.agentsMayPublish)
+              .map((l) => SECTIONS[l.section])
+              .join(', ') || 'none'}
+          </dd>
+        </dl>
+        {isOwner ? (
+          <details>
+            <summary className="link-button">Change publishing settings</summary>
+            <ActionForm action={savePublishingPolicy} label="Publishing settings">
+              <CheckboxField
+                name="agentsMayPublish"
+                label="Agents may publish on their own"
+                defaultChecked={publishing.agentsMayPublish}
+                hint="Master switch. Off stops every agent publication at once, including queued ones. Anyone on staff can switch it off."
+              />
+              <CheckboxGroup
+                name="lanes"
+                legend="Sections open to agents"
+                options={SECTIONS}
+                defaultValues={publishing.lanes.filter((l) => l.agentsMayPublish).map((l) => l.section)}
+                hint="Agents publish only explainers and reported features, only in these sections, and only after every automatic check passes."
+              />
+              <div className="form__grid form__grid--2">
+                <TextField
+                  name="agentDailyLimit"
+                  label="Agent publications per day, at most"
+                  type="number"
+                  inputMode="numeric"
+                  defaultValue={String(publishing.agentDailyLimit)}
+                />
+                <TextField
+                  name="minSources"
+                  label="Sources an agent story must cite, at least"
+                  type="number"
+                  inputMode="numeric"
+                  defaultValue={String(publishing.minSources)}
+                />
+              </div>
+              <CheckboxField
+                name="agentsMayEmail"
+                label="Agents may also email their stories to subscribers"
+                defaultChecked={publishing.agentsMayEmail}
+                hint="Email cannot be recalled once sent. Leave this off unless you trust the agent's lane completely."
+              />
+              <TextAreaField
+                name="disclosureText"
+                label="Note shown under every agent-written story"
+                rows={3}
+                maxLength={600}
+                defaultValue={publishing.disclosureText}
+              />
+              <div>
+                <SubmitButton small>Save publishing settings</SubmitButton>
+              </div>
+            </ActionForm>
+          </details>
+        ) : (
+          <p className="small muted">Owners change these settings.</p>
+        )}
       </Card>
 
       <Card
@@ -164,7 +284,7 @@ export default async function SettingsPage() {
                 legend="Scopes"
                 options={V1_SCOPES}
                 defaultValues={['briefs.list', 'items.read', 'drafts.propose', 'jobs.read']}
-                hint="Grant only what the agent needs. Publishing and sending do not exist as scopes."
+                hint="Grant only what the agent needs. Publishing works only where the publishing settings allow it; agents can never send email, approve or change permissions on their own."
               />
               <TextField
                 name="expiresInDays"

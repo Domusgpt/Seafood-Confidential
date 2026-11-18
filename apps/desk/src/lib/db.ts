@@ -45,8 +45,19 @@ async function bind(tx: Tx, requestId: string, claims: string, agentPrincipal: s
   await tx`
     select set_config('request.jwt.claims', ${claims}, true),
            set_config('app.agent_principal_id', ${agentPrincipal}, true),
+           set_config('app.agent_credential_id', '', true),
            set_config('app.request_id', ${requestId}, true)
   `;
+}
+
+function staffClaimsJson(claims: StaffClaims): string {
+  return JSON.stringify({
+    sub: claims.sub,
+    role: 'authenticated',
+    email: claims.email,
+    aal: claims.aal,
+    session_id: claims.session_id,
+  });
 }
 
 /** Run fn as a signed-in staff member. Claims must come from a verified Supabase session. */
@@ -54,16 +65,31 @@ export function withStaff<T>(
   ctx: { claims: StaffClaims; requestId: string },
   fn: (tx: Tx) => Promise<T>,
 ): Promise<T> {
-  const claims = JSON.stringify({
-    sub: ctx.claims.sub,
-    role: 'authenticated',
-    email: ctx.claims.email,
-    aal: ctx.claims.aal,
-    session_id: ctx.claims.session_id,
-  });
   return pool().begin(async (tx) => {
-    await bind(tx, ctx.requestId, claims, '');
+    await bind(tx, ctx.requestId, staffClaimsJson(ctx.claims), '');
     await tx`set local role authenticated`;
+    return fn(tx);
+  }) as Promise<T>;
+}
+
+/** Who a publisher transaction acts for: audit rows name them; the role itself stays desk_publisher. */
+export type PublisherActor =
+  { kind: 'staff'; claims: StaffClaims } | { kind: 'agent'; principalId: string } | { kind: 'system' };
+
+/**
+ * Run fn in the publisher context (ADR-005): only app.claim_publish_job, app.complete_publish_job
+ * and app.apply_ghost_webhook are executable there. The actor is bound so audit rows attribute
+ * the work to whoever asked for it.
+ */
+export function withPublisher<T>(
+  ctx: { requestId: string; actor: PublisherActor },
+  fn: (tx: Tx) => Promise<T>,
+): Promise<T> {
+  const claims = ctx.actor.kind === 'staff' ? staffClaimsJson(ctx.actor.claims) : '';
+  const agent = ctx.actor.kind === 'agent' ? ctx.actor.principalId : '';
+  return pool().begin(async (tx) => {
+    await bind(tx, ctx.requestId, claims, agent);
+    await tx`set local role desk_publisher`;
     return fn(tx);
   }) as Promise<T>;
 }

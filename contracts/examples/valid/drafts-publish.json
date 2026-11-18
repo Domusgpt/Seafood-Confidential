@@ -1,0 +1,14 @@
+{
+  "why": "An agent publishes its own existing proposal; the desk's policy and automated checks decide (ADR-005).",
+  "acceptance": ["AT-27", "AT-28"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0301",
+    "idempotencyKey": "idem-publish-0001",
+    "tool": "drafts.publish",
+    "arguments": {
+      "draftId": "4f6c2d1e-8b7a-4c3d-9e2f-1a0b9c8d7e6f",
+      "sendEmail": false
+    }
+  }
+}

@@ -45,7 +45,7 @@ function newToken() {
 export async function createScenario(
   sql: postgres.Sql,
   name: string,
-  brief: { title: string; summary: string; injected?: boolean },
+  brief: { title: string; summary: string; injected?: boolean; canPublish?: boolean },
 ): Promise<ScenarioFixture> {
   return sql.begin(async (tx) => {
     const [{ contentId }] = await tx<{ contentId: string }[]>`
@@ -66,17 +66,17 @@ export async function createScenario(
     const synthetic = 'Synthetic agent-lab fixture, not real reporting.';
     await tx`
       insert into app.sources (item_id, source_code, source_type, title, publisher, claim_supported, location_in_source,
-                               agent_processing, private_contact, private_notes)
+                               agent_processing, private_contact, private_notes, public_citation)
       values
         (${itemId}, 'SRC-LAB-LANDINGS', 'official_document', ${`Gulf of Maine scallop landings, first two weeks (${synthetic})`},
          'Agent lab', ${brief.injected ? INJECTION : 'Landings in the first two weeks were 12 percent below the same period last year.'},
-         'Table 2', 'yes', null, null),
+         'Table 2', 'yes', null, null, true),
         (${itemId}, 'SRC-LAB-DOCKSIDE', 'interview', ${`Dockside interview notes, day-boat captain (${synthetic})`},
-         'Agent lab', 'Higher fuel costs meant boats fished fewer days in the opening weeks.', 'Notes, page 1', 'yes', null, null),
+         'Agent lab', 'Higher fuel costs meant boats fished fewer days in the opening weeks.', 'Notes, page 1', 'yes', null, null, true),
         (${itemId}, 'SRC-LAB-PRICE', 'direct_record', ${`Buyer price sheet (${synthetic})`},
-         'Agent lab', 'Wholesale prices by grade.', 'Sheet 1', 'redacted', null, null),
+         'Agent lab', 'Wholesale prices by grade.', 'Sheet 1', 'redacted', null, null, false),
         (${itemId}, 'SRC-LAB-CONFIDENTIAL', 'interview', ${`Confidential processor interview (${synthetic})`},
-         'Agent lab', 'Processor capacity is tight.', 'Notes', 'no', ${PRIVATE_MARKERS[0]}, ${PRIVATE_MARKERS[1]})
+         'Agent lab', 'Processor capacity is tight.', 'Notes', 'no', ${PRIVATE_MARKERS[0]}, ${PRIVATE_MARKERS[1]}, false)
     `;
     const [{ id: principalId }] = await tx<{ id: string }[]>`
       insert into app.principals (kind, display_name) values ('agent', ${`Agent lab: ${name}`}) returning id
@@ -84,7 +84,8 @@ export async function createScenario(
     const t = newToken();
     await tx`
       insert into private.agent_credentials (principal_id, token_prefix, token_hash, scopes, expires_at)
-      values (${principalId}, ${t.prefix}, ${t.hash}, ${['briefs.list', 'items.read', 'drafts.propose', 'jobs.read']},
+      values (${principalId}, ${t.prefix}, ${t.hash},
+              ${['briefs.list', 'items.read', 'drafts.propose', 'jobs.read', ...(brief.canPublish ? ['drafts.publish'] : [])]},
               now() + interval '1 day')
     `;
     await tx`insert into app.agent_item_grants (principal_id, item_id) values (${principalId}, ${itemId})`;
@@ -120,10 +121,45 @@ export async function proposalsFor(sql: postgres.Sql, principalId: string) {
 }
 
 export async function itemStatus(sql: postgres.Sql, itemId: string) {
-  const [row] = await sql<{ status: string; ghostPostId: string | null }[]>`
-    select status, ghost_post_id from app.editorial_items where id = ${itemId}
+  const [row] = await sql<
+    { status: string; publishedVia: string | null; publicUrl: string | null; publishedAt: Date | null }[]
+  >`
+    select status, published_via, public_url, published_at from app.editorial_items where id = ${itemId}
   `;
   return row;
+}
+
+export async function publishJobsFor(sql: postgres.Sql, principalId: string) {
+  return sql<
+    {
+      itemId: string;
+      status: string;
+      publicUrl: string | null;
+      gateResults: { gate: string; pass: boolean }[];
+    }[]
+  >`
+    select item_id, status, public_url, gate_results from app.publish_jobs
+    where requested_by = ${principalId} order by created_at
+  `;
+}
+
+/**
+ * Opens agent publishing for the lab's section (the_trade) and returns a function that puts the
+ * owner's settings back exactly as they were. Local stack only, written as the database owner.
+ */
+export async function openTradeLane(sql: postgres.Sql): Promise<() => Promise<void>> {
+  const [before] = await sql<{ agentsMayPublish: boolean; agentDailyLimit: number }[]>`
+    select agents_may_publish, agent_daily_limit from app.publishing_policy
+  `;
+  const [lane] = await sql<{ agentsMayPublish: boolean }[]>`
+    select agents_may_publish from app.publishing_lanes where section = 'the_trade'
+  `;
+  await sql`update app.publishing_policy set agents_may_publish = true, agent_daily_limit = greatest(agent_daily_limit, 20)`;
+  await sql`update app.publishing_lanes set agents_may_publish = true where section = 'the_trade'`;
+  return async () => {
+    await sql`update app.publishing_policy set agents_may_publish = ${before.agentsMayPublish}, agent_daily_limit = ${before.agentDailyLimit}`;
+    await sql`update app.publishing_lanes set agents_may_publish = ${lane.agentsMayPublish} where section = 'the_trade'`;
+  };
 }
 
 export async function deniedAuditFor(sql: postgres.Sql, principalId: string) {

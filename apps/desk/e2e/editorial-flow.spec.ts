@@ -1,13 +1,5 @@
 import { expect, test } from '@playwright/test';
-import {
-  testClientAddress,
-  expectAccessible,
-  openDetails,
-  randomGhostId,
-  shot,
-  signIn,
-  uniqueSuffix,
-} from './helpers';
+import { testClientAddress, expectAccessible, openDetails, shot, signIn, uniqueSuffix } from './helpers';
 
 // Each test is its own intake client, so the per-client throttle (5 an hour) never couples runs.
 test.beforeEach(async ({ page }) => {
@@ -15,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 // SC-006 → SC-007 vertical slice: a public pitch becomes a commissioned story with an owner, a next
-// action, a unique Ghost reference, source records and rights records, gated before release.
+// action, its text written in the desk, source records and rights records, gated before release.
 test('pitch to release-ready story', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
   const suffix = uniqueSuffix();
@@ -62,21 +54,21 @@ test('pitch to release-ready story', async ({ page }, testInfo) => {
   await decide.getByRole('button', { name: 'Save decision' }).click();
   await expect(page).toHaveURL(/\/stories\/SC-\d{4}-\d{3,}\?from=pitch$/);
   const contentId = /SC-\d{4}-\d{3,}/.exec(page.url())![0];
-  await expect(page.getByRole('main').getByText('Next: Create the Ghost draft and link it')).toBeVisible();
+  await expect(page.getByRole('main').getByText('Next: Write the story')).toBeVisible();
   await expect(page.getByRole('main').getByText('Owner: Morgan Owner')).toBeVisible();
 
-  // Ghost reference: a pasted editor URL is reduced to the canonical post ID.
-  const ghostId = randomGhostId();
-  const ghostForm = page.getByRole('form', { name: 'Link the Ghost post' });
-  await ghostForm
-    .getByLabel('Ghost post ID or editor URL')
-    .fill(`http://localhost:2368/ghost/#/editor/post/${ghostId}`);
-  await ghostForm.getByRole('button', { name: 'Save Ghost link' }).click();
-  await expect(page.getByTestId('ghost-editor-link')).toHaveAttribute(
-    'href',
-    `http://localhost:2368/ghost/#/editor/post/${ghostId}`,
-  );
-  await expect(page.getByRole('main').getByText('Next: Start drafting in Ghost')).toBeVisible();
+  // The story is written in the desk (ADR-005).
+  const text = page.getByRole('form', { name: 'Story text' });
+  await text
+    .getByLabel('Story', { exact: true })
+    .fill(
+      'Day-boat crews out of Portland face a new quota rule this season.\n\n## What changes\n\nThe rule sets a weekly limit per boat instead of a seasonal one.',
+    );
+  await text.getByRole('button', { name: 'Save the text' }).click();
+  await expect(text.getByRole('status')).toContainText('Saved as revision 1.');
+  await expect(
+    page.getByRole('main').getByText('Next: Keep writing, then mark the story Drafting'),
+  ).toBeVisible();
 
   const details = page.getByRole('form', { name: 'Edit story details' });
   await details.getByLabel('Operations status').selectOption('drafting');
@@ -92,6 +84,7 @@ test('pitch to release-ready story', async ({ page }, testInfo) => {
   await sourceForm.getByLabel('Title', { exact: true }).fill('Fixture landings summary');
   await sourceForm.getByLabel('Claim it supports').fill('Landings fell year over year.');
   await sourceForm.getByLabel('May agents process it?').selectOption('yes');
+  await sourceForm.getByLabel(/Cite it publicly/).check();
   await sourceForm.getByRole('button', { name: 'Record source' }).click();
   await expect(sourceForm.getByRole('status')).toContainText('Source SRC-LANDINGS-2026-01 recorded.');
   await expect(
@@ -113,33 +106,21 @@ test('pitch to release-ready story', async ({ page }, testInfo) => {
   await details.getByRole('button', { name: 'Save details' }).click();
   await expect(page.getByRole('main').getByText('Next: Clear rights and credits for 1 asset')).toBeVisible();
 
-  // Release gate: pending rights block "Ready for release".
+  // Marking it ready by hand is still gated: pending rights block "Ready for release".
   await details.getByLabel('Operations status').selectOption('ready_for_release');
   await details.getByRole('button', { name: 'Save details' }).click();
   await expect(details.getByRole('alert')).toContainText('clear rights and credit lines for 1 asset');
 
   await page.getByLabel('Change status for Dock at dawn, Portland').selectOption('cleared');
   await page.getByRole('button', { name: 'Update' }).click();
-  await expect(page.getByRole('main').getByText('Next: Review the draft in Ghost')).toBeVisible();
+  await expect(page.getByRole('main').getByText('Next: Review the text')).toBeVisible();
 
   await details.getByLabel('Operations status').selectOption('ready_for_release');
   await details.getByRole('button', { name: 'Save details' }).click();
   await expect(details.getByRole('status')).toContainText('Story details saved.');
-  await expect(page.getByRole('main').getByText('Next: Publish in Ghost')).toBeVisible();
+  await expect(page.getByRole('main').getByText('Next: Publish the story')).toBeVisible();
   await expectAccessible(page, `story ${contentId}`);
   await shot(page, testInfo, 'story-ready');
-
-  // The same Ghost post cannot be linked to a second item (one mapping per item, SC-007).
-  await page.goto('/stories/new');
-  await page.getByLabel('Working title').fill(`Second item ${suffix}`);
-  await page.getByLabel('Section').selectOption('the_trade');
-  await page.getByLabel('Format', { exact: true }).selectOption('explainer');
-  await page.getByRole('button', { name: 'Create story' }).click();
-  await expect(page).toHaveURL(/\/stories\/SC-\d{4}-\d{3,}$/);
-  const secondForm = page.getByRole('form', { name: 'Link the Ghost post' });
-  await secondForm.getByLabel('Ghost post ID or editor URL').fill(ghostId);
-  await secondForm.getByRole('button', { name: 'Save Ghost link' }).click();
-  await expect(secondForm.getByRole('alert')).toContainText('already linked to another story');
 
   await page.goto('/stories');
   await expect(page.getByRole('link', { name: subject })).toBeVisible();

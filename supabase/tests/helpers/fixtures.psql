@@ -5,13 +5,14 @@
 create extension if not exists pgtap with schema extensions;
 
 create schema if not exists tests;
-grant usage on schema tests to anon, authenticated, desk_agent;
+grant usage on schema tests to anon, authenticated, desk_agent, desk_publisher;
 
 -- The test runner (postgres) administers desk_agent but cannot switch to it by default (PG16+
 -- membership options). Allow it for this transaction only; the rollback removes the grant.
 grant desk_agent to postgres with inherit false, set true;
+grant desk_publisher to postgres with inherit false, set true;
 -- pgTAP lives in the extensions schema; let assertions run while acting as an agent (test only).
-grant usage on schema extensions to desk_agent;
+grant usage on schema extensions to desk_agent, desk_publisher;
 
 -- Create an auth user and (optionally) a human principal with staff roles. Returns the auth user id.
 create or replace function tests.make_human(
@@ -80,6 +81,7 @@ as $$
 begin
   perform set_config('request.jwt.claims', json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
   perform set_config('app.agent_principal_id', '', true);
+  perform set_config('app.agent_credential_id', '', true);
   set local role authenticated;
 end
 $$;
@@ -91,6 +93,7 @@ as $$
 begin
   perform set_config('request.jwt.claims', '', true);
   perform set_config('app.agent_principal_id', '', true);
+  perform set_config('app.agent_credential_id', '', true);
   set local role anon;
 end
 $$;
@@ -106,10 +109,49 @@ declare
 begin
   perform set_config('request.jwt.claims', '', true);
   perform set_config('app.agent_principal_id', '', true);
+  perform set_config('app.agent_credential_id', '', true);
   set local role desk_agent;
   select count(*) into n from app.authenticate_agent(p_prefix, token_hash);
   return n;
 end
 $$;
 
-grant execute on all functions in schema tests to anon, authenticated, desk_agent;
+-- Act as the desk server's publisher context, optionally on behalf of a principal (as the executor
+-- binds the requester so audit rows name who asked).
+create or replace function tests.act_as_publisher(p_on_behalf_of_agent uuid default null)
+returns void
+language plpgsql
+as $$
+begin
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('app.agent_principal_id', coalesce(p_on_behalf_of_agent::text, ''), true);
+  perform set_config('app.agent_credential_id', '', true);
+  set local role desk_publisher;
+end
+$$;
+
+-- A draft proposal row written as the database owner (the gateway path is covered by E2E tests).
+create or replace function tests.make_proposal(
+  p_item uuid, p_agent uuid, p_body text, p_sources text[], p_title text default 'Fixture proposal title'
+)
+returns uuid
+language sql
+as $$
+  insert into app.draft_proposals (
+    item_id, principal_id, idempotency_key, payload_hash, request_id, title, body_markdown, source_ids
+  ) values (
+    p_item, p_agent, 'idem-' || replace(gen_random_uuid()::text, '-', ''), repeat('a', 64),
+    'req-fixture-proposal', p_title, p_body, p_sources
+  )
+  returning id
+$$;
+
+-- Look up a job ID by idempotency key as the owner (the publisher role cannot read tables).
+create or replace function tests.job_id(p_key text)
+returns uuid
+language sql
+stable
+security definer
+as $$ select id from app.publish_jobs where idempotency_key = p_key $$;
+
+grant execute on all functions in schema tests to anon, authenticated, desk_agent, desk_publisher;

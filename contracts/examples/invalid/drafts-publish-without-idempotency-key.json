@@ -1,0 +1,12 @@
+{
+  "why": "Publishing changes the outside world, so a retry must be recognisable: the idempotency key is required.",
+  "acceptance": ["AT-12", "AT-14"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0302",
+    "tool": "drafts.publish",
+    "arguments": {
+      "draftId": "4f6c2d1e-8b7a-4c3d-9e2f-1a0b9c8d7e6f"
+    }
+  }
+}

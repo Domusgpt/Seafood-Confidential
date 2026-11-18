@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Public site build outputs (scripts/build-site-assets.mjs, local publishing)
+/site-static
+/.site-output
+/.site-output.*

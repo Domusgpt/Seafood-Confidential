@@ -35,3 +35,7 @@ supabase/.branches/
 
 # Agent lab run reports (generated, git-ignored)
 apps/agent-lab/reports/
+
+# Public site build output (generated, git-ignored)
+apps/desk/site-static/
+apps/desk/.site-output/

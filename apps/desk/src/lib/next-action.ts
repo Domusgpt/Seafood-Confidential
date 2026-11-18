@@ -1,12 +1,16 @@
 import type { ItemStatus, Tone } from './vocab';
 
-// SC-007: every editorial item shows one next action with a named owner and, where the work happens
-// in Ghost, the exact native editor link. Pure function so it can be unit tested exhaustively.
+// SC-007: every editorial item shows one next action with a named owner and the exact place on the
+// page where the work happens (the story text or the publishing panel; ADR-005: stories are written
+// and published from the desk). Pure function so it can be unit tested exhaustively.
 
 export interface NextActionInput {
   status: ItemStatus;
   assignedEditorName: string | null;
-  ghostPostId: string | null;
+  /** Revision of the story text, or 0 when nobody has written it yet. */
+  textRevision: number;
+  /** Revision that is live on the public site, when published. */
+  publishedRevision: number | null;
   dueOn: string | null; // YYYY-MM-DD
   sourceCount: number;
   rightsPending: number; // rights records not yet cleared (pending)
@@ -16,8 +20,7 @@ export interface NextActionInput {
   today: string; // YYYY-MM-DD in the newsroom's time zone
 }
 
-export type ActionTarget =
-  'ghost_editor' | 'ghost_new' | 'sources' | 'rights' | 'proposals' | 'details' | null;
+export type ActionTarget = 'text' | 'publishing' | 'sources' | 'rights' | 'proposals' | 'details' | null;
 
 export interface NextAction {
   key: string;
@@ -87,12 +90,21 @@ export function nextAction(input: NextActionInput): NextAction {
     );
   }
   if (input.status === 'published') {
+    if (input.publishedRevision !== null && input.textRevision > input.publishedRevision) {
+      return make(
+        'update_live',
+        'Update the published story',
+        `The text has changed since publication (revision ${input.textRevision}, live ${input.publishedRevision}). Update the live page when the edit is ready.`,
+        'info',
+        'publishing',
+      );
+    }
     return make(
       'watch',
       'Watch for corrections',
-      'Published in Ghost. Corrections and distribution are separate decisions.',
+      'Published on the site. Corrections are edits to the text followed by an update.',
       'neutral',
-      'ghost_editor',
+      'publishing',
     );
   }
   if (input.proposalsWaiting > 0) {
@@ -100,28 +112,28 @@ export function nextAction(input: NextActionInput): NextAction {
     return make(
       'review_proposals',
       `Review ${n} agent draft proposal${n === 1 ? '' : 's'}`,
-      'Proposals never publish. Accept or reject each one, then work in Ghost.',
+      'Use one as the story text, or reject it.',
       'info',
       'proposals',
     );
   }
-  if (!input.ghostPostId) {
+  if (input.textRevision === 0) {
     return make(
-      'link_ghost',
-      'Create the Ghost draft and link it',
-      'Start a draft in Ghost, then paste its post ID or editor URL here.',
+      'write',
+      'Write the story',
+      'Write the text on this page, or use an agent proposal as the starting point.',
       'info',
-      'ghost_new',
+      'text',
     );
   }
   switch (input.status) {
     case 'commissioned':
       return make(
         'start_draft',
-        'Start drafting in Ghost',
-        'Open the linked draft in Ghost, then mark the item Drafting.',
+        'Keep writing, then mark the story Drafting',
+        'The text is started. Move the story to Drafting so everyone knows it is under way.',
         'info',
-        'ghost_editor',
+        'text',
       );
     case 'drafting':
       if (input.sourceCount === 0) {
@@ -136,9 +148,9 @@ export function nextAction(input: NextActionInput): NextAction {
       return make(
         'finish_draft',
         'Finish the draft and send it to review',
-        'Complete the draft in Ghost, then mark the item In review.',
+        'Complete the text, then mark the story In review.',
         'info',
-        'ghost_editor',
+        'text',
       );
     case 'in_review':
       if (input.sourceCount === 0) {
@@ -163,18 +175,18 @@ export function nextAction(input: NextActionInput): NextAction {
       }
       return make(
         'review_draft',
-        'Review the draft in Ghost',
+        'Review the text',
         'Approve it as ready for release or request changes.',
         'info',
-        'ghost_editor',
+        'text',
       );
     case 'changes_requested':
       return make(
         'revise',
-        'Revise the draft and resubmit',
-        'Address the requested changes in Ghost, then mark the item In review.',
+        'Revise the text and resubmit',
+        'Address the requested changes, then mark the story In review.',
         'info',
-        'ghost_editor',
+        'text',
       );
     case 'ready_for_release':
       if (input.rightsBlocked > 0 || input.rightsPending > 0) {
@@ -189,10 +201,10 @@ export function nextAction(input: NextActionInput): NextAction {
       }
       return make(
         'publish',
-        'Publish in Ghost',
-        'A person publishes in Ghost, then marks the item Published here. The desk never publishes.',
+        'Publish the story',
+        'Publish it from the Publishing panel. Emailing subscribers is a separate choice.',
         'good',
-        'ghost_editor',
+        'publishing',
       );
     default:
       return make('details', 'Check the item details', 'Review the status and owner.', 'neutral', 'details');

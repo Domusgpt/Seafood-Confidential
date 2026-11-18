@@ -20,9 +20,9 @@ const PLANNED = [
   },
   {
     ticket: 'SC-004',
-    title: 'Newsletter and reader account journey',
+    title: 'Newsletter and reader signup',
     detail:
-      'Set up in Ghost. Whether a story is emailed stays a separate human decision; the desk never sends.',
+      'Kit free plan (ADR-005): the public site carries the signup form; a story is emailed only when the person publishing ticks the box, or when the owner allows agents to.',
   },
 ];
 

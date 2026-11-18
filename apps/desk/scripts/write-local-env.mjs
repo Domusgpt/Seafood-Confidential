@@ -46,7 +46,10 @@ const app = {
   INTAKE_HASH_SECRET: prev.INTAKE_HASH_SECRET ?? randomBytes(32).toString('base64url'),
   NEXT_SERVER_ACTIONS_ENCRYPTION_KEY:
     prev.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY ?? randomBytes(32).toString('base64'),
-  GHOST_ADMIN_URL: prev.GHOST_ADMIN_URL ?? 'http://localhost:2368',
+  // Publishing (ADR-005): build the public site into a local folder, served by `pnpm site:serve`.
+  SITE_PUBLIC_URL: prev.SITE_PUBLIC_URL ?? 'http://127.0.0.1:4173',
+  SITE_DESTINATION: prev.SITE_DESTINATION ?? 'local',
+  SITE_OUTPUT_DIR: prev.SITE_OUTPUT_DIR ?? '.site-output',
   // Next.js fills X-Forwarded-For from the socket when absent; the test runner sets it per test.
   DESK_TRUSTED_PROXY_HOPS: prev.DESK_TRUSTED_PROXY_HOPS ?? '1',
   DESK_AGENT_RATE_PER_MINUTE: prev.DESK_AGENT_RATE_PER_MINUTE ?? '120',

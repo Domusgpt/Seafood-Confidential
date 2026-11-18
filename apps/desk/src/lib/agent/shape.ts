@@ -103,7 +103,35 @@ export const JOB_STATES = {
   },
   accepted: {
     state: 'accepted',
-    message: 'An editor accepted the proposal. Editors continue the work in Ghost.',
+    message: 'An editor accepted the proposal and continues the work in the desk.',
   },
   rejected: { state: 'rejected', message: 'An editor rejected the proposal. Nothing from it will be used.' },
+  published: { state: 'published', message: 'The proposal was published.' },
 } as const;
+
+/** Publish job states as agents see them (ADR-005). */
+export const PUBLISH_JOB_STATES = {
+  queued: { state: 'queued', message: 'Waiting to be published.' },
+  running: { state: 'running', message: 'Being published now.' },
+  succeeded: { state: 'succeeded', message: 'Done.' },
+  failed: { state: 'failed', message: 'The publication did not happen. Nothing was changed.' },
+  needs_attention: {
+    state: 'needs_attention',
+    message: 'The outcome is uncertain; an editor will check the publication. Do not retry.',
+  },
+  refused: { state: 'refused', message: 'Refused by the automated publishing checks; nothing was sent.' },
+  cancelled: { state: 'cancelled', message: 'Cancelled before it ran.' },
+} as const;
+
+export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+export interface GateResult {
+  gate: string;
+  pass: boolean;
+  detail: string;
+}
+
+/** The checks that failed, in the order the database evaluated them. */
+export function failedChecks(gates: GateResult[]): { check: string; detail: string }[] {
+  return gates.filter((g) => !g.pass).map((g) => ({ check: g.gate, detail: g.detail }));
+}

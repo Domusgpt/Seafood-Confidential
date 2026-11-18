@@ -35,7 +35,7 @@ export const DOC_GROUPS = [
       { src: 'docs/PRODUCT_SPEC.md', slug: 'product-spec', title: 'Product specification' },
       { src: 'docs/ARCHITECTURE.md', slug: 'architecture', title: 'Architecture' },
       { src: 'docs/DESK.md', slug: 'desk', title: 'Operations desk' },
-      { src: 'docs/DEPLOYMENT.md', slug: 'deployment', title: 'Deploying the desk' },
+      { src: 'docs/DEPLOYMENT.md', slug: 'deployment', title: 'Deploying the desk and the public site' },
       {
         src: 'docs/planning/HOSTING_AND_COSTS.md',
         slug: 'hosting-and-costs',

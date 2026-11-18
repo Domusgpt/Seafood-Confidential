@@ -1,6 +1,6 @@
 {
   "name": "@sc/agent-lab",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Claude-powered agents that exercise and red-team the desk's draft-only agent gateway.",
   "license": "UNLICENSED",
