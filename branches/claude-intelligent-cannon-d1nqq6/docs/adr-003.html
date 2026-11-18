@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>ADR-003 operations desk foundation stack and data access · Seafood Confidential project hub</title>
+<meta name="description" content="ADR-003 operations desk foundation stack and data access (decisions/ADR-003-desk-foundation-stack.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.2.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/d09120798af3ca967b65655aeb7811ea2bb9ea2c">Commit <code>d091207</code></a>
+      <span>Built Nov 18, 2026, 2:11 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="desk.html">Operations desk (v0.2.0)</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li><li><a href="adr-003.html" aria-current="page">ADR-003 operations desk foundation stack and data access</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="adr-003-operations-desk-foundation-stack-and-data-access">ADR 003 operations desk foundation stack and data access</h1>
+<p>Date: November 18, 2026. Status: accepted as developer defaults for the foundation build (session S01, turn 2); founders may revisit through the planning brief questions without data loss.</p>
+<h2 id="context">Context</h2>
+<p>ADR-001 chose Ghost for publishing and a small Next.js + Supabase desk for private operations. The foundation planning brief listed sixteen open questions with recommendations. The team asked to build the foundation and its first chunk directly, so the recommendations become defaults now. Choices that need founders (accounts, budget, channels, repository visibility) stay open and do not block local development.</p>
+<h2 id="decision">Decision</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Choice</th>
+<th>Brief question</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Runtime</td>
+<td>Node.js 24 LTS; pnpm 12 workspace (<code>apps/*</code>, <code>packages/*</code>) with release-age and trust gates</td>
+<td>Q2, Q13</td>
+</tr>
+<tr>
+<td>Framework</td>
+<td>Next.js 16.4 App Router, React 19.3, TypeScript 6.0.3; ESLint 9.39 with <code>eslint-config-next</code> (ESLint 10 is blocked by the peer ranges of <code>eslint-plugin-react</code>, <code>-import</code> and <code>-jsx-a11y</code>)</td>
+<td>Q3</td>
+</tr>
+<tr>
+<td>Rendering</td>
+<td><strong>Cache Components off.</strong> Every desk page is per-user and permission-sensitive, revocation must apply on the next request, and the CSP nonce needs per-request rendering. The public pitch page renders per request for the same nonce reason</td>
+<td>—</td>
+</tr>
+<tr>
+<td>UI</td>
+<td>One global stylesheet on CSS custom properties compiled from <code>brand/tokens.json</code> (<code>apps/desk/scripts/build-tokens.mjs</code>, checked in CI); no inline <code>style</code> attributes because the nonce CSP blocks them; self-hosted Fraunces and Source Sans 3 (<code>@fontsource-variable</code>)</td>
+<td>Q11</td>
+</tr>
+<tr>
+<td>Identity</td>
+<td>Supabase Auth email magic links for staff; sign-up disabled; staff are invited by an owner. Agents use revocable bearer tokens (<code>sca_…</code>) stored only as SHA-256 hashes</td>
+<td>Q6</td>
+</tr>
+<tr>
+<td><strong>Data access</strong></td>
+<td>The desk server connects as a dedicated <code>desk_app</code> login role that has <strong>no privileges of its own</strong> (<code>NOINHERIT</code>). Every query runs in a transaction that first switches role: <code>authenticated</code> with the verified Supabase claims for staff, <code>desk_agent</code> after token verification for agents, <code>anon</code> for public pitch intake. Row Level Security and column grants therefore govern every request; a missing role switch fails closed</td>
+<td>Q6</td>
+</tr>
+<tr>
+<td>Schemas</td>
+<td><code>app</code> for operations records (RLS on every table, explicit grants); <code>private</code> for credentials, audit events and intake throttling (no API exposure, no direct grants)</td>
+<td>AT-25</td>
+</tr>
+<tr>
+<td>Supabase</td>
+<td>Local-first (CLI 3.x); new publishable/secret keys. The app holds only the publishable key (auth) and the <code>desk_app</code> URL; the secret key lives in the operator CLI&#39;s <code>.env.ops.local</code>, and the app refuses to start if a secret key is in its environment</td>
+<td>Q5</td>
+</tr>
+<tr>
+<td>Middleware</td>
+<td><code>proxy.ts</code>: session refresh, request ID, nonce-based CSP and security headers. Authorization is re-checked inside every page, action and route</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Telemetry</td>
+<td>OpenTelemetry via <code>instrumentation.ts</code> (<code>@vercel/otel</code> 2.3, which requires <code>@opentelemetry/api</code> &lt; 1.10: pinned 1.9.1; export through standard <code>OTEL_*</code> variables); pino JSON logs with trace IDs and a redaction list; security events in <code>private.audit_events</code> carrying the request ID, which triggers inherit from the transaction</td>
+<td>Q10</td>
+</tr>
+<tr>
+<td>Agent gateway</td>
+<td><code>POST /api/agent/v1</code> implements the kit&#39;s request contract (validated with Ajv from <code>@sc/contracts</code>). v1 serves <code>briefs.list</code>, <code>items.read</code>, <code>drafts.propose</code> and <code>jobs.read</code>; <code>drafts.revise</code> and <code>social.propose</code> answer 501 until review snapshots (SC-008) and durable jobs (SC-011) exist</td>
+<td>SC-009</td>
+</tr>
+<tr>
+<td>Tests</td>
+<td>Vitest (units), pgTAP via <code>supabase test db</code> (policies and grants), Playwright plus axe (journeys, accessibility), contract examples (schema)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Theme</td>
+<td>Ghost&#39;s MIT Source theme as the base for SC-003 (licence-safe in a public repository)</td>
+<td>Q7</td>
+</tr>
+</tbody></table></div>
+<h2 id="consequences">Consequences</h2>
+<p>Authorization lives in one place, the database, and is testable in SQL. Server code cannot accidentally query as a privileged role. The pattern requires a direct Postgres connection (Supavisor transaction pooling in hosted environments) and a <code>desk_app</code> password provisioned out of band. Hosted verification of role membership grants is part of staging (SC-015). PostgREST is not used for operations data, so the Data API can stay closed to the <code>app</code> and <code>private</code> schemas.</p>
+<h2 id="alternatives-considered">Alternatives considered</h2>
+<ul>
+<li><strong>supabase-js/PostgREST for all data:</strong> simpler CRUD, but it exposes schemas and leaves agents without an RLS-enforced path.</li>
+<li><strong>Secret key plus application checks:</strong> bypasses RLS and contradicts AGENTS.md.</li>
+<li><strong>Minted JWTs for agents:</strong> depends on signing-key access, which Supabase&#39;s asymmetric keys restrict.</li>
+</ul>
+<h2 id="review-triggers">Review triggers</h2>
+<p>Revisit if hosted Supabase refuses the role-membership grants, if connection pooling breaks transaction-scoped settings, or when an MCP adapter for agents is added (it must reuse the same gateway and policies).</p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/decisions/ADR-003-desk-foundation-stack.md">decisions/ADR-003-desk-foundation-stack.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/d09120798af3ca967b65655aeb7811ea2bb9ea2c">d091207</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Operations desk (v0.2.0) · Seafood Confidential project hub</title>
+<meta name="description" content="Operations desk (v0.2.0) (docs/DESK.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.2.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/d09120798af3ca967b65655aeb7811ea2bb9ea2c">Commit <code>d091207</code></a>
+      <span>Built Nov 18, 2026, 2:11 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="desk.html" aria-current="page">Operations desk (v0.2.0)</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li><li><a href="adr-003.html">ADR-003 operations desk foundation stack and data access</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="operations-desk-v020">Operations desk (v0.2.0)</h1>
+<p>The private operations desk for Seafood Confidential: staff sign-in, the guest pitch queue, editorial items with one next action each, source and rights records, links to the native Ghost editor, and a draft-only agent gateway. Code lives in <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/apps/desk"><code>apps/desk</code></a>; the database lives in <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/supabase"><code>supabase/</code></a>. Decisions: <a href="adr-001.html">ADR-001</a> (Ghost publishes, the desk operates) and <a href="adr-003.html">ADR-003</a> (stack and data access).</p>
+<p><strong>What it is not.</strong> The desk never publishes, sends, schedules or changes anything in Ghost. People publish in Ghost; the desk stores the Ghost post ID and links to its editor. Newsletter and social distribution are later tickets (SC-004, SC-008, SC-010) and the Distribution page says so.</p>
+<h2 id="scope-delivered-in-this-version">Scope delivered in this version</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Ticket</th>
+<th>Delivered</th>
+<th>Not yet</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SC-005 Private operations shell and auth</td>
+<td>Magic-link sign-in (sign-up disabled), staff principals and roles, Row Level Security on every table, nonce CSP, request IDs, audit trail, OpenTelemetry and structured logs</td>
+<td>Staff invitations from the UI (owner uses the operator CLI)</td>
+</tr>
+<tr>
+<td>SC-006 Pitch intake, sources and rights</td>
+<td>Public <code>/pitch</code> form (text only, consent-gated, throttled, receipt only), pitch queue and decisions, source records with an agent-processing flag, rights records with provenance, credit and permitted uses</td>
+<td>Contributor accounts, media intake</td>
+</tr>
+<tr>
+<td>SC-007 Editorial queue and Ghost references</td>
+<td>Items with content IDs (<code>SC-YYYY-NNN</code>), owner, status, section, format, focus, regions, species, due date; one unique Ghost post per item; next action with the exact Ghost editor link; release gate (Ghost link, sources, cleared rights with credits)</td>
+<td>Ghost webhooks (ADR-001 keeps Ghost&#39;s own status separate)</td>
+</tr>
+<tr>
+<td>SC-009 Scoped agent draft gateway (first slice)</td>
+<td>Token auth, contract validation, scopes, item grants, SQL-side redaction, idempotent <code>drafts.propose</code>, <code>jobs.read</code>, per-agent request budget, flood guards, audit of every authenticated request</td>
+<td><code>drafts.revise</code> and <code>social.propose</code> (need SC-008 and SC-011), an MCP adapter</td>
+</tr>
+</tbody></table></div>
+<h2 id="architecture">Architecture</h2>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-mermaid">flowchart LR
+  subgraph Browser
+    S[Staff browser]
+    P[Public pitch form]
+  end
+  A[Agent client]
+  subgraph Desk[&quot;apps/desk (Next.js 16, Node runtime)&quot;]
+    PX[proxy.ts&lt;br/&gt;request ID, nonce CSP,&lt;br/&gt;session refresh]
+    UI[Pages and Server Actions&lt;br/&gt;requireStaff on every call]
+    GW[&quot;/api/agent/v1&lt;br/&gt;gateway&quot;]
+    DB[lib/db.ts&lt;br/&gt;withStaff / withAgent / withAnon]
+  end
+  subgraph Supabase
+    AUTH[Auth: magic links]
+    PG[(Postgres&lt;br/&gt;app + private schemas&lt;br/&gt;RLS everywhere)]
+  end
+  S --&gt; PX --&gt; UI --&gt; DB
+  P --&gt; PX
+  A -- Bearer sca_… --&gt; GW --&gt; DB
+  UI -- verify session --&gt; AUTH
+  DB -- &quot;connect as desk_app (no privileges);&lt;br/&gt;SET LOCAL ROLE authenticated / desk_agent / anon&quot; --&gt; PG
+</code></pre>
+<ul>
+<li><strong>One authorization boundary: the database.</strong> The server connects as <code>desk_app</code>, a <code>NOINHERIT</code> login role with no privileges of its own. Each unit of work is a transaction that binds the caller (<code>request.jwt.claims</code> for staff, <code>app.agent_principal_id</code> after <code>app.authenticate_agent</code> for agents), switches role with <code>SET LOCAL ROLE</code>, and lets Row Level Security and column grants decide. A query issued outside the helpers runs as <code>desk_app</code> and fails.</li>
+<li><strong>Defense in depth in the app.</strong> Every page, Server Action and route calls <code>requireStaff()</code> (or validates the agent token) itself; the proxy is not a security boundary. Inputs are validated with zod against the same bounds as the database constraints. SQL is always a tagged template (ESLint forbids <code>sql.unsafe</code>).</li>
+<li><strong>Schemas.</strong> <code>app</code> holds operations records; <code>private</code> holds agent credential hashes, the audit trail and intake throttling, reachable only through <code>SECURITY DEFINER</code> functions with <code>search_path = &#39;&#39;</code>.</li>
+</ul>
+<h2 id="running-it-locally">Running it locally</h2>
+<p>Prerequisites: Node 24 (<code>.nvmrc</code>), pnpm 12, Docker. Everything below runs from the repository root.</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm install
+</code></pre>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm db:start
+</code></pre>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm desk:env
+</code></pre>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm --filter @sc/desk staff add --email you@example.test --name &quot;Your Name&quot; --role owner
+</code></pre>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm desk:dev
+</code></pre>
+<p>Open <a href="http://127.0.0.1:3000">http://127.0.0.1:3000</a>, request a sign-in link and open it from Mailpit at <a href="http://127.0.0.1:54324">http://127.0.0.1:54324</a>. <code>pnpm desk:env</code> writes two git-ignored files from <code>supabase status</code>: <code>apps/desk/.env.local</code> for the app (publishable key, <code>desk_app</code> URL, intake hash secret, Server Actions key) and <code>apps/desk/.env.ops.local</code> for the operator CLI (secret key and database owner URL). See <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/apps/desk/.env.example"><code>apps/desk/.env.example</code></a> for every variable.</p>
+<h2 id="security-model">Security model</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Control</th>
+<th>Verified by</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Staff access</td>
+<td>Active human principal + active staff assignment, checked by RLS on every query; disabled principals and revoked assignments see nothing on the next request</td>
+<td>pgTAP <code>02_staff_access</code>; E2E &quot;disabling a staff member…&quot;</td>
+</tr>
+<tr>
+<td>Reader or contributor identities</td>
+<td>A Supabase identity without a principal confers nothing (<code>/no-access</code>); Ghost members are a separate system and are never accepted</td>
+<td>pgTAP; E2E AT-03</td>
+</tr>
+<tr>
+<td>Roles</td>
+<td>Owner: principals, agents, tokens. Owner and managing editor: agent grants, source deletion, audit trail. Editors: editorial work. Staff can update only the columns the workflow changes (column-level grants): submissions, agent proposals, content IDs, provenance and source records cannot be rewritten after insert. Who reviewed or decided is stamped by the database, never taken from the request</td>
+<td>pgTAP <code>01</code>, <code>02</code>; E2E</td>
+</tr>
+<tr>
+<td>Agents</td>
+<td>Named principals; tokens <code>sca_&lt;prefix&gt;_&lt;secret&gt;</code> stored as SHA-256; scopes per token; items only when granted; no access to pitches or rights; sources only through <code>app.agent_item_sources</code>, which redacts in SQL; cannot update items, approve proposals or insert anything that looks reviewed (column-level insert grants); can record only <code>agent.*</code> audit events. Revoking an agent is final and revokes every token it holds</td>
+<td>pgTAP <code>03_agent_access</code>; E2E gateway suite</td>
+</tr>
+<tr>
+<td>Public intake</td>
+<td><code>anon</code> can execute exactly one function, <code>app.submit_pitch</code>: consent-gated, bounded fields, receipt only, honeypot, no uploads; 5 per client per hour and 200 per hour overall, serialized with an advisory lock so bursts cannot exceed either limit. The client is a keyed daily hash of the address that the nearest of <code>DESK_TRUSTED_PROXY_HOPS</code> proxies appended (required in production; with 0, all clients share one bucket)</td>
+<td>pgTAP <code>04_…</code>; E2E; units</td>
+</tr>
+<tr>
+<td>Audit</td>
+<td>Append-only <code>private.audit_events</code> (update, delete and truncate refused), actor derived from the bound identity, request ID on every row including trigger-written rows. Recorded: every gateway request that carries a well-formed token, intake submissions and throttling, pitch decisions, item status, owner and Ghost-link changes, sources, rights, proposals, grants, staff and agent principals, tokens, and refused desk actions. Transport rejections and requests without a token shape are logged, not audited, so anonymous traffic cannot grow the trail</td>
+<td>pgTAP <code>04_…</code>; E2E</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td>Nonce CSP with <code>strict-dynamic</code>, <code>frame-ancestors &#39;none&#39;</code>, <code>object-src &#39;none&#39;</code>, <code>base-uri &#39;none&#39;</code>; HSTS, nosniff, <code>Referrer-Policy: same-origin</code>, COOP/CORP, Permissions-Policy; no <code>x-powered-by</code></td>
+<td>E2E headers test; unit tests</td>
+</tr>
+<tr>
+<td>Secrets</td>
+<td>No <code>NEXT_PUBLIC_</code> variables; the app refuses to start with a Supabase secret key in its environment; the client bundle is scanned for secret shapes and the literal local secret values</td>
+<td><code>pnpm desk:build</code> (bundle scan)</td>
+</tr>
+<tr>
+<td>Server Actions</td>
+<td>Next.js origin check (CSRF), 1 MB body limit, stable <code>NEXT_SERVER_ACTIONS_ENCRYPTION_KEY</code>; every action re-checks the session and runs under RLS</td>
+<td>Code review; E2E</td>
+</tr>
+</tbody></table></div>
+<p><strong>Trust boundary to know about.</strong> The desk server binds identities with <code>set_config</code>. Anyone who can run arbitrary SQL on the <code>desk_app</code> connection could bind any identity, exactly as with PostgREST&#39;s trusted claims. The mitigations are a server-only connection string, parameterized SQL only (lint-enforced) and principal status checks that make revocation effective even for a forged binding.</p>
+<h2 id="agent-gateway-v1">Agent gateway v1</h2>
+<p><code>POST /api/agent/v1</code> with <code>Content-Type: application/json</code> (512 KiB limit) and <code>Authorization: Bearer sca_…</code>. Requests follow <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/contracts/agent-tools.schema.json">contracts/agent-tools.schema.json</a> (schema version 1.0); <code>requestId</code> must also be a safe identifier (letters, digits and <code>. _ : -</code>). The order of checks is fixed: transport; pre-database guards (no token shape, no database work; 20 failed authentications per client per minute; at most 4 concurrent gateway transactions per instance, 32 queued); authentication inside the database (revocation is immediate); the per-agent budget (<code>DESK_AGENT_RATE_PER_MINUTE</code>, default 120, counted in the database); contract; token scope; then Row Level Security for every object. Every request past the token-shape check is written to the audit trail with its <code>requestId</code>.</p>
+<p>Successful responses:</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-json">{ &quot;schemaVersion&quot;: &quot;1.0&quot;, &quot;requestId&quot;: &quot;req-…&quot;, &quot;ok&quot;: true, &quot;tool&quot;: &quot;items.read&quot;, &quot;result&quot;: { &quot;…&quot;: &quot;…&quot; } }
+</code></pre>
+<p>Errors:</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-json">{ &quot;schemaVersion&quot;: &quot;1.0&quot;, &quot;requestId&quot;: &quot;req-…&quot;, &quot;ok&quot;: false, &quot;error&quot;: { &quot;code&quot;: &quot;contract_violation&quot;, &quot;message&quot;: &quot;…&quot;, &quot;details&quot;: [] } }
+</code></pre>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Result</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>briefs.list</code></td>
+<td><code>briefs[]</code> (<code>briefId</code> = content ID, title, summary, section, format, status, <code>dueOn</code>), <code>nextCursor</code></td>
+<td>Granted, active items only; keyset pagination, <code>limit</code> 1–50</td>
+</tr>
+<tr>
+<td><code>items.read</code></td>
+<td><code>item</code> (no Ghost ID, only <code>ghostLinked</code>), <code>sources[]</code></td>
+<td>Sources marked &quot;Agents may use&quot; in full; &quot;redacted&quot; ones as <code>{ sourceId, sourceType, redacted: true }</code>; staff-only sources never appear</td>
+</tr>
+<tr>
+<td><code>drafts.propose</code></td>
+<td><code>draftId</code>, <code>jobId</code>, <code>status</code>, <code>replayed</code></td>
+<td>Requires <code>idempotencyKey</code>. Cited <code>sourceIds</code> must exist on the brief and be visible. Same key and same arguments return the original (200, <code>replayed: true</code>); same key with different arguments is <code>409 idempotency_conflict</code>. A proposal never publishes</td>
+</tr>
+<tr>
+<td><code>jobs.read</code></td>
+<td><code>state</code> (<code>waiting_for_review</code>, <code>accepted</code>, <code>rejected</code>) with a plain-language <code>message</code></td>
+<td>Jobs are the agent&#39;s own proposals</td>
+</tr>
+<tr>
+<td><code>drafts.revise</code>, <code>social.propose</code></td>
+<td><code>501 not_available</code></td>
+<td>Need review snapshots (SC-008) and durable jobs (SC-011)</td>
+</tr>
+</tbody></table></div>
+<p>Status codes: 200/201 success, 400 <code>invalid_json</code>, <code>contract_violation</code> (unknown tools such as <code>posts.publish</code> or <code>members.export</code> stop here) or <code>invalid_request_id</code>, 401 <code>unauthenticated</code> (with <code>WWW-Authenticate</code>), 403 <code>insufficient_scope</code>, 404 <code>not_found</code> (also for items that exist but are not granted), 409 <code>idempotency_conflict</code> or <code>brief_closed</code>, 413, 415, 422 <code>unknown_source_ids</code> or <code>unknown_section</code>, 429 <code>rate_limited</code> (with <code>Retry-After</code>), 501, 503 <code>busy</code> or <code>unavailable</code> (retry with the same idempotency key).</p>
+<p>Example (local):</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">curl -s http://127.0.0.1:3000/api/agent/v1 -H &quot;Authorization: Bearer $SC_AGENT_TOKEN&quot; -H &#39;Content-Type: application/json&#39; -d &#39;{&quot;schemaVersion&quot;:&quot;1.0&quot;,&quot;requestId&quot;:&quot;req-local-0001&quot;,&quot;tool&quot;:&quot;briefs.list&quot;,&quot;arguments&quot;:{&quot;limit&quot;:10}}&#39;
+</code></pre>
+<h2 id="operator-cli">Operator CLI</h2>
+<p>For local work and first-owner bootstrap only (it uses the database owner URL and refuses non-local hosts unless <code>--allow-remote</code> is passed). In production the owner manages agents from <strong>Settings</strong>.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>pnpm --filter @sc/desk staff add --email … --name … --role owner|managing_editor|editor</code></td>
+<td>Create the auth user (admin API) and the staff principal</td>
+</tr>
+<tr>
+<td><code>pnpm --filter @sc/desk staff identity --email …</code></td>
+<td>A sign-in identity with no desk access (testing)</td>
+</tr>
+<tr>
+<td><code>pnpm --filter @sc/desk staff disable --email …</code> / <code>staff list</code></td>
+<td>Disable a staff member / list staff</td>
+</tr>
+<tr>
+<td><code>pnpm --filter @sc/desk agent create --name … --scopes briefs.list,items.read,drafts.propose,jobs.read [--grant SC-2026-001]</code></td>
+<td>Create an agent and print its token once</td>
+</tr>
+<tr>
+<td><code>pnpm --filter @sc/desk agent grant|revoke|list</code></td>
+<td>Manage grants and tokens</td>
+</tr>
+</tbody></table></div>
+<h2 id="tests">Tests</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Command</th>
+<th>What it proves</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Database policies</td>
+<td><code>pnpm db:test</code></td>
+<td>108 pgTAP assertions: grants, RLS, column privileges, functions, integrity triggers, workflow, audit (AT-25, AT-03, AT-04, AT-06, AT-07, AT-12, AT-13 at the database layer). Mutation-tested: each of 11 deliberate breaks fails a named assertion. Correct on fresh and used databases</td>
+</tr>
+<tr>
+<td>Units</td>
+<td><code>pnpm --filter @sc/desk test</code></td>
+<td>67 tests: next actions, CSP, redirects, client addresses, tokens, redaction, hashing, cursors, rate guards, validation, every contract example</td>
+</tr>
+<tr>
+<td>End to end</td>
+<td><code>pnpm desk:e2e</code></td>
+<td>24 tests: real sign-in through Mailpit, the pitch-to-release journey, access control, hostile input, the gateway over HTTP, phone layouts; axe WCAG 2.2 AA on every page visited</td>
+</tr>
+<tr>
+<td>Bundle</td>
+<td><code>pnpm desk:build</code></td>
+<td>No secret shapes or local secret values in anything shipped to browsers</td>
+</tr>
+</tbody></table></div>
+<p>CI runs all of it in the <code>desk</code> job of <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/.github/workflows/ci.yml"><code>.github/workflows/ci.yml</code></a> against a local Supabase stack.</p>
+<h2 id="telemetry-and-logs">Telemetry and logs</h2>
+<ul>
+<li><strong>Traces:</strong> OpenTelemetry through <code>@vercel/otel</code>; set <code>OTEL_EXPORTER_OTLP_ENDPOINT</code> (and the usual <code>OTEL_*</code> variables) to export. Without them spans exist for correlation only.</li>
+<li><strong>Logs:</strong> pino JSON to stdout with <code>request_id</code>, <code>trace_id</code> and <code>span_id</code>; emails, tokens, cookies and private contacts are redacted by path and are not logged in the first place. Agent requests log the token prefix, never the token.</li>
+<li><strong>Audit:</strong> <code>private.audit_events</code>, readable by owners and managing editors in Settings and summarized on Today (&quot;What failed?&quot;).</li>
+<li><strong>Health:</strong> <code>GET /api/health</code> returns status and version only.</li>
+</ul>
+<h2 id="known-limits-and-next-steps">Known limits and next steps</h2>
+<ul>
+<li>Staff invitations and role changes from the UI; account recovery is the magic link itself.</li>
+<li>An MCP adapter for agents must reuse this gateway and its policies (SC-009 continuation).</li>
+<li>The flood guards are per instance; with several instances, put a shared limiter (or the platform&#39;s) in front.</li>
+<li>Audit retention: the trail is append-only and unbounded; a retention and archive procedure belongs with exports and backups (SC-014).</li>
+<li>The global intake ceiling (200 an hour) protects storage but lets a determined sender pause intake for an hour. A privacy-respecting challenge (for example Cloudflare Turnstile) is a founder decision before launch.</li>
+<li>Review snapshots and stale detection (SC-008) before any social or newsletter work.</li>
+<li>Hosted Supabase verification of the role-membership grants and transaction pooling (ADR-003 review triggers, SC-015).</li>
+</ul>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/DESK.md">docs/DESK.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/d09120798af3ca967b65655aeb7811ea2bb9ea2c">d091207</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
