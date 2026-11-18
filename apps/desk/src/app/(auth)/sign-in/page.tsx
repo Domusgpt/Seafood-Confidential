@@ -32,7 +32,8 @@ export default async function SignInPage({ searchParams }: PageProps<'/sign-in'>
         </div>
         {linkError ? (
           <div className="notice notice--error" role="alert">
-            That sign-in link is invalid or has expired. Request a new one below.
+            That sign-in link is invalid or has expired. Request a new one below, and open it in this same
+            browser.
           </div>
         ) : null}
         {signedOut ? (
