@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-11-18T21:12:40.938Z",
+  "updatedAt": "2026-11-18T21:14:53.826Z",
   "repo": "https://github.com/Domusgpt/Seafood-Confidential",
   "previews": [
     {
       "slug": "claude-intelligent-cannon-d1nqq6",
       "branch": "claude/intelligent-cannon-d1nqq6",
-      "commit": "d9a479f65d4e60f0aa69a77e1eb724aeda4d3558",
-      "updatedAt": "2026-11-18T21:12:40.938Z",
+      "commit": "ee55329ab715e29babd09c7c299dff6d46d9f2b3",
+      "updatedAt": "2026-11-18T21:14:53.826Z",
       "version": "0.4.0",
       "tickets": {
         "in_progress": 10,
