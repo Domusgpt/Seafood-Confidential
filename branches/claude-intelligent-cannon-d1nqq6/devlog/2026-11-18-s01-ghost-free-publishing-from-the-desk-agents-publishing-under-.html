@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Ghost-free publishing from the desk, agents publishing under policy, and a $1-a-month cost plan · Seafood Confidential project hub</title>
+<meta name="description" content="Dev log DL-20261118-04.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.4.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/6a0ad37d9d6c21ab1e3092c21ea2542f52aa5f44">Commit <code>6a0ad37</code></a>
+      <span>Built Nov 18, 2026, 4:10 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html">Docs</a></li><li><a href="../devlog/index.html" aria-current="page">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<article class="prose" style="max-width:none">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Entry details" style="max-width:78ch"><table><tbody><tr><th scope="row">Entry</th><td>DL-20261118-04</td></tr><tr><th scope="row">Session</th><td>S01, turn 4</td></tr><tr><th scope="row">Version</th><td>0.4.0</td></tr><tr><th scope="row">Branch</th><td>claude/intelligent-cannon-d1nqq6</td></tr><tr><th scope="row">Base commit</th><td>7f6a37ced83b</td></tr><tr><th scope="row">Started</th><td>Nov 18, 2026, 2:45 PM EST</td></tr><tr><th scope="row">Recorded</th><td>Nov 18, 2026, 4:07 PM EST</td></tr><tr><th scope="row">Tickets</th><td>SC-001, SC-002, SC-003, SC-004, SC-009, SC-011, SC-017, SC-018</td></tr><tr><th scope="row">Workstreams</th><td>WS-PLAN, WS-ENV</td></tr><tr><th scope="row">Status</th><td>complete</td></tr></tbody></table></div>
+  <div style="max-width:78ch"><h1 id="ghost-free-publishing-from-the-desk-agents-publishing-under-policy-and-a-1-a-month-cost-plan">Ghost-free publishing from the desk, agents publishing under policy, and a $1-a-month cost plan</h1>
+<h2 id="summary">Summary</h2>
+<p>The founders asked, in order:</p>
+<ul>
+<li>for a cost and accounts note for Dave, and how to give the session their Claude API key;</li>
+<li>for <strong>Ghost and agent publishing in scope, without hindering human work</strong>;</li>
+<li>to check that no service is wasted and nothing could be cheaper;</li>
+<li>in the end, to <strong>&quot;go ghost free and cheap to start.&quot;</strong></li>
+</ul>
+<p>This turn records that decision (ADR-005) and builds it:</p>
+<ul>
+<li><strong>Writing:</strong> story text is written in the desk, with revisions.</li>
+<li><strong>Publishing:</strong> publishing renders and deploys our own static site (Firebase Hosting in production, a local folder in tests). The newsletter goes through Kit&#39;s free plan.</li>
+<li><strong>Agents:</strong> agents publish their own proposals only inside the owner&#39;s switches and checks that the database evaluates.</li>
+<li><strong>Cost:</strong> the plan is now about <strong>$1 a month</strong> to start, down from $84–99 a month plus $588 upfront.</li>
+</ul>
+<h2 id="what-changed">What changed</h2>
+<p><strong>Agent lab key</strong> (pushed early, commit 7f6a37c):</p>
+<ul>
+<li>The lab reads <code>SC_AGENT_LAB_API_KEY</code> first, so a key added for the lab never doubles as Claude Code&#39;s own sign-in.</li>
+<li>It ignores a host-set <code>ANTHROPIC_BASE_URL</code>.</li>
+<li><code>lab --check-key</code> confirms the key, the model and billing for well under a cent. It was verified offline against a stub on six paths.</li>
+</ul>
+<p><strong>Database</strong> (<code>supabase/migrations/20261118200000_publishing.sql</code>):</p>
+<ul>
+<li>Articles and append-only revisions, with optimistic concurrency.</li>
+<li>Publishing policy and per-section lanes: master switch off by default, every lane closed.</li>
+<li>Durable publish jobs: one in flight per story, one site build at a time through an advisory lock and lease.</li>
+<li>Agent gates evaluated in SQL; staff warnings; <code>desk_publisher</code> role.</li>
+<li>Snapshot of the publishable site; at-most-once email marker.</li>
+<li>A citable flag on sources.</li>
+<li>74 new pgTAP tests (184 in total).</li>
+</ul>
+<p><strong>Desk:</strong></p>
+<ul>
+<li>A Markdown story editor with preview, and a Publishing panel with warnings, history, retry and cancel.</li>
+<li>Publishing settings for the owner (agent tokens can now carry the publish scope) and a <code>/publishing</code> log with a stop switch.</li>
+<li>Citable-source toggles.</li>
+<li>Next actions now point to the text and the panel.</li>
+<li>The executor builds the site, deploys it and sends the Kit broadcast.</li>
+<li>The gateway gains <code>drafts.publish</code>, and <code>jobs.read</code> now covers publish jobs.</li>
+</ul>
+<p><strong>Public site:</strong></p>
+<ul>
+<li>Home, sections, stories, RSS, sitemap and 404, in the Working Waterfront design.</li>
+<li>Self-hosted fonts and the WebGL bathymetry masthead.</li>
+<li>Strict CSP, plus the AI label and disclosure on agent stories.</li>
+</ul>
+<p><strong>Agent lab:</strong> a <code>publish</code> scenario with five checks, and a <code>publish_draft</code> tool.</p>
+<p><strong>Docs:</strong></p>
+<ul>
+<li>ADR-005; ADR-001 marked superseded in part and ADR-004 superseded; AGENTS.md publishing rules.</li>
+<li>Product spec note; AT-27 to AT-30 added and six ATs reworded; backlog SC-017 and SC-018 added, four tickets re-scoped.</li>
+<li>HOSTING_AND_COSTS rewritten with verified prices; DEPLOYMENT (Firebase Hosting, Kit, Resend SMTP); DESK publishing section; CHANGELOG 0.4.0.</li>
+</ul>
+<h2 id="decisions">Decisions</h2>
+<p><strong>ADR-005</strong>, accepted by Paul with Dave to confirm:</p>
+<ul>
+<li>No Ghost at launch. The desk is the only editor.</li>
+<li>Firebase Hosting for the public site, Kit for the newsletter.</li>
+<li>Agents publish without per-post approval, but only where the owner opened a section, only stories nobody has touched, and only if every check passes. Anyone on staff can stop them.</li>
+<li>People are warned and never blocked. Email goes out at most once.</li>
+</ul>
+<p>The cost review answered &quot;do we need these services?&quot; one line at a time. The domain, Supabase, Cloud Run and the API key are needed; Ghost, Buffer, Google Workspace, Transistor and Supabase Pro (until real data) are not needed to start.</p>
+<h2 id="problems-and-resolutions">Problems and resolutions</h2>
+<ul>
+<li><strong>A Ghost adapter was built first.</strong> It covered JWT auth, collision handling, internal tags and signed webhooks, verified against a real Ghost 6.78 container. The decision then went Ghost-free, so the adapter was dropped before commit. Its findings are kept in ADR-005.</li>
+<li><strong>New functions inherited <code>PUBLIC</code> execute.</strong> The existing structure test caught it. The migration now revokes every privilege on its functions before granting.</li>
+<li><strong>Concurrent publishing could drop stories.</strong> Two jobs publishing at once could each deploy a snapshot missing the other&#39;s story, because a deploy is a full snapshot. A site lease in <code>claim_publish_job</code> makes the second wait (&quot;busy&quot;).</li>
+<li><strong>A footer rule hid the signup text.</strong> It dimmed the newsletter box text on the light theme (2.44:1); axe caught it.</li>
+<li><strong>A stale server broke the first test run.</strong> An old <code>next start</code> from turn 3 kept port 3000, so the tests mixed builds. The process was found with <code>ps</code> (<code>ss</code> is not installed) and stopped.</li>
+<li><strong>Sign-in tests reused a spent link.</strong> A throttled second request for the same address sent nothing, and the helper picked up the previous email&#39;s link. The helper now waits for a new message, and the local auth limits were raised.</li>
+</ul>
+<h2 id="evidence">Evidence</h2>
+<ul>
+<li>EV-0031: pgTAP 184/184.</li>
+<li>EV-0032: Vitest 87/87.</li>
+<li>EV-0033: Playwright 30/30, including axe on the public pages.</li>
+<li>EV-0034: agent-lab self-test 18/18.</li>
+<li>EV-0035: container image 0.4.0 smoke test and bundle scan.</li>
+<li>EV-0036: visual review of the public site.</li>
+<li>EV-0037: official pricing check.</li>
+</ul>
+<p>The Claude lab runs are still UNRUN: the key is now in the environment, but this session cannot see it.</p>
+<h2 id="risks-and-open-questions">Risks and open questions</h2>
+<ul>
+<li><strong>Untested live services.</strong> Live Firebase Hosting and Kit have not been exercised; they are tested against fakes, and their first live runs are part of SC-015.</li>
+<li><strong>Pending confirmations.</strong> Dave has to confirm ADR-005. The founders choose which sections, if any, to open to agents, and the daily cap.</li>
+<li><strong>Supabase Free.</strong> It has no backups. Before real data goes in, move to Pro or build the nightly Cloud Storage backup (SC-014).</li>
+<li><strong>Public repository.</strong> The repository is public, so plans and costs are readable by anyone. Make it private (GitHub Pro $4/month) if that matters.</li>
+<li><strong>One unexplained 500.</strong> The container answered 500 once on its very first gateway request. It could not be reproduced in two cold starts; CI repeats the check.</li>
+</ul>
+<h2 id="next-actions">Next actions</h2>
+<ol>
+<li>Run the agent lab with Claude (new session, key in <code>SC_AGENT_LAB_API_KEY</code>): <code>--check-key</code>, then all four scenarios, and record AT-17 and the costs.</li>
+<li>Have Dave create the accounts in the revised note and confirm ADR-005, then do the first live deploy (SC-015).</li>
+<li>Build the nightly backup to Cloud Storage (SC-014), scheduled publication and a public corrections note (SC-013).</li>
+</ol>
+</div>
+  <h2>Evidence referenced</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">ID</th><th scope="col">Result</th><th scope="col">Summary</th><th scope="col">Observed</th></tr></thead><tbody><tr><td class="id"><a href="evidence.html#EV-0031">EV-0031</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Database policy tests 184/184, 74 of them new for ADR-005 publishing (supabase/tests/05_publishing.test.sql)</td><td>All pass. Articles: stale saves refused (SC409), revisions append-only, no direct staff writes. Agents: no drafts.publish scope refused; master switch and closed lane refuse with named gates; every content gate refuses alone (quote, phone, private contact from a staff-only source, image, redacted or uncitable source, too few sources, length, raw HTML, opinion format, a story a person wrote); daily limit; email permission. Idempotent replay and SC409 conflicts; one job in flight per story; one site build at a time (busy). Publisher role only: claim, snapshot, mark email attempt, complete; no table access. Stop switch by any staff cancels queued agent jobs. Uncertain email outcome needs attention and a retry knows the email may have gone out. The structure test caught new functions inheriting PUBLIC execute; fixed by revoking all privileges on them.</td></tr><tr><td class="id"><a href="evidence.html#EV-0032">EV-0032</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Unit tests 87/87, including the static site build, local and Firebase Hosting deploys and the Kit client against protocol fakes</td><td>Markdown escapes raw HTML and drops javascript: links; pages, feed, sitemap and 404 are built; AI label and disclosure only on agent stories; opinion label shown. Local deploy swaps atomically and refuses path escapes. Firebase: version, populateFiles with SHA-256 of gzip, upload only required hashes, finalize, release; a failed release is uncertain, an earlier failure certain. Kit: X-Kit-Api-Key, scheduled non-public broadcast, optional segment; 422 is certain, a lost connection uncertain (never resent). Live Firebase and Kit calls are UNRUN.</td></tr><tr><td class="id"><a href="evidence.html#EV-0033">EV-0033</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>End-to-end tests 30/30 (24 existing plus 6 publishing) against the production build, local Supabase and the local public site</td><td>Owner opens the trade lane and issues a token with drafts.publish; the agent reads, proposes and publishes (201, succeeded) and the public page shows the AI label, the disclosure and the citable sources; feed lists it; a story a person wrote is refused (brief_untouched_by_people); a stale save from a second browser is refused and the newer text kept; a person publishes after acknowledging an uncleared-photo warning, updates and unpublishes (page 404); an editor stops agent publishing and the next agent request is refused (master_switch). Public pages pass axe WCAG 2.2 AA; the site sends its CSP header. Two harness fixes: magic-link sign-in now waits for a fresh email (a throttled second request reused a spent link) and local auth rate limits were raised for test runs.</td></tr><tr><td class="id"><a href="evidence.html#EV-0034">EV-0034</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Agent lab harness self-test 18/18 checks (13 system) including the new publish scenario; scripted driver, not an agent result</td><td>draft 5/5, injection 5/5, revocation 3/3, publish 5/5: the scripted run proposed and published through the gateway, the public page carried the AI label and disclosure, nothing private leaked, and the owner&#39;s settings were restored after the run. Real Claude runs remain UNRUN until a session has the key.</td></tr><tr><td class="id"><a href="evidence.html#EV-0035">EV-0035</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Container image 0.4.0 builds (387 MB) and serves health, the pitch form with CSP and the gateway&#39;s 401; site assets are inside the image</td><td>Runs as node; no .env files in the image; /api/health reports 0.4.0; /pitch 200 with a nonce CSP; POST /api/agent/v1 without a token 401 (one earlier 500 on the very first request could not be reproduced in two cold starts; CI repeats the check); SITE_ASSETS_DIR points at the bundled fonts, styles and motif. Bundle scan: 45 shipped files, no findings.</td></tr><tr><td class="id"><a href="evidence.html#EV-0036">EV-0036</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Visual check of the public site: desktop light and dark and iPhone 13, home, agent story and person story</td><td>0 axe violations in 9 views after fixing one footer rule that dimmed the newsletter box text (2.44:1); no horizontal overflow; WebGL bathymetry running on the home masthead; self-hosted Fraunces and Source Sans 3 loaded; AI label, disclosure, sources and signup render as designed.</td></tr><tr><td class="id"><a href="evidence.html#EV-0037">EV-0037</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Startup stack prices and limits checked on official vendor pages (18 Nov 2026) for the Ghost-free plan</td><td>See docs/planning/HOSTING_AND_COSTS.md. Key facts: Kit free to 10,000 subscribers with API; Supabase Free pauses after a week of low activity and has no backups; Supabase&#39;s built-in mailer is not usable for real sign-ins (custom SMTP such as Resend free 3,000/month); Cloud Run domain mapping is a preview; GitHub repository is public, so Actions and Pages are free and everything in it is public.</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/6a0ad37d9d6c21ab1e3092c21ea2542f52aa5f44">6a0ad37</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

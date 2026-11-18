@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>ADR-005 Ghost-free publishing from the desk, with agents publishing under policy · Seafood Confidential project hub</title>
+<meta name="description" content="ADR-005 Ghost-free publishing from the desk, with agents publishing under policy (decisions/ADR-005-desk-publishing-without-ghost.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.4.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/6a0ad37d9d6c21ab1e3092c21ea2542f52aa5f44">Commit <code>6a0ad37</code></a>
+      <span>Built Nov 18, 2026, 4:10 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="desk.html">Operations desk</a></li><li><a href="deployment.html">Deploying the desk and the public site</a></li><li><a href="hosting-and-costs.html">Hosting and running costs</a></li><li><a href="agent-lab.html">Agent lab (Claude against the gateway)</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li><li><a href="adr-003.html">ADR-003 operations desk foundation stack and data access</a></li><li><a href="adr-004.html">ADR-004 desk-driven Ghost drafts and one-click human publishing</a></li><li><a href="adr-005.html" aria-current="page">ADR-005 Ghost-free publishing from the desk, with agents publishing under policy</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="adr-005-ghost-free-publishing-from-the-desk-with-agents-publishing-under-policy">ADR 005 Ghost-free publishing from the desk, with agents publishing under policy</h1>
+<p>Date: November 18, 2026. Status: <strong>Accepted</strong> by Paul (founder) in session S01, turn 4. Dave should confirm as co-founder (D04 launch scope, D06 publication authority). Supersedes <a href="adr-004.html">ADR-004</a> (proposed). It also replaces the part of <a href="adr-001.html">ADR-001</a> that made Ghost the publishing platform at launch.</p>
+<h2 id="context">Context</h2>
+<p>The founders asked for three things in turn 4:</p>
+<ol>
+<li>&quot;I want ghost and agents publishing. To be in the scope I don&#39;t want this hindered for human work to get added.&quot;</li>
+<li>&quot;Go over these costs and make sure we aren&#39;t wasting or can&#39;t do this cheaper and better to start.&quot;</li>
+<li>After a cost review showed that Ghost(Pro) was the largest recurring cost and was replaceable: &quot;Let&#39;s go ghost free and cheap to start.&quot;</li>
+</ol>
+<p>The kit&#39;s original rules said that agents only draft and that Ghost is canonical for articles, the newsletter and members. ADR-004 had proposed automatic Ghost drafts with one-click human publishing, and had rejected autonomous agent publishing. The founders have now decided otherwise. This ADR records that decision and the safeguards that make it workable.</p>
+<h2 id="decision">Decision</h2>
+<h3 id="1-the-desk-publishes-the-site-itself-no-ghost-at-launch">1. The desk publishes the site itself (no Ghost at launch)</h3>
+<ul>
+<li><strong>Writing:</strong> stories are written in the desk (<code>app.articles</code>). Every save is kept (<code>app.article_revisions</code>). A save from an outdated page is refused, so a newer edit is never lost (AT-08).</li>
+<li><strong>Rendering:</strong> publishing renders the whole public site from the published articles: home, sections, stories, RSS feed, sitemap and a 404 page.</li>
+<li><strong>Deploying:</strong><ul>
+<li>Production deploys to <strong>Firebase Hosting</strong> through its REST API. Hosting is free, has a CDN and serves our own domain. No key file is needed on Cloud Run.</li>
+<li>Development and the tests write the site into a local folder.</li>
+<li>Every deploy is a full snapshot, so repeating one is harmless. One build runs at a time, so two publications can never drop each other&#39;s story.</li>
+</ul>
+</li>
+<li><strong>Design:</strong> the site follows the Working Waterfront visual codex. It uses self-hosted fonts, the bathymetry motif on the home page, a strict CSP with no inline script or style, and a WCAG 2.2 AA scan of every page type.</li>
+<li><strong>Newsletter:</strong> Kit&#39;s free plan, free up to 10,000 subscribers per kit.com/pricing on 18 November 2026. The site carries the signup form. A story is emailed only when the person publishing ticks the box, or, if the owner allows it, when an agent asks.</li>
+<li><strong>Email is at most once:</strong><ul>
+<li>The desk records the attempt before calling Kit.</li>
+<li>An uncertain outcome becomes &quot;needs attention&quot;.</li>
+<li>A retry never sends again (AT-14).</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-agents-publish-without-per-post-approval-inside-switches-and-checks-the-owner-controls">2. Agents publish without per-post approval, inside switches and checks the owner controls</h3>
+<p>An agent publishes only its own proposal, through the gateway tool <code>drafts.publish</code>, and only if all of these hold. The database evaluates every condition itself, in <code>app.agent_request_publish</code>, so an application bug cannot skip one:</p>
+<ul>
+<li><strong>Switches (owner):</strong><ul>
+<li>The master switch is on. It is off by default, and anyone on staff can turn it off. Turning it off cancels any agent jobs still queued.</li>
+<li>The story&#39;s section is open to agents. Every section starts closed.</li>
+<li>The agent&#39;s token carries the <code>drafts.publish</code> scope, and the story is granted to that agent.</li>
+</ul>
+</li>
+<li><strong>The story is untouched by people:</strong><ul>
+<li>Nobody has written or edited its text.</li>
+<li>It is still Commissioned or Drafting.</li>
+<li>No other publish job for it is open.</li>
+</ul>
+</li>
+<li><strong>Content checks:</strong><ul>
+<li>It is reporting, in the explainer or reported-feature format.</li>
+<li>It cites at least the minimum number of sources (2 by default).</li>
+<li>Every cited source is readable by the agent and marked <strong>citable</strong> by staff.</li>
+<li>It contains no direct quotations, no email addresses, no phone numbers and none of the story&#39;s private contacts.</li>
+<li>It contains no images and no HTML.</li>
+<li>Its length is within limits.</li>
+</ul>
+</li>
+<li><strong>Volume and email:</strong> the agent is under the daily cap (5 by default), and email goes out only if the owner allows agents to email.</li>
+</ul>
+<p>Every refusal returns the list of failed checks and is audited. When the job actually runs, it checks the switches and &quot;people first&quot; again, so a job queued just before someone turned agent publishing off never publishes. Agent stories carry a visible &quot;Written by an AI agent&quot; label and the owner&#39;s disclosure text (AT-24).</p>
+<h3 id="3-people-are-never-blocked-and-their-work-wins">3. People are never blocked, and their work wins</h3>
+<ul>
+<li><strong>Warnings:</strong> staff publishing returns warnings, such as a missing source, an uncleared photo, or a direct quotation in agent-written text. One click acknowledges them and publishes. The acknowledgement is recorded with the job.</li>
+<li><strong>Who:</strong> owners and managing editors publish (D06). Every staff member can write.</li>
+<li><strong>People first:</strong> once a person has written or edited a story, agents cannot publish it.</li>
+<li><strong>Adopting proposals:</strong> a person can adopt an agent proposal as the starting text. It stays labelled as AI-written, and it counts as human work from then on.</li>
+</ul>
+<h3 id="4-separation-of-duties-in-the-database">4. Separation of duties in the database</h3>
+<ul>
+<li><strong>Who runs publishing:</strong> the site build and upload run in the desk server under a new role, <code>desk_publisher</code>. That role can only claim jobs, read the publishable snapshot and record outcomes. Agents can request a publication but can never run or complete one.</li>
+<li><strong>Writing articles:</strong> staff write articles only through <code>app.save_article</code> and <code>app.adopt_proposal</code>; there are no direct table writes.</li>
+<li><strong>Recording publication:</strong> a proposal can be marked published only by the publishing functions. The <code>private.stamp_review</code> trigger refuses it for every API role.</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<ul>
+<li><strong>Cost:</strong> monthly cash at launch drops from about $84–99 to about <strong>$1</strong> (the domain). See <a href="hosting-and-costs.html">docs/planning/HOSTING_AND_COSTS.md</a>.</li>
+<li><strong>What Ghost gave us that we must replace:</strong><ul>
+<li><strong>Member accounts and paywalls:</strong> no paid memberships or paywalled articles at launch. Kit handles paid newsletters if they are wanted (3.5% plus 30¢ per transaction on its free plan).</li>
+<li><strong>Theme ecosystem:</strong> the site design is ours to maintain.</li>
+<li><strong>Hosted editor:</strong> the desk now has the only article editor. That keeps faith with the kit&#39;s rule against two competing editors.</li>
+</ul>
+</li>
+<li><strong>Kit superseded:</strong> kit rules that assumed Ghost need replacing: AGENTS.md (updated), the product specification and the acceptance matrix. AT-02, AT-10, AT-19 and AT-26 now refer to the desk and Kit (docs/ACCEPTANCE_TESTS.md).</li>
+<li><strong>Ghost columns:</strong> <code>ghost_post_id</code> and <code>ghost_updated_at</code> stay in the schema, reserved and unused, in case a Ghost destination is wanted later.</li>
+<li><strong>Live services not yet exercised:</strong> Firebase Hosting and Kit are verified with protocol-level fakes only. Their first live runs belong to SC-015, with the founders&#39; accounts.</li>
+</ul>
+<h2 id="alternatives-considered">Alternatives considered</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Why not now</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ghost(Pro) Publisher ($29/mo yearly, $35 monthly; $46/mo past 1,000 members)</td>
+<td>The most expensive line. Its strengths (memberships, themes, editor) are not needed to start.</td>
+</tr>
+<tr>
+<td>Self-hosted Ghost</td>
+<td>Needs MySQL and Mailgun, so it saves nothing and adds operations work.</td>
+</tr>
+<tr>
+<td>Beehiiv</td>
+<td>The free plan has no custom domain; paid plans start at $49/mo.</td>
+</tr>
+<tr>
+<td>MailerLite</td>
+<td>The free plan is 250 subscribers, and it cannot send through the API.</td>
+</tr>
+<tr>
+<td>Buttondown</td>
+<td>Free only up to 100 subscribers; an archive on our own domain is +$29/mo.</td>
+</tr>
+<tr>
+<td>The desk serving public pages from Cloud Run</td>
+<td>Simpler to build, but the site would go down whenever the database pauses (Supabase Free) or the server is cold. A static site stays up.</td>
+</tr>
+<tr>
+<td>Fully autonomous agents with no switches or checks</td>
+<td>Rejected: invented quotes, misstatements about named businesses and image rights cannot be undone once published. The switches and checks above are the founders&#39; chosen guardrails.</td>
+</tr>
+</tbody></table></div>
+<p>A Ghost destination was prototyped and verified against Ghost 6.78 before this decision. The facts it established are kept here for a possible future adapter:</p>
+<ul>
+<li>Admin API keys in Ghost 6 are returned as <code>id:secret</code> inside the <code>secret</code> field.</li>
+<li>Short-lived HS256 tokens work.</li>
+<li>A stale <code>updated_at</code> returns 409 <code>UpdateCollisionError</code>.</li>
+<li>Internal tags (<code>#sc-…</code>, slug <code>hash-sc-…</code>) find posts for reconciliation.</li>
+<li>Webhooks are signed as <code>sha256=&lt;hex&gt;, t=&lt;ms&gt;</code> over body plus timestamp.</li>
+</ul>
+<h2 id="review-triggers">Review triggers</h2>
+<p>Revisit this ADR in any of these cases:</p>
+<ul>
+<li>after the first month of agent publishing;</li>
+<li>if a correction is needed on an agent story;</li>
+<li>when paid memberships become a goal (re-evaluate Ghost or an equivalent);</li>
+<li>before raising the daily cap or opening more than two sections to agents.</li>
+</ul>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/decisions/ADR-005-desk-publishing-without-ghost.md">decisions/ADR-005-desk-publishing-without-ghost.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/6a0ad37d9d6c21ab1e3092c21ea2542f52aa5f44">6a0ad37</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
