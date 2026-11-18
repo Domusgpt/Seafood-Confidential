@@ -12,6 +12,11 @@ const schema = z.object({
   INTAKE_HASH_SECRET: z.string().min(32, 'use at least 32 random characters'),
   GHOST_ADMIN_URL: z.url().optional(),
   DESK_DB_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
+  // Supabase's shared pooler in transaction mode (port 6543) does not support prepared statements.
+  DESK_DB_PREPARE: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
   DESK_TRUSTED_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
   DESK_AGENT_RATE_PER_MINUTE: z.coerce.number().int().min(1).max(10_000).default(120),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
@@ -42,4 +47,4 @@ export function env(): DeskEnv {
   return cached;
 }
 
-export const DESK_VERSION = '0.2.0';
+export const DESK_VERSION = '0.3.0';

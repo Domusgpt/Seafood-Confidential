@@ -27,6 +27,7 @@ function pool(): postgres.Sql {
     const config = env();
     globalThis.__scDeskSql = postgres(config.DESK_DATABASE_URL, {
       max: config.DESK_DB_POOL_MAX,
+      prepare: config.DESK_DB_PREPARE,
       idle_timeout: 20,
       connect_timeout: 10,
       transform: postgres.camel,

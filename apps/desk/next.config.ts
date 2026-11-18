@@ -1,3 +1,5 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { NextConfig } from 'next';
 
 // Security headers that do not depend on the request. The nonce-based Content-Security-Policy is
@@ -20,6 +22,10 @@ const nextConfig: NextConfig = {
   // revocation must apply on the next request, and the CSP nonce needs per-request rendering.
   poweredByHeader: false,
   reactStrictMode: true,
+  // Self-contained server for the container image (apps/desk/Dockerfile); traced from the
+  // workspace root so packages/contracts and the kit's contract schema are included.
+  output: 'standalone',
+  outputFileTracingRoot: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..'),
   typedRoutes: true,
   serverExternalPackages: ['pino', 'postgres'],
   experimental: {
