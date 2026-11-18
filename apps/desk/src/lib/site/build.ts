@@ -230,7 +230,7 @@ function homePage(snapshot: SiteSnapshot, config: SiteConfig, v: string): string
   <section class="lead" aria-label="Top story">${storyCard(lead, true)}</section>
   ${rest.length ? `<section aria-labelledby="more-heading"><h2 id="more-heading" class="rule-heading">More stories</h2><div class="grid">${rest.map((s) => storyCard(s)).join('\n')}</div></section>` : ''}
 </div>`
-    : `<div class="wrap"><h1 class="page-title">Coming soon</h1><p class="lede">The first stories are on their way. Subscribe to hear when they land.</p>${signup(config, 'article')}</div>`;
+    : `<div class="wrap"><h1 class="page-title">Coming soon</h1><p class="lede">The first stories are on their way.${config.kitFormId ? ' Subscribe to hear when they land.' : ''}</p>${signup(config, 'article')}</div>`;
   return layout({
     config,
     assetVersion: v,

@@ -152,6 +152,11 @@ describe('buildSite', () => {
 
   it('shows a coming-soon page when nothing is published', () => {
     expect(file(buildSite(snapshot([]), config, [asset]), '/index.html')).toContain('Coming soon');
+    // Only offer to subscribe when there is a form to subscribe with.
+    expect(file(buildSite(snapshot([]), config, [asset]), '/index.html')).not.toContain('Subscribe');
+    expect(
+      file(buildSite(snapshot([]), { ...config, kitFormId: '123456' }, [asset]), '/index.html'),
+    ).toContain('Subscribe to hear when they land.');
   });
 
   it('marks a preview build on every page and keeps it out of search engines', () => {

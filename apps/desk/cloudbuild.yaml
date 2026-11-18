@@ -1,0 +1,24 @@
+# Builds the desk image in Cloud Build, with BuildKit (the Dockerfile's optional secret mount needs
+# it), from an uploaded source archive. Usage from the repository root (docs/LAUNCH_PREVIEW.md):
+#   git archive --format=tar.gz -o /tmp/desk-src.tar.gz HEAD
+#   gcloud builds submit /tmp/desk-src.tar.gz --config apps/desk/cloudbuild.yaml --region us-west1 \
+#     --substitutions _TAG=$(git rev-parse --short HEAD)
+steps:
+  - name: gcr.io/cloud-builders/docker
+    env: ['DOCKER_BUILDKIT=1']
+    args:
+      - build
+      - -f
+      - apps/desk/Dockerfile
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/desk:${_TAG}
+      - .
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/desk:${_TAG}
+substitutions:
+  _REGION: us-west1
+  _REPO: sc-desk
+  _TAG: local
+options:
+  machineType: E2_HIGHCPU_8
+timeout: 1800s

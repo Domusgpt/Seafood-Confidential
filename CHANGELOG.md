@@ -4,6 +4,34 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-18 · Session S01, turn 5 (preview launch) · `claude/intelligent-cannon-d1nqq6`
+
+The desk and the public site are live as a preview, for the founders to try. See [docs/LAUNCH_PREVIEW.md](docs/LAUNCH_PREVIEW.md).
+
+### Added
+- **Preview deployment:**
+  - Desk on Cloud Run (`sc-desk`, us-west1, scales to zero) with its own runtime account and Secret Manager secrets.
+  - Database and sign-in on Supabase (us-west2, Free plan); both migrations applied atomically through the Management API and recorded in the CLI's migration history.
+  - Public site on Firebase Hosting (`seafood-confidential-preview.web.app`).
+  - Paul has an owner account.
+- **Preview mode for the public site (`SITE_PREVIEW_NOTICE`):** every page carries a "Preview." banner (new `notice` token roles, 8.01:1 in both themes) and a `noindex` tag, and robots.txt disallows everything.
+- **`apps/desk/cloudbuild.yaml`:** reproducible image builds in Cloud Build from an exact `git archive`.
+
+### Changed
+- **Sign-in links:** the desk also accepts Supabase's default sign-in links (a PKCE code exchanged on the server). On the free plan with the built-in mailer, the email template cannot be customized. Our token-hash links still work. A failed link now says to open it in the same browser.
+- **Indexing:** the desk sends `X-Robots-Tag: noindex, nofollow` on every response.
+- **Coming-soon page:** it offers a subscription only when a Kit form is configured.
+
+### Verified
+- **Live:**
+  - database security model;
+  - desk health and headers;
+  - the desk reaching the database through the pooler (an audited request);
+  - the public site released by the desk's own Firebase deploy code (banner, noindex, headers, 404);
+  - 0 axe violations on six live views.
+- **Locally:** both sign-in link shapes, Vitest 102/102, Playwright 30/30, pgTAP 229/229. See EV-0045 to EV-0050.
+- **Not exercised live yet:** a real-email sign-in and a publication from Cloud Run (Paul's first ones), and the newsletter (Kit not connected).
+
 ## [0.4.1] - 2026-11-18 · Session S01, turn 4 (security hardening) · `claude/intelligent-cannon-d1nqq6`
 
 An independent review of agent publishing found eight problems (one High, four Medium, three Low). All eight are fixed with regression tests. Fixing them turned up eight more, which are also fixed and tested: retries, the Markdown and invisible-character bypasses, international phone numbers, a possible second newsletter, failure details shown to agents, accented addresses, and claim outcomes reported to agents as "queued".

@@ -66,4 +66,4 @@ export function env(): DeskEnv {
   return cached;
 }
 
-export const DESK_VERSION = '0.4.1';
+export const DESK_VERSION = '0.5.0';
