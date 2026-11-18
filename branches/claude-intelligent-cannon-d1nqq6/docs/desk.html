@@ -31,10 +31,10 @@
     <p class="tagline">Seafood, from the people who know it.</p>
     <div class="hub-meta">
       <span>Project hub</span>
-      <span>v0.4.0</span>
+      <span>v0.4.1</span>
       <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
-      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/ee55329ab715e29babd09c7c299dff6d46d9f2b3">Commit <code>ee55329</code></a>
-      <span>Built Nov 18, 2026, 4:14 PM EST</span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/cbecf059f6f564abad40efd51162a942963f8af9">Commit <code>cbecf05</code></a>
+      <span>Built Nov 18, 2026, 4:50 PM EST</span>
       <a href="../../../index.html">All branch previews</a>
     </div>
   </div>
@@ -43,7 +43,7 @@
 <main id="content" tabindex="-1">
 <div class="docs-layout">
   <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="desk.html" aria-current="page">Operations desk</a></li><li><a href="deployment.html">Deploying the desk and the public site</a></li><li><a href="hosting-and-costs.html">Hosting and running costs</a></li><li><a href="agent-lab.html">Agent lab (Claude against the gateway)</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li><li><a href="adr-003.html">ADR-003 operations desk foundation stack and data access</a></li><li><a href="adr-004.html">ADR-004 desk-driven Ghost drafts and one-click human publishing</a></li><li><a href="adr-005.html">ADR-005 Ghost-free publishing from the desk, with agents publishing under policy</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
-  <article class="prose"><h1 id="operations-desk-v040">Operations desk (v0.4.0)</h1>
+  <article class="prose"><h1 id="operations-desk-v041">Operations desk (v0.4.1)</h1>
 <p>The operations desk for Seafood Confidential:</p>
 <ul>
 <li>staff sign-in;</li>
@@ -80,6 +80,28 @@
 <li><p><strong>Stopping agents.</strong> Anyone on staff can press <strong>Stop agent publishing</strong> (Publishing page or Settings). It cancels queued agent jobs immediately.</p>
 </li>
 <li><p><strong>Publishing log.</strong> <code>/publishing</code> lists every publication by people and agents, with refused checks, acknowledged warnings and anything that needs attention.</p>
+</li>
+</ul>
+<h3 id="publishing-safeguards-v041">Publishing safeguards (v0.4.1)</h3>
+<ul>
+<li><p><strong>What is live is what was published.</strong> Each story records the revision it was published at. Every rebuild of the site uses those revisions, never text saved since, so an editor can keep working on a live story without it going out. Status moves to and from Published only through publishing; no API role can set it by hand (a database trigger).</p>
+</li>
+<li><p><strong>One build at a time, fenced.</strong> A job is claimed with a token and a 5-minute lease. The desk renews the lease during the deploy and confirms it right before the release. A worker that lost its lease cannot read the snapshot, send email or record an outcome.</p>
+</li>
+<li><p><strong>The newsletter goes out at most once per job.</strong> The attempt is recorded in the database before Kit is called, and a second attempt is refused. A live story is updated, not published again. Publishing again with email after an unpublish warns that subscribers were already emailed.</p>
+</li>
+<li><p><strong>Agent jobs are re-checked when they run.</strong> A revoked token, a rejected proposal, withdrawn email permission or the switch turned off cancels the job, and the reason is recorded. A retry publishes the revision the agent&#39;s job froze, never a person&#39;s later edit.</p>
+</li>
+<li><p><strong>Agents cannot probe the checks.</strong> Content checks run only once the switch, lane and grant checks pass, and an agent gets 10 refused requests a day. Refusals are recorded, and the agent reads them with <code>jobs.read</code>.</p>
+</li>
+<li><p><strong>Agent text is checked as readers see it.</strong> The database refuses:</p>
+<ul>
+<li>HTML and HTML character references;</li>
+<li>quotations, including block quotes in lists;</li>
+<li>links other than to cited sources;</li>
+<li>email addresses and phone numbers, including ones hidden by Markdown escapes, emphasis or invisible characters.</li>
+</ul>
+<p>The desk checks the rendered page once more before deploying.</p>
 </li>
 </ul>
 <h2 id="scope-delivered-in-this-version">Scope delivered in this version</h2>
@@ -189,7 +211,7 @@
 </tr>
 <tr>
 <td>Audit</td>
-<td>Append-only <code>private.audit_events</code> (update, delete and truncate refused), actor derived from the bound identity, request ID on every row including trigger-written rows. Recorded: every gateway request that carries a well-formed token, intake submissions and throttling, pitch decisions, item status, owner and Ghost-link changes, sources, rights, proposals, grants, staff and agent principals, tokens, and refused desk actions. Transport rejections and requests without a token shape are logged, not audited, so anonymous traffic cannot grow the trail</td>
+<td>Append-only <code>private.audit_events</code> (update, delete and truncate refused), actor derived from the bound identity, request ID on every row including trigger-written rows. Recorded: every gateway request that carries a well-formed token, intake submissions and throttling, pitch decisions, item status and owner changes, sources, rights, proposals, grants, staff and agent principals, tokens, publish requests, refusals, cancellations, email attempts and outcomes, publishing settings, and refused desk actions. Transport rejections and requests without a token shape are logged, not audited, so anonymous traffic cannot grow the trail</td>
 <td>pgTAP <code>04_…</code>; E2E</td>
 </tr>
 <tr>
@@ -206,6 +228,16 @@
 <td>Server Actions</td>
 <td>Next.js origin check (CSRF), 1 MB body limit, stable <code>NEXT_SERVER_ACTIONS_ENCRYPTION_KEY</code>; every action re-checks the session and runs under RLS</td>
 <td>Code review; E2E</td>
+</tr>
+<tr>
+<td>Publishing</td>
+<td>Jobs are created only by <code>app.staff_request_publish</code> (owners and managing editors) and <code>app.agent_request_publish</code> (agents with <code>drafts.publish</code>, all gates in SQL); the site is built under <code>desk_publisher</code>, which can only claim, renew, snapshot, mark the email and complete, each fenced by the claim token; rebuilds use <code>published_revision</code>; a trigger stops API roles from setting Published by hand</td>
+<td>pgTAP <code>05_publishing</code> (121 assertions); E2E publishing suite; units</td>
+</tr>
+<tr>
+<td>Public site</td>
+<td>Static files only, strict CSP (<code>script-src &#39;self&#39;</code>, <code>form-action</code> Kit only), Markdown rendered with HTML off and a link allowlist; agent stories carry the AI label and disclosure</td>
+<td>Units (<code>site.test.ts</code>, <code>contact.test.ts</code>); E2E with axe</td>
 </tr>
 </tbody></table></div>
 <p><strong>Trust boundary to know about.</strong> The desk server binds identities with <code>set_config</code>. Anyone who can run arbitrary SQL on the <code>desk_app</code> connection could bind any identity, exactly as with PostgREST&#39;s trusted claims. The mitigations are a server-only connection string, parameterized SQL only (lint-enforced) and principal status checks that make revocation effective even for a forged binding.</p>
@@ -297,17 +329,17 @@
 <tbody><tr>
 <td>Database policies</td>
 <td><code>pnpm db:test</code></td>
-<td>108 pgTAP assertions: grants, RLS, column privileges, functions, integrity triggers, workflow, audit (AT-25, AT-03, AT-04, AT-06, AT-07, AT-12, AT-13 at the database layer). Mutation-tested: each of 11 deliberate breaks fails a named assertion. Correct on fresh and used databases</td>
+<td>229 pgTAP assertions: grants, RLS, column privileges, functions, integrity triggers, workflow, audit, and publishing (gates and their bypasses, claim fencing, leases, at-most-once email, re-checks, retries, refusal budget, addresses). Covers AT-03, AT-04, AT-06, AT-07, AT-12 to AT-14, AT-25 and AT-27 to AT-30 at the database layer. Correct on fresh and used databases</td>
 </tr>
 <tr>
 <td>Units</td>
 <td><code>pnpm --filter @sc/desk test</code></td>
-<td>67 tests: next actions, CSP, redirects, client addresses, tokens, redaction, hashing, cursors, rate guards, validation, every contract example</td>
+<td>101 tests: next actions, CSP, redirects, client addresses, tokens, redaction, hashing, cursors, rate guards, validation, every contract example, the site build, deploy fencing (local and Firebase), Kit, and the rendered-text contact check</td>
 </tr>
 <tr>
 <td>End to end</td>
 <td><code>pnpm desk:e2e</code></td>
-<td>24 tests: real sign-in through Mailpit, the pitch-to-release journey, access control, hostile input, the gateway over HTTP, phone layouts; axe WCAG 2.2 AA on every page visited</td>
+<td>30 tests: real sign-in through Mailpit, the pitch-to-release journey, access control, hostile input, the gateway over HTTP, agent and staff publishing against the local site server, phone layouts; axe WCAG 2.2 AA on every page visited</td>
 </tr>
 <tr>
 <td>Bundle</td>
@@ -341,7 +373,7 @@
 </div>
 </main>
 <footer class="site-footer"><div>
-  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/ee55329ab715e29babd09c7c299dff6d46d9f2b3">ee55329</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/cbecf059f6f564abad40efd51162a942963f8af9">cbecf05</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
   <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
 </div></footer>
 </body>

@@ -31,10 +31,10 @@
     <p class="tagline">Seafood, from the people who know it.</p>
     <div class="hub-meta">
       <span>Project hub</span>
-      <span>v0.4.0</span>
+      <span>v0.4.1</span>
       <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
-      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/ee55329ab715e29babd09c7c299dff6d46d9f2b3">Commit <code>ee55329</code></a>
-      <span>Built Nov 18, 2026, 4:14 PM EST</span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/cbecf059f6f564abad40efd51162a942963f8af9">Commit <code>cbecf05</code></a>
+      <span>Built Nov 18, 2026, 4:50 PM EST</span>
       <a href="../../../index.html">All branch previews</a>
     </div>
   </div>
@@ -46,6 +46,29 @@
   <article class="prose"><h1 id="changelog">Changelog</h1>
 <p>All notable changes to this repository. Format: <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>; versions follow <a href="https://semver.org/">semantic versioning</a> (0.x before launch, one minor version per working session).</p>
 <h2 id="unreleased">[Unreleased]</h2>
+<h2 id="041---2026-11-18--session-s01-turn-4-security-hardening--claudeintelligent-cannon-d1nqq6">[0.4.1] - 2026-11-18 · Session S01, turn 4 (security hardening) · <code>claude/intelligent-cannon-d1nqq6</code></h2>
+<p>An independent review of agent publishing found eight problems (one High, four Medium, three Low). All eight are fixed with regression tests. Fixing them turned up eight more, which are also fixed and tested: retries, the Markdown and invisible-character bypasses, international phone numbers, a possible second newsletter, failure details shown to agents, accented addresses, and claim outcomes reported to agents as &quot;queued&quot;.</p>
+<h3 id="security">Security</h3>
+<ul>
+<li><strong>The live site is built only from what was published.</strong> Every rebuild used each story&#39;s current text, so an editor&#39;s unreviewed save went live the next time any story was published. It also trusted a status anyone could set by hand. Now each story records the revision it was published at (<code>published_revision</code>), rebuilds use that revision, and no API role can move a story to or from Published by hand (a database trigger).</li>
+<li><strong>Agent jobs are re-checked in full when they run.</strong> A token revoked, a proposal rejected, agent email withdrawn or the switch turned off after the request now cancels the job, with the reason recorded. A retry keeps the revision the job froze, so text a person saved since is never published under an agent&#39;s job.</li>
+<li><strong>Claim tokens fence every step after the claim.</strong> A worker whose lease expired can no longer read the snapshot, email or record an outcome. Leases are renewed during deploys and confirmed right before the release. The newsletter attempt is a compare-and-set in the database: at most one email per job, even with two workers.</li>
+<li><strong>Refused agent requests are recorded.</strong> The gateway&#39;s refusal used to roll back the refused job and its audit row, so the new budget of 10 refusals a day could not count them. Refusals are now committed, and <code>jobs.read</code> returns them.</li>
+<li><strong>Content checks match what readers see.</strong> HTML character references, block quotes inside list items, links to anything but a cited source, Markdown escapes or emphasis that split an email address, invisible characters and international phone numbers are all refused. The content checks run only after the switch, lane and grant checks pass, so they cannot be probed. The desk also checks the rendered text of agent stories before deploying.</li>
+<li><strong>The queue cannot wedge.</strong> Headlines and summaries that would not fit, titles without Latin letters and long titles all get valid public addresses (accented letters are transliterated, e.g. São → sao). A job that cannot be prepared fails instead of blocking the queue.</li>
+<li><strong>Local site server:</strong> malformed URL escapes return 400 instead of crashing the process, and directory redirects are built from the file system, never from the request.</li>
+<li><strong>Agents see agent-facing outcomes.</strong> Failure details written for editors (hosting and database errors) are no longer returned to agents.</li>
+</ul>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>A live story is updated, not published again (which could email subscribers twice). Publishing again with email after an unpublish warns that subscribers were already emailed.</li>
+<li>On a live story, the status picker offers only Published and explains that publishing sets it. The unused Ghost link action is removed.</li>
+<li>The publishing log names each failed check briefly (&quot;Master switch: Agent publishing is switched off in Settings&quot;).</li>
+</ul>
+<h3 id="verified">Verified</h3>
+<ul>
+<li>pgTAP 229/229 (fresh and populated databases), Vitest 101/101, Playwright 30/30, agent lab self-test 18/18, <code>pnpm check</code>. See EV-0038 to EV-0044.</li>
+</ul>
 <h2 id="040---2026-11-18--session-s01-turn-4--claudeintelligent-cannon-d1nqq6">[0.4.0] - 2026-11-18 · Session S01, turn 4 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Ghost-free publishing from the desk, with agents that may publish under the owner&#39;s switches and automated checks (ADR-005), and a cost plan that starts at about $1 a month.</p>
 <h3 id="added">Added</h3>
@@ -71,7 +94,7 @@
 </li>
 <li><strong>Docs:</strong> ADR-005; AGENTS.md updated; acceptance tests AT-27 to AT-30; backlog tickets SC-017 and SC-018, with SC-002, SC-003, SC-004 and SC-011 re-scoped. HOSTING_AND_COSTS rewritten with verified prices.</li>
 </ul>
-<h3 id="changed">Changed</h3>
+<h3 id="changed-1">Changed</h3>
 <ul>
 <li>Next actions point to the story text and the Publishing panel instead of Ghost. Marking a story ready by hand now needs its text instead of a Ghost link.</li>
 <li>The contract test now allows exactly one publish tool (<code>drafts.publish</code>, which takes a proposal ID only) and still forbids send, approve, export, delete and member tools.</li>
@@ -93,7 +116,7 @@
 <li><code>DESK_DB_PREPARE</code> for the Supabase pooler&#39;s transaction mode.</li>
 <li>&quot;Operations desk UI patterns&quot; in the <code>sc-visual-codex</code> skill.</li>
 </ul>
-<h3 id="changed-1">Changed</h3>
+<h3 id="changed-2">Changed</h3>
 <ul>
 <li><code>DESK_TRUSTED_PROXY_HOPS</code> is required in production.</li>
 <li>The founders&#39; decision to keep the intake limits as built is recorded in <code>docs/DESK.md</code>.</li>
@@ -116,7 +139,7 @@
 <li>Independent security review (no Critical or High findings) with every Medium and Low finding fixed: column-level update grants, database-stamped reviewers and deciders, final agent revocation that revokes tokens, SQL-side source redaction for agents, audited sources, rights and refused actions, gateway flood guards and per-agent budget, strict request IDs, serialized intake throttling with trusted-proxy hops.</li>
 <li>Operator CLIs (<code>staff</code>, <code>agent</code>), <code>apps/desk/.env.example</code>, <code>docs/DESK.md</code>, <code>packages/contracts</code> validator package.</li>
 </ul>
-<h3 id="changed-2">Changed</h3>
+<h3 id="changed-3">Changed</h3>
 <ul>
 <li>ADR-003 records the decisions made during the build (Cache Components off, ESLint 9, OpenTelemetry API 1.9.1, global stylesheet on tokens, gateway scope).</li>
 <li>Root scripts: <code>desk:*</code> and <code>db:*</code>; <code>pnpm check</code> includes the desk&#39;s static checks. Version 0.2.0.</li>
@@ -135,7 +158,7 @@
 <li>Design tokens (<code>brand/tokens.json</code>) with computed contrast gates; <code>sc-visual-codex</code> project skill.</li>
 <li>Kit audit, foundation planning brief, ADR-002, contributing, security, license and third-party notices.</li>
 </ul>
-<h3 id="changed-3">Changed</h3>
+<h3 id="changed-4">Changed</h3>
 <ul>
 <li><code>README.md</code> keeps the original description and adds navigation.</li>
 <li><code>planning/BACKLOG.json</code> and <code>.csv</code>: SC-001 status <code>planned</code> → <code>in_progress</code> (repository, dev environment and vendor feasibility work begun; founder decisions outstanding).</li>
@@ -154,7 +177,7 @@
 </div>
 </main>
 <footer class="site-footer"><div>
-  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/ee55329ab715e29babd09c7c299dff6d46d9f2b3">ee55329</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/cbecf059f6f564abad40efd51162a942963f8af9">cbecf05</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
   <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
 </div></footer>
 </body>

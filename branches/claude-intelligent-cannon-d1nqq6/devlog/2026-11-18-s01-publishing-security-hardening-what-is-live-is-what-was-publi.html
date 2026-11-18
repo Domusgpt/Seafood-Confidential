@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Publishing security hardening: what is live is what was published · Seafood Confidential project hub</title>
+<meta name="description" content="Dev log DL-20261118-05.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.4.1</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/cbecf059f6f564abad40efd51162a942963f8af9">Commit <code>cbecf05</code></a>
+      <span>Built Nov 18, 2026, 4:50 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html">Docs</a></li><li><a href="../devlog/index.html" aria-current="page">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<article class="prose" style="max-width:none">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Entry details" style="max-width:78ch"><table><tbody><tr><th scope="row">Entry</th><td>DL-20261118-05</td></tr><tr><th scope="row">Session</th><td>S01, turn 4</td></tr><tr><th scope="row">Version</th><td>0.4.1</td></tr><tr><th scope="row">Branch</th><td>claude/intelligent-cannon-d1nqq6</td></tr><tr><th scope="row">Base commit</th><td>ee55329ab715</td></tr><tr><th scope="row">Started</th><td>Nov 18, 2026, 4:15 PM EST</td></tr><tr><th scope="row">Recorded</th><td>Nov 18, 2026, 4:48 PM EST</td></tr><tr><th scope="row">Tickets</th><td>SC-003, SC-009, SC-011, SC-015, SC-017, SC-018</td></tr><tr><th scope="row">Workstreams</th><td>WS-ENV</td></tr><tr><th scope="row">Status</th><td>complete</td></tr></tbody></table></div>
+  <div style="max-width:78ch"><h1 id="publishing-security-hardening-what-is-live-is-what-was-published">Publishing security hardening: what is live is what was published</h1>
+<h2 id="summary">Summary</h2>
+<p>Before handing v0.4.0 over, a separate agent reviewed agent publishing adversarially. It found eight problems:</p>
+<ul>
+<li><strong>High:</strong> the live site was rebuilt from text editors were still working on, and from a status anyone could set by hand.</li>
+<li><strong>Medium (four):</strong> stale agent jobs ran without full re-checks; overlapping workers could deploy twice or email twice; one bad job could block the queue; and refused agent requests were silently rolled back.</li>
+<li><strong>Low (three):</strong> content checks that could be probed or bypassed, and two bugs in the local site server.</li>
+</ul>
+<p>All eight are fixed in <strong>v0.4.1</strong>, each with a regression test. Fixing them turned up eight more problems, which are also fixed and tested. Every suite passes on the final build, and the container image is rebuilt and smoke-tested.</p>
+<h2 id="what-changed">What changed</h2>
+<p><strong>Database</strong> (<code>supabase/migrations/20261118200000_publishing.sql</code>):</p>
+<ul>
+<li><strong>Published revision:</strong> each story records the revision it was published at (<code>published_revision</code>). Every rebuild uses it, so an editor&#39;s later save never goes live until a person updates the story. A trigger stops API roles from setting Published, or leaving it, by hand.</li>
+<li><strong>Claim token:</strong> <code>app.claim_publish_job</code> returns a claim token, and <code>site_snapshot</code>, <code>mark_email_attempt</code>, <code>renew_publish_lease</code> and <code>complete_publish_job</code> all require it. A worker whose lease expired is locked out.</li>
+<li><strong>Email:</strong> <code>mark_email_attempt</code> is a compare-and-set that returns true at most once per job.</li>
+<li><strong>Re-checks at claim:</strong> the credential (revoked, expired or out of scope), the agent account and every gate are checked again. A job whose conditions changed is cancelled with the reason, and the claim says so (<code>{cancelled, message}</code>).</li>
+<li><strong>Retries:</strong> a retry keeps the revision the job froze. A retry of a job whose revision is already live finishes it without a re-check (it can publish nothing new). A job that cannot be prepared fails (<code>{failed}</code>) instead of blocking the queue.</li>
+<li><strong>Gate order:</strong> preconditions (switch, lane, grant, people-first, in flight, format, daily cap, email) run first, and content checks run only if they pass. Agents get 10 refused requests a day (<code>refusal_limit</code>).</li>
+<li><strong>New content checks:</strong> headline and summary fit; links point only at cited sources; HTML character references; block quotes inside lists; emails and phones found in a flattened copy of the text (Markdown escapes, emphasis markers and invisible characters removed); international phone numbers; and private contacts split by emphasis.</li>
+<li><strong>Addresses:</strong> accented letters are transliterated (São → sao, Straße → strasse); a title with no Latin letters falls back to <code>story-…</code>; no double or leading hyphens.</li>
+<li><strong>Staff:</strong> &quot;publish&quot; on a live story is refused (update it instead, so subscribers are never emailed twice). Publishing again with email after an unpublish warns <code>already_emailed</code>.</li>
+</ul>
+<p><strong>Desk server:</strong></p>
+<ul>
+<li><strong>Executor:</strong><ul>
+<li>every step after the claim carries the token;</li>
+<li>the lease is renewed every minute and confirmed right before the release;</li>
+<li>Kit is called only when the email mark returns true;</li>
+<li>the rendered text of an agent story (<code>site/contact.ts</code>) is checked once more before deploying;</li>
+<li>nothing throws to the caller.</li>
+</ul>
+</li>
+<li><strong>Deploy destinations</strong> take a stop signal and a <code>beforeRelease</code> hook. A lost claim leaves the live site untouched, for both the local folder and Firebase Hosting.</li>
+<li><strong>Gateway:</strong><ul>
+<li>a refusal is returned as a committed 422, so the job, the audit row and the refusal budget all hold;</li>
+<li><code>jobs.read</code> returns the refusal;</li>
+<li>agents get agent-facing messages, never editor-facing hosting or database errors.</li>
+</ul>
+</li>
+<li><strong>Local site server</strong> (<code>serve-site.mjs</code>): malformed escapes return 400 instead of crashing the process; directory redirects are built from the file system.</li>
+</ul>
+<p><strong>Desk UI:</strong></p>
+<ul>
+<li>On a live story the status picker offers only Published, with a hint pointing to the Publishing panel. The action gives the same explanation to a crafted request.</li>
+<li>The unused Ghost link action is removed.</li>
+<li>The publishing log names failed checks briefly (&quot;<strong>Master switch:</strong> Agent publishing is switched off in Settings&quot;).</li>
+</ul>
+<p><strong>Docs and tracking:</strong></p>
+<ul>
+<li>CHANGELOG [0.4.1].</li>
+<li>DESK.md: publishing safeguards, security model rows and test counts.</li>
+<li>Acceptance tests: AT-31 (live site stays at the published revision) and AT-32 (overlapping workers are fenced) added as PASS; AT-28 widened.</li>
+<li>Visual codex: two reusable patterns, &quot;state a workflow owns&quot; and &quot;failed checks&quot;.</li>
+<li>Version 0.4.1 everywhere.</li>
+</ul>
+<h2 id="decisions">Decisions</h2>
+<ul>
+<li><strong>Retries of live agent jobs are not re-checked.</strong> They can only redeploy the revision that is already live, and the email marker stops a second newsletter. Re-checking would cancel them with a misleading reason (the proposal is already published).</li>
+<li><strong>Transliteration lives in SQL</strong> (<code>translate</code> with a generated table of Latin letters). <code>unaccent</code> would need an extension and is not immutable.</li>
+<li><strong>Agents see failure details only for their own outcomes</strong> (succeeded, cancelled, refused). Hosting and database errors stay with editors on the Publishing page.</li>
+<li><strong>The rendered-text check runs only for agent stories.</strong> People are warned, never blocked (ADR-005).</li>
+</ul>
+<h2 id="problems-and-resolutions">Problems and resolutions</h2>
+<ul>
+<li><strong>Isolation in the new tests.</strong> The new &quot;link to a cited source passes&quot; test queued a real job, which then blocked later tests on the same story. Fixed by cancelling it right after the assertion. A re-claimed job holding a live lease made later claims answer &quot;busy&quot;; fixed by finishing it under its new token, which also tests that path.</li>
+<li><strong>psql <code>\gset</code> with NULL</strong> unsets the variable, so a later <code>:&#39;claim_a2&#39;</code> became a syntax error. The cause was a stale database, and <code>supabase db reset</code> fixed it.</li>
+<li><strong>My own test expectation was wrong.</strong> &quot;Ünïcödé&quot; keeps the letters n, c and d, so it was never a fallback case. That led to adding transliteration, and the fallback test now uses a Japanese title.</li>
+<li><strong>Invisible characters.</strong> Writing a file through a JSON tool parameter decoded <code>\u00AD</code>-style escapes into real invisible characters in a regex. A Python scan of every source, test and doc file now confirms there are none left.</li>
+<li><strong>Docker build behind the proxy.</strong> <code>pnpm install</code> in the image needs this sandbox&#39;s CA as a build secret (<code>--secret id=extra_ca,…</code>), as documented in DEPLOYMENT.md. The certificate is never stored in the image.</li>
+<li><strong>Smoke test timing.</strong> Immediate retries finished before the container was listening. curl&#39;s own retry delay fixed it.</li>
+</ul>
+<h2 id="evidence">Evidence</h2>
+<ul>
+<li>EV-0038: the review and every finding, with its fix.</li>
+<li>EV-0039: pgTAP 229/229, fresh and populated (121 publishing assertions).</li>
+<li>EV-0040: Vitest 101/101, typecheck and lint.</li>
+<li>EV-0041: Playwright 30/30 on the final build, including the refused job read back with <code>jobs.read</code>.</li>
+<li>EV-0042: agent lab self-test 18/18 (13 system checks).</li>
+<li>EV-0043: local site server probes.</li>
+<li>EV-0044: container 0.4.1 smoke test.</li>
+</ul>
+<p>Screenshots (final build, desktop):</p>
+<p><img src="../devlog/assets/2026-11-18-s01-t4/desk-story-details-live-desktop.jpg" alt="Details card on a live story: the status picker offers only Published, with a hint pointing to the Publishing panel" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t4/desk-story-publishing-desktop.jpg" alt="Publishing card: published by the agent, live version revision 1, update and unpublish" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t4/desk-publishing-log-desktop.jpg" alt="Publishing log: refused agent requests are now kept, with short check names" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t4/site-agent-story-desktop.jpg" alt="The agent story on the local public site, labelled and with its disclosure and sources" loading="lazy" decoding="async"></p>
+<h2 id="risks-and-open-questions">Risks and open questions</h2>
+<ul>
+<li><strong>Firebase Hosting has not been called for real.</strong> The REST flow and the release fencing are covered by unit tests against a fake API. The first real deploy is SC-015, which needs Dave&#39;s project.</li>
+<li><strong>Lease loss inside the desk process</strong> (renewal failing mid-deploy) is covered by unit tests of the destinations and pgTAP of the fencing. No end-to-end test kills a worker mid-deploy.</li>
+<li><strong>Detection gaps:</strong> quotations in single quotation marks are not detected, and neither are deliberately spelled-out contacts (&quot;jane at example dot com&quot;). The checks stop accidents and common tricks, not a determined adversary; tokens, grants, lanes and the owner&#39;s switch remain the real boundary.</li>
+<li><strong>No scheduler yet.</strong> A job left queued behind a busy build runs with the next publication or from the Publishing page (&quot;Run queued jobs&quot;). A scheduled sweep can come with the Cloud Run deployment.</li>
+</ul>
+<h2 id="next-actions">Next actions</h2>
+<ul>
+<li>Dave confirms ADR-005, D01 and D05.</li>
+<li>Run the agent lab with the Claude key (rename the variable to <code>SC_AGENT_LAB_API_KEY</code>).</li>
+<li>First live deployment (SC-015): Firebase project, Supabase Pro, Kit form and a sending domain; then backups (SC-014).</li>
+<li>Consider a scheduled publish-queue sweep with the Cloud Run deployment.</li>
+</ul>
+</div>
+  <h2>Evidence referenced</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">ID</th><th scope="col">Result</th><th scope="col">Summary</th><th scope="col">Observed</th></tr></thead><tbody><tr><td class="id"><a href="evidence.html#EV-0038">EV-0038</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Independent security review of agent publishing (v0.4.0): 1 High, 4 Medium and 3 Low findings, all fixed in v0.4.1 with regression tests, plus 8 more found while fixing</td><td>High: rebuilds used current or edited text and a hand-settable status (fixed: published_revision plus a status guard trigger). Medium: incomplete re-checks at claim; no lease fencing (possible double email or overlapping deploys); unclaimable jobs could wedge the queue; refused requests rolled back by the gateway savepoint. Low: private-contact oracle outside an open lane; entity, list-quote and link bypasses; serve-site open redirect and crash on bad escapes. Found while fixing: retries could publish a person&#39;s later edit; retries of live agent jobs were cancelled; Markdown-escape, emphasis and invisible-character bypasses of the contact check; international phone numbers; a second publish could email twice; editor-facing failure details shown to agents; accented titles made poor addresses; cancelled claims reported to agents as queued</td></tr><tr><td class="id"><a href="evidence.html#EV-0039">EV-0039</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>pgTAP 229/229 on a fresh database and on one the end-to-end suite had used, including 121 publishing assertions</td><td>Files=5, Tests=229, Result: PASS both times. New publishing assertions: token-fenced snapshot, mark and complete; a re-claim after lease expiry gets a new token and locks the old worker out; second email mark refused; snapshot uses published_revision after a later edit; hand status changes to and from Published refused (42501); claim cancels jobs after revocation, rejection or withdrawn email permission, with the reason; already-live retry keeps the agent&#39;s revision; publish on a live story refused; already_emailed warning; 10-refusal budget; entity, list-quote, uncited-link, escaped and emphasis-split email, international phone and emphasis-split private-contact refusals; content checks not run with the switch off; slug fallback and transliteration</td></tr><tr><td class="id"><a href="evidence.html#EV-0040">EV-0040</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Vitest 101/101 plus typecheck and lint clean, including deploy fencing and the rendered-text contact check</td><td>10 files, 101 tests passed. New: the local destination leaves the live site untouched when the claim cannot be confirmed or the run is stopped; Firebase confirms the claim after finalize and never calls the release without it; a claim lost mid-upload stops before the release; the reader-text check catches plain, escaped, emphasis-split, invisible-character and link-target emails, North American and international phones, and passes trade copy full of figures</td></tr><tr><td class="id"><a href="evidence.html#EV-0041">EV-0041</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Playwright 30/30 on the final v0.4.1 build, including a refused agent request that now persists and reads back as refused</td><td>30 passed (42.9s). AT-29 now also calls jobs.read on the refused job ID and gets state refused with the failed check; before the fix the gateway&#39;s savepoint rolled the refusal back. Bundle scan: 45 shipped files, 11 rules, no findings</td></tr><tr><td class="id"><a href="evidence.html#EV-0042">EV-0042</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Agent lab self-test 18/18 (13 system checks) against the v0.4.1 desk and local site</td><td>draft 5/5, injection 5/5, revocation 3/3, publish 5/5; system checks PASS (13/13). Scripted driver, no model call: not an agent result</td></tr><tr><td class="id"><a href="evidence.html#EV-0043">EV-0043</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Local site server: malformed escapes return 400 and the server stays up; directory redirects stay on the same host</td><td>/stories/abc 301 to /stories/abc/; //stories/abc 301 to /stories/abc/ (previously Location //stories/abc/, a protocol-relative URL); /%E0%A4%A 400; /%00 400; traversal 404; health 200 afterwards</td></tr><tr><td class="id"><a href="evidence.html#EV-0044">EV-0044</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Container image 0.4.1 builds (387 MB) and serves health, the pitch form with a nonce CSP and the gateway&#39;s 401, as node</td><td>health {status: ok, service: sc-desk, version: 0.4.1}; /pitch 200 with a nonce CSP; gateway without a token 401; whoami node; no error lines in the container log</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/cbecf059f6f564abad40efd51162a942963f8af9">cbecf05</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
