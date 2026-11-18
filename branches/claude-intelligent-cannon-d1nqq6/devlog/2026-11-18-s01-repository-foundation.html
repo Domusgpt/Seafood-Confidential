@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Repository foundation, tooling and planning readiness · Seafood Confidential project hub</title>
+<meta name="description" content="Dev log DL-20261118-01.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html">Docs</a></li><li><a href="../devlog/index.html" aria-current="page">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<article class="prose" style="max-width:none">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Entry details" style="max-width:78ch"><table><tbody><tr><th scope="row">Entry</th><td>DL-20261118-01</td></tr><tr><th scope="row">Session</th><td>S01, turn 1</td></tr><tr><th scope="row">Version</th><td>0.1.0</td></tr><tr><th scope="row">Branch</th><td>claude/intelligent-cannon-d1nqq6</td></tr><tr><th scope="row">Base commit</th><td>2eb97235e0ba</td></tr><tr><th scope="row">Started</th><td>Nov 18, 2026, 10:43 AM EST</td></tr><tr><th scope="row">Recorded</th><td>Nov 18, 2026, 11:55 AM EST</td></tr><tr><th scope="row">Tickets</th><td>SC-001</td></tr><tr><th scope="row">Workstreams</th><td>WS-REPO, WS-ENV, WS-TRACK, WS-HUB, WS-PLAN</td></tr><tr><th scope="row">Status</th><td>complete</td></tr></tbody></table></div>
+  <div style="max-width:78ch"><h1 id="repository-foundation-tooling-and-planning-readiness">Repository foundation, tooling and planning readiness</h1>
+<h2 id="summary">Summary</h2>
+<p>The launch packet that arrived as a zip is now a working repository. The development kit sits at the root, and the founder originals are preserved with checksums. The tooling validates the kit&#39;s own consistency on every push. A dev log and an evidence-backed tracking system record every turn. A branded project hub publishes each branch to GitHub Pages. Every tool and dependency the foundation needs was installed and verified in this cloud environment, including local Supabase and local Ghost. Current vendor facts were researched, and several of them change the foundation design. The <a href="../docs/foundation-planning-brief.html">foundation planning brief</a> is ready for the next turn&#39;s plan mode. <strong>No application exists yet, and all 26 acceptance scenarios remain UNRUN.</strong></p>
+<h2 id="what-changed">What changed</h2>
+<p><strong>Packet and structure</strong></p>
+<ul>
+<li>The kit was unpacked at the root (32 files, byte-identical: EV-0001). The PDF, DOCX, XLSX and cover note sit in <code>packet/</code> with <code>SHA256SUMS</code>. The zip was removed from the working tree and is recoverable from <code>2eb9723</code>.</li>
+<li>The README keeps the original description and adds navigation. The kit README is preserved as <code>docs/DEVELOPMENT_KIT.md</code>. <code>AGENTS.md</code> and <code>CLAUDE.md</code> each gain an appended, dated conventions section; the kit&#39;s text is unchanged.</li>
+<li>SC-001 moved from <code>planned</code> to <code>in_progress</code>: repository, dev environment and vendor feasibility work started, founder decisions still outstanding.</li>
+</ul>
+<p><strong>Tracking and validation</strong></p>
+<ul>
+<li><code>devtrack/</code>: sessions, workstreams and append-only evidence, each with a JSON Schema. <code>devlog/</code>: this log. <code>docs/IMPLEMENTATION_STATUS.md</code> has a generated, deterministic status block, and CI fails when it is stale.</li>
+<li><code>pnpm validate</code> runs 9 checks. They cover backlog integrity and CSV parity, the calendar, decisions, the acceptance matrix, the agent contract against 17 example requests, the fixture guard, packet checksums, Markdown links and the evidence rules. 26 tool tests prove the checks catch what they exist for.</li>
+</ul>
+<p><strong>Environment and tooling (your mid-turn request)</strong></p>
+<ul>
+<li><code>tools/bootstrap/install-dev-tools.sh</code> installs pinned tools and verifies each against a SHA-256 hash: actionlint 1.7.12, gitleaks 8.30.1, shellcheck 0.11.0, firebase-tools 15.36.0, vercel 66.1.0, gscan 6.7.0, and Node 24 LTS side-by-side.</li>
+<li>Repo dependencies are pinned exactly: Supabase CLI 3.2.0, Playwright 1.63.0, axe, Ajv, marked, yaml, Prettier and the OFL fonts. pnpm 12 runs with supply-chain gates.</li>
+<li>Docker is running with a registry mirror. Supabase local stack images, Ghost 6.78.0 and Mailpit are pulled and verified. A Next.js 16.4.6 probe with the foundation libraries builds, which also warmed the package store. glslang is installed for shader validation.</li>
+</ul>
+<p><strong>Project hub and previews</strong></p>
+<ul>
+<li><code>pnpm hub:build</code> produces 44 pages: overview, backlog with dependency graph and critical path, acceptance, decisions, editorial plan, visual codex, rendered docs, dev log and evidence. The masthead is a WebGL2 &quot;bathymetry&quot; contour field with fallbacks. The pages carry a strict CSP and <code>noindex</code>, and self-host their fonts.</li>
+<li><code>.github/workflows/pages.yml</code> publishes every branch to <code>gh-pages/branches/&lt;slug&gt;/</code>, with a root index of previews and a <code>/latest/</code> redirect. <code>ci.yml</code> validates, tests, builds, lints, scans for secrets, validates the shaders, and uploads screenshots and axe results as artifacts.</li>
+<li><code>brand/tokens.json</code> is the single source of brand colour roles. The build fails if a declared text pair drops below WCAG AA. A <code>sc-visual-codex</code> project skill encodes the system for future visual work.</li>
+</ul>
+<p><strong>Planning</strong></p>
+<ul>
+<li><a href="../docs/kit-audit.html">Kit audit</a>: 17 findings, including the social-channel conflict, the agent contract gaps, the public-repository mismatch, tight capacity and the brand contrast facts.</li>
+<li><a href="../docs/foundation-planning-brief.html">Foundation planning brief</a>: scope, current platform facts, verified feasibility, proposed architecture (middleware, telemetry, security, testing), 16 questions with recommendations, and a phase plan.</li>
+<li><a href="../docs/adr-002.html">ADR-002</a>: the repository-scope engineering decisions.</li>
+</ul>
+<h2 id="decisions">Decisions</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Kit at the repository root</td>
+<td>Every path inside the kit&#39;s documents stays valid</td>
+</tr>
+<tr>
+<td><strong>Node 24 LTS, not 26</strong></td>
+<td>Ghost 6.78 (<code>^22.23.5 || ^24.22.3</code>) and gscan (<code>^22.17 || ^24</code>) exclude Node 26 (EV-0009)</td>
+</tr>
+<tr>
+<td>pnpm 12 with <code>allowBuilds</code>, a 1-day <code>minimumReleaseAge</code> and <code>trustPolicy: no-downgrade</code></td>
+<td>Supply-chain protection after the 2025 npm compromises; both gates proved their value in the probe (EV-0008)</td>
+</tr>
+<tr>
+<td>Previews from a <code>gh-pages</code> branch rather than Actions artifacts</td>
+<td>The Actions <code>github-pages</code> environment only deploys the default branch, which would block previews of unmerged session branches</td>
+</tr>
+<tr>
+<td><strong>No Dependabot version-update PRs</strong></td>
+<td>You work from the latest open PR, and bot PRs would pollute that list. Security alerts can stay on at the repository level</td>
+</tr>
+<tr>
+<td>Interim proprietary licence</td>
+<td>The founders own the material; open licensing is their decision (Q14)</td>
+</tr>
+<tr>
+<td>Derived accessible colour steps</td>
+<td>Rust on salt is 4.46:1 and sea glass on salt is 2.36:1; brand values stay unchanged</td>
+</tr>
+<tr>
+<td>HTML/CSS bar charts</td>
+<td>SVG text scaled down to about 9.5 px in two-column layouts; HTML keeps real type sizes</td>
+</tr>
+<tr>
+<td>Product choices stay <strong>Proposed</strong></td>
+<td>Hosting, TypeScript line, Buffer path, telemetry backend and repository visibility are listed in the brief for the founders</td>
+</tr>
+</tbody></table></div>
+<h2 id="problems-and-resolutions">Problems and resolutions</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Cause</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker pull</code> returned 429 Too Many Requests</td>
+<td>Docker Hub&#39;s anonymous rate limit on the shared egress address</td>
+<td>Registry mirror <code>mirror.gcr.io</code> in <code>/etc/docker/daemon.json</code> (EV-0004)</td>
+</tr>
+<tr>
+<td>Ghost exited with &quot;error code -97&quot;</td>
+<td>Ghost binds IPv6 <code>::</code> by default; the container has no IPv6 (EAFNOSUPPORT)</td>
+<td><code>server__host=0.0.0.0</code>; Ghost answered in about 4 s (EV-0007)</td>
+</tr>
+<tr>
+<td>The Next.js template failed to install</td>
+<td>pnpm&#39;s trust policy flagged <code>undici-types@6.21.0</code> via the template&#39;s <code>@types/node@^20</code></td>
+<td>Align <code>@types/node</code> with the runtime (<code>^24</code>) rather than weakening the policy</td>
+</tr>
+<tr>
+<td><code>@supabase/supabase-js</code> 2.119.1 refused</td>
+<td>Published 14:42 UTC that day; under the 1-day release age</td>
+<td>Use 2.119.0; the gate works as designed</td>
+</tr>
+<tr>
+<td>The kit&#39;s CSVs would be rewritten</td>
+<td>They use CRLF; the default <code>eol=lf</code> normalization would alter them</td>
+<td><code>*.csv -text</code> in <code>.gitattributes</code>; the ticket CLI preserves CRLF</td>
+</tr>
+<tr>
+<td>Ajv strict mode rejected the kit&#39;s contract</td>
+<td><code>required</code> inside <code>if/then</code> without a redeclared property (valid JSON Schema)</td>
+<td>Relaxed only <code>strictRequired</code>; noted as audit finding K-06 instead of editing the kit</td>
+</tr>
+<tr>
+<td>axe: scrollable regions unreachable by keyboard</td>
+<td>Wide tables and code blocks overflow on phones</td>
+<td>Focusable named regions (WCAG 2.1.1)</td>
+</tr>
+<tr>
+<td>axe: a swatch label at 2.87:1</td>
+<td>Ink on rust</td>
+<td>Chip text is now chosen by computed contrast</td>
+</tr>
+<tr>
+<td>Chart text too small or too large</td>
+<td>SVG text scales with the viewBox</td>
+<td>Bars rebuilt in HTML/CSS</td>
+</tr>
+<tr>
+<td>24 <code>&lt;h1&gt;</code>s on the launch-packet page</td>
+<td>One top-level heading per PDF page</td>
+<td>Multi-H1 documents are demoted under a single page title</td>
+</tr>
+<tr>
+<td>Pages simulation failures</td>
+<td>A fixed <code>../pages</code> worktree path; <code>hub:check</code> rejecting the intentional previews link</td>
+<td><code>mktemp</code> worktree; a single exemption via <code>build.json</code> (EV-0013)</td>
+</tr>
+<tr>
+<td>Two skills cite files that don&#39;t exist</td>
+<td><code>shader-projects-assistant</code> and <code>dev-blog-automator</code> ship only SKILL.md (template TODOs remain)</td>
+<td>Used Khronos <code>glslangValidator</code> instead; reported as an agent-setup improvement</td>
+</tr>
+</tbody></table></div>
+<h2 id="evidence">Evidence</h2>
+<p>EV-0001 to EV-0014 are in <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/devtrack/evidence.json">the evidence log</a>. All passed except EV-0009 and EV-0010, which are informational.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Screens (final verification round, EV-0012)</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="../devlog/assets/2026-11-18-s01/hub-overview-desktop.jpg" alt="Hub overview, desktop" loading="lazy" decoding="async"></td>
+<td><img src="../devlog/assets/2026-11-18-s01/hub-overview-mobile.jpg" alt="Hub overview, phone" loading="lazy" decoding="async"></td>
+</tr>
+<tr>
+<td><img src="../devlog/assets/2026-11-18-s01/hub-backlog-desktop.jpg" alt="Backlog with dependency graph" loading="lazy" decoding="async"></td>
+<td><img src="../devlog/assets/2026-11-18-s01/hub-overview-dark.jpg" alt="Overview in dark mode" loading="lazy" decoding="async"></td>
+</tr>
+</tbody></table></div>
+<p>The visual codex page is in <a href="../devlog/assets/2026-11-18-s01/hub-visual-codex-desktop.jpg">hub-visual-codex-desktop.jpg</a>.</p>
+<h2 id="risks-and-open-questions">Risks and open questions</h2>
+<ul>
+<li><strong>Founder decisions D01–D12 are all Proposed.</strong> SC-001 can&#39;t complete without them.</li>
+<li><strong>The repository is public</strong> while the kit assumes a private one (Q1). This decides the theme licence options and who can read the hub.</li>
+<li><strong>GitHub Pages must be enabled once</strong> (Settings → Pages → <code>gh-pages</code> / root) before the previews are served.</li>
+<li>Platform changes since the packet affect SC-005, SC-009 and SC-010: Next 16 <code>proxy.ts</code>, Supabase keys and grants, and Buffer API-key posts bypassing approval.</li>
+<li>The workbook can&#39;t be regenerated here. The repository JSON is the working record until Q12 is decided.</li>
+<li>Docker is not running by default in new cloud sessions, and pulled images don&#39;t persist when the container is reclaimed.</li>
+</ul>
+<h2 id="next-actions">Next actions</h2>
+<ol>
+<li>Enable GitHub Pages from the <code>gh-pages</code> branch, then open the preview from the PR.</li>
+<li>Founders: answer the questions in the planning brief, at minimum Q1 to Q4 and Q8 to Q9, plus decisions D01, D04, D05, D06 and D10.</li>
+<li>Next turn: plan mode on the brief, then build foundation phases F0 to F2 (desk scaffold, database with grants, RLS and pgTAP) on a new session branch.</li>
+<li>Optionally save the environment setup script so new cloud sessions start with these tools.</li>
+<li>Agent setup: merge the <code>sc-visual-codex</code> entry into your shared visual codex skill, which isn&#39;t installed in this cloud environment, and complete the shader and dev-blog skills&#39; missing scripts and references.</li>
+</ol>
+</div>
+  <h2>Evidence referenced</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">ID</th><th scope="col">Result</th><th scope="col">Summary</th><th scope="col">Observed</th></tr></thead><tbody><tr><td class="id"><a href="evidence.html#EV-0001">EV-0001</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Launch packet unpacked byte-identical; uploaded files equal the zip contents</td><td>verified 32 files byte-identical; mismatches: none. Upload SHA-256 values equal the zip members (START_HERE cdc26087…, PDF 98c02e8c…, DOCX 9945ea43…, XLSX 1950ec5f…).</td></tr><tr><td class="id"><a href="evidence.html#EV-0002">EV-0002</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>PDF and DOCX founder packet carry the same text as docs/LAUNCH_PACKET.md</td><td>DOCX similarity 0.9968 (differences: punctuation spacing, title block, image alt text). PDF similarity 0.9520 (differences: running headers/footers and table-cell reflow from layout extraction). No substantive wording differences found. 24 pages; producer LibreOfficeDev 26.8.</td></tr><tr><td class="id"><a href="evidence.html#EV-0003">EV-0003</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Sprint workbook formulas and cached values reconcile with the JSON planning sources</td><td>16 tickets with identical ids, owners, dependencies and hour ranges; totals 107–149 h + 11 reserve = 118–160 h; costs: vendor base $94, operation $119–169/mo, with podcast $138–218/mo, annual upfront $588; 6 editorial weeks; 12 decisions all Proposed; no formula error values. Note: workbook statuses use Proposed/Ready/In progress/Blocked/Done while BACKLOG.json uses planned; the workbook is not regenerable here because planning/build_workbook.mjs depends on the proprietary @oai/artifact-tool runtime.</td></tr><tr><td class="id"><a href="evidence.html#EV-0004">EV-0004</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Docker daemon runs in cloud sessions; Docker Hub anonymous pulls are rate limited; mirror.gcr.io resolves it</td><td>First pull failed at 15:57:28Z: &#39;429 Too Many Requests&#39; from registry-1.docker.io. With the mirror both images pulled (ghost digest sha256:baa6dbff…). public.ecr.aws and ghcr.io (used by Supabase CLI) were reachable without a mirror.</td></tr><tr><td class="id"><a href="evidence.html#EV-0005">EV-0005</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Pinned developer tools installed by tools/bootstrap/install-dev-tools.sh with checksum verification</td><td>Installed: actionlint 1.7.12, gitleaks 8.30.1, shellcheck 0.11.0, firebase-tools 15.36.0, vercel 66.1.0, gscan 6.7.0 (npm global); Node 24.22.3 present at /opt/node24 (default node 22.23.5 unchanged); glslang 15.1.0 via apt. Re-run is idempotent. shellcheck: clean after fixing SC2015.</td></tr><tr><td class="id"><a href="evidence.html#EV-0006">EV-0006</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Local Supabase stack starts in cloud sessions with pgTAP and the Supabase roles available</td><td>Stack healthy after 67 s (first run including image pulls): postgres 17.12.0.000, gotrue v2.198.0, postgrest v16.5, realtime v2.167.0, storage-api v1.96.0, kong 2.8.1, mailpit v1.31.3, studio, postgres-meta v0.100.0. Extensions available: pgtap 1.3.3, pg_cron 1.6.4, pg_net 0.20.4, pgsodium 3.1.8, supabase_vault 0.3.2. Roles present: anon, authenticated, authenticator, service_role, supabase_admin.</td></tr><tr><td class="id"><a href="evidence.html#EV-0007">EV-0007</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Ghost 6.78 runs locally (SQLite, development mode) once bound to IPv4</td><td>First start failed at 16:06:08Z with &#39;There was an error starting your server&#39; (Code -97, EAFNOSUPPORT: default IPv6 bind, container has no IPv6). With server__host=0.0.0.0 the admin site endpoint returned HTTP 200 after ~4 s with version 6.78; public home HTTP 200. Container removed; image kept.</td></tr><tr><td class="id"><a href="evidence.html#EV-0008">EV-0008</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Next.js 16.4.6 scaffold builds under the proposed supply-chain policy after two adjustments</td><td>1) trustPolicy no-downgrade rejected undici-types@6.21.0 (via template default @types/node ^20) as a high-risk trust downgrade; aligning @types/node to ^24 (24.19.2) resolved it. 2) minimumReleaseAge rejected @supabase/supabase-js 2.119.1 (published 2026-11-18T14:42Z); 2.119.0 installed. Template defaults: next 16.4.6, react 19.3.0, typescript ^5 (5.9.3), eslint ^9 (9.39.5 flagged deprecated; 10.15.0 current). Build succeeded (static routes / and /_not-found); add+build 5 s with a warm store.</td></tr><tr><td class="id"><a href="evidence.html#EV-0009">EV-0009</a></td><td><span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.2" y="7" width="1.6" height="4.5" fill="currentColor"/><circle cx="8" cy="4.9" r="1" fill="currentColor"/></svg>info</span></td><td>Runtime constraint: Ghost tooling excludes Node 26; repository pins Node 24 LTS</td><td>ghost@6.78.0 engines node ^22.23.5 || ^24.22.3; gscan@6.7.0 engines node ^22.17.0 || ^24.0.0. Release lines: 26.13.1 (LTS Lithium), 24.22.3 (LTS Krypton), 22.23.5 (LTS Jod). .nvmrc set to 24.</td></tr><tr><td class="id"><a href="evidence.html#EV-0010">EV-0010</a></td><td><span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.2" y="7" width="1.6" height="4.5" fill="currentColor"/><circle cx="8" cy="4.9" r="1" fill="currentColor"/></svg>info</span></td><td>Vendor prices in the packet still hold; several platform changes affect the foundation design</td><td>Ghost Publisher $29/mo yearly ($35 monthly), 3 staff, Contributors free; Buffer Team $10/channel/mo yearly; Supabase Pro from $25/mo; Vercel Pro $20/mo incl. one deploying seat. Changes: Next 16 proxy.ts replaces middleware.ts; Supabase publishable/secret keys replace legacy anon/service_role (legacy deprecating end of 2026) and new tables need explicit GRANTs (since 2026-10-30); Buffer GraphQL API + official MCP server, API-key posts act as owner (approval only enforced for Needs Approval members via MCP/OAuth); TypeScript 7.0 is npm latest but typescript-eslint supports &lt; 6.1; Firebase App Hosting lists Next 16 as preview only.</td></tr><tr><td class="id"><a href="evidence.html#EV-0011">EV-0011</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Repository gate passes: pnpm check (validators, tool tests, hub build and check, formatting)</td><td>Validators 9/9 pass (16 tickets, 107-149 h + 11; 6 calendar weeks; 12 decisions; 26 scenarios UNRUN; 6 valid + 11 invalid contract examples; 4 packet checksums; 74 relative links in 37 Markdown files; tracking rules). Tests 26/26 pass, including negative cases: dangling dependency, cycle, hour drift, CSV drift, done without evidence, PASS without a test record, publish tool in the valid corpus, publishable fixture, tampered packet, non-sequential evidence IDs. Hub: 44 pages, 1,997 internal links and assets resolve. Prettier clean.</td></tr><tr><td class="id"><a href="evidence.html#EV-0012">EV-0012</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Project hub visual and accessibility verification across desktop, phone, dark and reduced-motion profiles</td><td>Final round: 44/44 renders clean: 0 axe violations, 0 console errors, 0 horizontal overflow; WebGL masthead running in 33 renders and static in all 11 reduced-motion renders; Fraunces and Source Sans 3 loaded. Earlier rounds found and fixed: scrollable regions not keyboard-focusable (WCAG 2.1.1), a 2.87:1 swatch label, SVG chart text scaling to about 9.5 px (rebuilt as HTML/CSS bars), 24 h1s on the launch packet page, GMT-5 instead of EST, a JPEG size limit on a very long mobile page.</td></tr><tr><td class="id"><a href="evidence.html#EV-0013">EV-0013</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Pages preview publishing simulated end to end with CI-style fresh shallow clones</td><td>gh-pages created and updated; branches/claude-intelligent-cannon-d1nqq6 and branches/feat-second-branch published; root index lists both; latest/ redirects to the newest; each branch hub links to All branch previews; removal deletes the preview and rewrites the index. Found and fixed: a fixed ../pages worktree path that collides on reused runners (now mktemp), and hub:check rejecting the intentional previews-index link (now exempted via build.json; a stray escaping link still fails).</td></tr><tr><td class="id"><a href="evidence.html#EV-0014">EV-0014</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Static analysis and secret scanning clean</td><td>actionlint: no findings; shellcheck: no findings after fixing SC2015; glslang: both shaders valid GLSL ES 3.00; gitleaks: no leaks in the working tree (generated paths excluded) or in the 2 existing commits.</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

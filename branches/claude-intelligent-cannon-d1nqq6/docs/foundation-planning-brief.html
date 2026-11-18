@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Foundation planning brief · Seafood Confidential project hub</title>
+<meta name="description" content="Foundation planning brief (docs/planning/FOUNDATION_PLANNING_BRIEF.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html" aria-current="page">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="foundation-planning-brief">Foundation planning brief</h1>
+<p>Prepared 18 November 2026 by session S01 (branch <code>claude/intelligent-cannon-d1nqq6</code>, version 0.1.0) as the input to the next turn&#39;s plan mode. Everything here is a <strong>proposal</strong>. Founder decisions stay Proposed until the founders decide; product architecture stays with <a href="adr-001.html">ADR-001</a> until changed deliberately.</p>
+<h2 id="how-to-use-this-brief">How to use this brief</h2>
+<ol>
+<li>Read the scope, platform facts and feasibility sections for what the foundation covers and what changed since the packet.</li>
+<li>Answer the questions under &quot;Questions for plan mode&quot;. Each has options and a recommendation; the plan should not start building past a question it depends on.</li>
+<li>Turn the plan skeleton into the executable plan: tickets, order, exit criteria and the acceptance scenarios each phase must evidence.</li>
+</ol>
+<h2 id="foundation-scope">Foundation scope</h2>
+<p>The kit says &quot;implement SC-001 through SC-005 first&quot; and &quot;demonstrate guest/agent negative-permission tests before building broad automation&quot; (<a href="development-kit.html">development kit</a>). Three of those five tickets (SC-002 Ghost roles, SC-003 theme, SC-004 newsletter) configure a <strong>paid Ghost(Pro) account that does not exist yet</strong>. The proposed foundation therefore separates what can be built now from what waits for accounts:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Tickets</th>
+<th>Can start now?</th>
+<th>Proposed foundation outcome</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Decisions and environment</td>
+<td>SC-001 (in progress)</td>
+<td>Yes</td>
+<td>Founder answers recorded; runtime/tooling ADR; staging secrets plan; vendor feasibility documented with manual fallbacks</td>
+</tr>
+<tr>
+<td>Private operations shell and auth</td>
+<td>SC-005</td>
+<td>Yes, fully local</td>
+<td>Next.js desk with staff-only access, explicit human and agent principals, Supabase RLS <strong>and grants</strong>, pgTAP policy tests, audit trail, telemetry baseline</td>
+</tr>
+<tr>
+<td>Ghost groundwork</td>
+<td>SC-002 to SC-004</td>
+<td>Partly, against local Ghost 6.78</td>
+<td>Docker Compose stack (Ghost + Mailpit), a fork of the MIT-licensed Source theme with brand tokens, a scripted Contributor-cannot-publish rehearsal; the paid-account configuration waits for D01/D05</td>
+</tr>
+</tbody></table></div>
+<p>Foundation estimate from the backlog: <strong>30–42 h</strong> (SC-001 to SC-005). The local Ghost groundwork moves part of SC-002 to SC-004 earlier; it does not add tickets.</p>
+<h2 id="current-platform-facts">Current platform facts</h2>
+<p>Checked 18 November 2026 (EV-0009, EV-0010) against primary sources: nodejs.org, npm, nextjs.org, supabase.com, docs.ghost.org and Ghost 6.78.0 source, ghost.org/pricing, support.buffer.com and developers.buffer.com, vercel.com, firebase.google.com.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Fact</th>
+<th>Consequence for the foundation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Node.js</td>
+<td>Active LTS 26 (EOL 2029-04-30); maintenance LTS 24 (EOL 2028-04-30) and 22 (EOL 2027-04-30)</td>
+<td>Ghost 6.78 (<code>^22.23.5 || ^24.22.3</code>) and gscan (<code>^22.17 || ^24</code>) exclude 26; <strong>pin Node 24</strong> (done in <code>.nvmrc</code>)</td>
+</tr>
+<tr>
+<td>Next.js</td>
+<td>16.4.6; Node ≥ 20.9; <code>middleware.ts</code> renamed <strong><code>proxy.ts</code></strong>, Node runtime only; Turbopack default; Cache Components on for new apps</td>
+<td>Session refresh and request IDs in <code>proxy.ts</code>; authorization still checked inside every route handler and server action</td>
+</tr>
+<tr>
+<td>React</td>
+<td>19.3.1 (template installs 19.3.0)</td>
+<td></td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>7.0.2 is npm <code>latest</code> (native compiler, no compiler API); typescript-eslint supports &lt; 6.1</td>
+<td>Choose a TypeScript line (Q3)</td>
+</tr>
+<tr>
+<td>pnpm</td>
+<td>12.21.0 with <code>allowBuilds</code>, <code>minimumReleaseAge</code>, <code>trustPolicy</code></td>
+<td>Already configured; blocked a trust downgrade and a same-day release during the probe (EV-0008)</td>
+</tr>
+<tr>
+<td>Supabase JS</td>
+<td>supabase-js 2.119.x (Node ≥ 22); <code>@supabase/ssr</code> 0.12.7 for App Router</td>
+<td>Server and browser clients via <code>@supabase/ssr</code> with <code>getClaims()</code></td>
+</tr>
+<tr>
+<td>Supabase keys</td>
+<td>Publishable/secret keys (<code>sb_publishable_…</code>, <code>sb_secret_…</code>) replace legacy anon/service_role keys, which are deprecated by the end of 2026; new projects don&#39;t receive legacy keys</td>
+<td>Use the new keys from day one; secret key server-only (it bypasses RLS)</td>
+</tr>
+<tr>
+<td>Supabase grants</td>
+<td>Since 30 October 2026 new tables in <code>public</code> are <strong>not exposed to the Data API automatically</strong></td>
+<td>Every migration grants explicitly; pgTAP tests assert grants (this is AT-25)</td>
+</tr>
+<tr>
+<td>Supabase Postgres</td>
+<td>17 by default; CLI 3.2.0 targets the local stack by default; <code>supabase test db</code> runs pgTAP</td>
+<td>Local stack verified in this container (EV-0006)</td>
+</tr>
+<tr>
+<td>Ghost</td>
+<td>6.78.0; Contributor drafts but cannot publish; Admin API JWT from an integration key; staff access tokens act with that user&#39;s role; <code>Accept-Version: v6.0</code></td>
+<td>A Contributor staff token lets Ghost itself refuse publication: defence in depth for agent drafts (verify on Ghost(Pro))</td>
+</tr>
+<tr>
+<td>Ghost webhooks</td>
+<td>Signed with <code>X-Ghost-Signature</code> (HMAC-SHA256) when a secret is set; not in the public docs, confirmed in source</td>
+<td>Verify on a real delivery before relying on it (kit: &quot;do not assume&quot;)</td>
+</tr>
+<tr>
+<td>Ghost themes</td>
+<td>Source (default theme) is MIT-licensed; premium themes typically forbid redistribution</td>
+<td>Source fits a public repository; a premium theme needs a private one</td>
+</tr>
+<tr>
+<td>Buffer</td>
+<td>GraphQL API (<code>api.buffer.com</code>, since 27 May 2026, all plans); official MCP server <code>mcp.buffer.com/mcp</code> (OAuth); legacy REST retires 1 February 2027; approvals are Team-plan only</td>
+<td><strong>An API key acts as the owner and skips approval.</strong> Only a Needs Approval member connected through MCP/OAuth has posts held as drafts by Buffer (Q9)</td>
+</tr>
+<tr>
+<td>Prices</td>
+<td>Ghost Publisher $29/mo yearly ($35 monthly); Buffer Team $10/channel/mo yearly ($12 monthly); Supabase Pro from $25/mo; Vercel Pro $20/mo with one deploying seat</td>
+<td>Packet figures hold</td>
+</tr>
+<tr>
+<td>Firebase App Hosting</td>
+<td>Blaze plan; Next.js 15.2 &quot;active&quot;, 16.x preview only</td>
+<td>Viable later, riskier now (Q4)</td>
+</tr>
+</tbody></table></div>
+<h2 id="environment-feasibility">Environment feasibility</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Docker</td>
+<td>The daemon is not running by default but starts (<code>dockerd</code>). Docker Hub anonymous pulls returned 429; a <code>mirror.gcr.io</code> registry mirror fixes it; ECR Public and GHCR work directly</td>
+<td>EV-0004</td>
+</tr>
+<tr>
+<td>Supabase local stack</td>
+<td>Healthy in 67 s on first run: Postgres 17.12, GoTrue, PostgREST, Storage, Realtime, Mailpit, Studio; pgTAP 1.3.3; roles <code>anon</code>, <code>authenticated</code>, <code>service_role</code> present</td>
+<td>EV-0006</td>
+</tr>
+<tr>
+<td>Ghost 6.78 local</td>
+<td>Runs in development mode with SQLite. It must bind IPv4 (<code>server__host=0.0.0.0</code>); the default IPv6 bind fails here with EAFNOSUPPORT</td>
+<td>EV-0007</td>
+</tr>
+<tr>
+<td>Next.js 16.4.6</td>
+<td>Template plus supabase-js, <code>@supabase/ssr</code>, Ghost Admin API client, zod 4, MCP SDK and Ajv install and build under Node 24 and pnpm 12 policies; two policy adjustments were needed</td>
+<td>EV-0008</td>
+</tr>
+<tr>
+<td>Tools</td>
+<td>actionlint, gitleaks, shellcheck, glslang, Firebase CLI, Vercel CLI, gscan, Supabase CLI; pinned and checksum-verified</td>
+<td>EV-0005</td>
+</tr>
+</tbody></table></div>
+<h2 id="proposed-foundation-architecture">Proposed foundation architecture</h2>
+<h3 id="repository-layout">Repository layout</h3>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-text">apps/desk/            Next.js 16 private operations desk (App Router, TypeScript, Node 24)
+packages/contracts/   agent request/response schemas and generated types (source: contracts/)
+packages/policy/      authorization and validation shared by HTTP routes and a later MCP adapter
+supabase/             migrations, fixture-only seed, pgTAP tests (supabase/tests)
+themes/sc-source/     fork of Ghost&#39;s MIT-licensed Source theme with Working Waterfront tokens
+infra/local/          docker compose for Ghost 6.78 + Mailpit; scripts to seed roles
+tools/                repository tooling (exists)
+</code></pre>
+<h3 id="identity-and-data-sc-005">Identity and data (SC-005)</h3>
+<ul>
+<li><strong>Principals:</strong> one row per human staff member or named agent: <code>kind human|agent</code>, <code>status active|disabled|revoked</code>. Reader (Ghost member), Ghost staff, desk human and desk agent remain distinct identities (ARCHITECTURE.md). Matching email addresses confer nothing.</li>
+<li><strong>Staff assignments</strong> grant desk access explicitly. Supabase Auth sign-in alone grants nothing; a signed-in user without an active assignment sees no data.</li>
+<li><strong>Agent credentials</strong> are stored hashed, with scopes, object grants, expiry and revocation time, and are verified server-side. The browser and the model never receive vendor keys.</li>
+<li><strong>Audit events</strong> form an append-only table. The application role cannot update or delete rows.</li>
+<li><strong>Database access for agents</strong> (Q6): recommended pattern is a server-side transaction that switches to a restricted Postgres role and sets <code>app.principal_id</code>, so the <strong>same RLS policies</strong> apply to humans and agents, proven by pgTAP tests. The secret key is reserved for narrowly reviewed maintenance paths.</li>
+</ul>
+<h3 id="middleware-nextjs-proxyts-and-route-guards">Middleware: Next.js <code>proxy.ts</code> and route guards</h3>
+<ul>
+<li><code>proxy.ts</code>: Supabase session refresh (<code>@supabase/ssr</code>), a request ID (<code>x-request-id</code>), and security headers: a nonce-based CSP, <code>frame-ancestors &#39;none&#39;</code>, HSTS, <code>Referrer-Policy</code>, <code>Permissions-Policy</code>.</li>
+<li><strong>Route guards inside each handler and server action</strong> (proxy is not an authorization boundary): resolve principal → check assignment or scope → validate input (Ajv/zod against the contract) → execute → emit audit event.</li>
+<li>The agent gateway (<code>/api/agent/v1</code>) accepts only the contract&#39;s six tools. Unknown tools, extra fields and publish/send verbs are rejected before any vendor call (AT-04).</li>
+</ul>
+<h3 id="telemetry-baseline">Telemetry baseline</h3>
+<ul>
+<li><strong>Traces:</strong> OpenTelemetry through Next.js <code>instrumentation.ts</code>. Agent gateway spans follow the OpenTelemetry GenAI conventions where applicable (<code>gen_ai.operation.name</code>, tool name, request ID, principal ID; never content, prompts or contact data).</li>
+<li><strong>Logs:</strong> structured JSON with a redaction allowlist. Tokens, cookies, email addresses, source contacts and draft bodies are never logged (AGENTS.md; AT-23).</li>
+<li><strong>Audit:</strong> security-relevant events (sign-in, assignment change, agent request accepted or rejected, revocation, review snapshot) go to <code>audit_events</code> with the request ID.</li>
+<li><strong>Errors:</strong> an error boundary plus server error capture. The vendor choice (Sentry, host-native or OTel backend) is Q10.</li>
+</ul>
+<h3 id="security-baseline">Security baseline</h3>
+<p>Secrets live only in the hosting environment and Supabase. gitleaks runs in CI alongside GitHub push protection. Dependencies install under pnpm&#39;s release-age and trust gates. Every table gets RLS, explicit grants and pgTAP tests. CSP and secure headers are in place, the client bundle is scanned for secrets (AT-23), and staging and production environments are kept separate. The fixture is clearly marked unpublishable.</p>
+<h3 id="testing-strategy">Testing strategy</h3>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Tool</th>
+<th>Runs in CI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Contract</td>
+<td>Ajv over contracts/examples (exists)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Database policies and grants</td>
+<td>pgTAP via <code>supabase test db</code></td>
+<td>Yes (Docker on GitHub runners)</td>
+</tr>
+<tr>
+<td>Unit</td>
+<td>Vitest or <code>node --test</code> for policy functions</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Integration and journeys</td>
+<td>Playwright against the desk and local Ghost</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Accessibility</td>
+<td>axe-core via Playwright (exists for the hub)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Visual</td>
+<td>Playwright screenshots attached to the dev log</td>
+<td>On demand</td>
+</tr>
+</tbody></table></div>
+<h2 id="questions-for-plan-mode">Questions for plan mode</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Question</th>
+<th>Options</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Q1</td>
+<td>Repository visibility</td>
+<td>Keep public / make private</td>
+<td><strong>Decide before SC-003.</strong> Public is workable only with Source (MIT) and strict no-secrets discipline. Private matches the kit, but GitHub Pages on a private repository needs a paid plan and the site itself stays public; an access-controlled hub would move to Cloudflare Access or Vercel</td>
+</tr>
+<tr>
+<td>Q2</td>
+<td>Node runtime</td>
+<td>24 LTS / 26 LTS</td>
+<td><strong>24</strong> (Ghost and gscan exclude 26); revisit when Ghost supports 26</td>
+</tr>
+<tr>
+<td>Q3</td>
+<td>TypeScript line</td>
+<td>5.9 (template) / 6.0.3 / 7.0.2</td>
+<td><strong>6.0.3</strong> with typescript-eslint; trial 7.x for type-checking speed once lint support lands</td>
+</tr>
+<tr>
+<td>Q4</td>
+<td>Desk hosting</td>
+<td>Vercel Pro / Firebase App Hosting / self-host</td>
+<td><strong>Vercel Pro</strong> (kit default, first-class Next 16). Firebase App Hosting stays an option once Next 16 is &quot;active&quot; there</td>
+</tr>
+<tr>
+<td>Q5</td>
+<td>Supabase project timing</td>
+<td>Hosted staging now / local-first</td>
+<td><strong>Local-first</strong> until SC-005 passes its policy tests; create a staging project after D05 approves budget</td>
+</tr>
+<tr>
+<td>Q6</td>
+<td>How agents reach the database</td>
+<td>Role switch + <code>app.principal_id</code> / minted JWTs / secret key + app checks</td>
+<td><strong>Role switch + <code>app.principal_id</code></strong>: one set of RLS policies, testable in pgTAP, no RLS bypass</td>
+</tr>
+<tr>
+<td>Q7</td>
+<td>Ghost theme</td>
+<td>Source (MIT) / premium</td>
+<td><strong>Source fork</strong> (license-safe in a public repository; mature components)</td>
+</tr>
+<tr>
+<td>Q8</td>
+<td>Launch social channels (D10)</td>
+<td>LinkedIn only / LinkedIn + Facebook</td>
+<td>Founder choice; engineering builds channel-agnostic. The playbook&#39;s LinkedIn-first is lower workload</td>
+</tr>
+<tr>
+<td>Q9</td>
+<td>Buffer integration path</td>
+<td>GraphQL with owner key / MCP or OAuth as a Needs Approval member / manual export</td>
+<td><strong>MCP/OAuth as Needs Approval member</strong> so Buffer itself holds drafts; manual export always available</td>
+</tr>
+<tr>
+<td>Q10</td>
+<td>Telemetry and error backend</td>
+<td>Host-native / OTel backend (e.g. Grafana Cloud, Honeycomb) / Sentry</td>
+<td><strong>OTel SDK plus structured logs first</strong>; choose a backend with the accounts; no PII in telemetry</td>
+</tr>
+<tr>
+<td>Q11</td>
+<td>Desk UI approach</td>
+<td>CSS modules + brand tokens / Tailwind v4 / component library</td>
+<td><strong>CSS modules + brand tokens</strong> (small private surface; tokens already compiled from brand/tokens.json)</td>
+</tr>
+<tr>
+<td>Q12</td>
+<td>Workbook</td>
+<td>Replace the generator (ExcelJS or openpyxl) / retire as engineering record</td>
+<td><strong>Repository JSON is the record</strong>; keep the XLSX as a founder snapshot</td>
+</tr>
+<tr>
+<td>Q13</td>
+<td>Repository layout</td>
+<td>As proposed above / single app</td>
+<td><strong>The layout above</strong>; packages only where code is shared (contracts, policy)</td>
+</tr>
+<tr>
+<td>Q14</td>
+<td>Licensing</td>
+<td>Proprietary interim (current) / open-source code</td>
+<td>Interim proprietary notice stands until the founders decide; content is never open-licensed by default</td>
+</tr>
+<tr>
+<td>Q15</td>
+<td>Which founder decisions can be made now</td>
+<td>D01–D12</td>
+<td>At minimum D01 (owners), D04 (scope), D06 (publication authority), D10 (channels), D05 (budget) before paid accounts</td>
+</tr>
+<tr>
+<td>Q16</td>
+<td>Fit with the team&#39;s usual Firebase, Flutter and WebGL stack</td>
+<td>—</td>
+<td>Keep the kit stack for the desk; reuse the WebGL bathymetry motif for theme and newsletter art; no Flutter app (native apps are a launch exclusion); Firebase is optional for later hosting</td>
+</tr>
+</tbody></table></div>
+<h2 id="plan-skeleton">Plan skeleton</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Work</th>
+<th>Exit criteria (evidence required)</th>
+<th>Tickets / scenarios</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>F0 Decisions</td>
+<td>Record answers to Q1–Q16 and the founder decisions possible now; ADR-003 runtime and tooling; staging secrets plan</td>
+<td>Decisions recorded with owner and date; ADR merged</td>
+<td>SC-001</td>
+</tr>
+<tr>
+<td>F1 Desk scaffold</td>
+<td><code>apps/desk</code> on Next 16 with Node 24 and pnpm 12; <code>proxy.ts</code>, security headers, request IDs, OTel and logging, error boundary; CI jobs</td>
+<td>Desk builds and starts in CI; header and CSP check; bundle secret scan clean</td>
+<td>SC-005; AT-23</td>
+</tr>
+<tr>
+<td>F2 Database</td>
+<td>Migrations: principals, staff assignments, agent credentials, audit events; explicit grants plus RLS; fixture-only seed; generated types</td>
+<td><code>supabase test db</code> passes grant, RLS and view/function tests</td>
+<td>SC-005; AT-25</td>
+</tr>
+<tr>
+<td>F3 Access</td>
+<td>Staff sign-in, assignment-gated access, disabled-account denial; agent token issue/revoke CLI; gateway skeleton enforcing the contract</td>
+<td>Negative tests: unauthorized, disabled and revoked principals denied; publish verbs rejected before vendor calls</td>
+<td>SC-005; AT-03, AT-04, AT-07</td>
+</tr>
+<tr>
+<td>F4 Ghost groundwork</td>
+<td>Local Ghost + Mailpit compose file; Source theme fork with tokens; scripted role setup; server-only Admin API wrapper</td>
+<td>Contributor cannot publish or edit another contributor&#39;s draft on local Ghost; reader member cannot reach staff admin</td>
+<td>SC-002 to SC-004 (local); AT-01, AT-02 rehearsal</td>
+</tr>
+<tr>
+<td>F5 Evidence and hand-off</td>
+<td>Run in-scope scenarios; evidence records; hub, dev log and status updated</td>
+<td><code>pnpm check</code> green; IMPLEMENTATION_STATUS current</td>
+<td>All of the above</td>
+</tr>
+</tbody></table></div>
+<h2 id="foundation-risks">Foundation risks</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Founder decisions lag</td>
+<td>Build only what is account-independent; keep SC-001 open with named blockers</td>
+</tr>
+<tr>
+<td>Supabase grant and key changes catch migrations</td>
+<td>pgTAP grant tests from the first migration; new keys only</td>
+</tr>
+<tr>
+<td>Proxy mistaken for an authorization boundary</td>
+<td>Guards inside each handler; tests that call handlers directly</td>
+</tr>
+<tr>
+<td>Vendor API drift (Buffer, Ghost webhooks)</td>
+<td>Isolate adapters; manual export path; verify against real deliveries</td>
+</tr>
+<tr>
+<td>Public repository leaks something sensitive</td>
+<td>gitleaks plus push protection; no real contacts or credentials in fixtures; Q1 decided early</td>
+</tr>
+<tr>
+<td>Single developer and tight capacity</td>
+<td>Re-estimate after F1; the critical path is 54–74 h, so a second contributor on Ghost work shortens calendar time</td>
+</tr>
+</tbody></table></div>
+<h2 id="references">References</h2>
+<p><a href="product-spec.html">Product spec</a> · <a href="architecture.html">Architecture</a> · <a href="acceptance-tests.html">Acceptance tests</a> · <a href="sprint-plan.html">Sprint plan</a> · <a href="kit-audit.html">Kit audit</a> · <a href="development-environment.html">Development environment</a> · <a href="adr-001.html">ADR-001</a> · <a href="adr-002.html">ADR-002</a> · <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/devtrack/evidence.json">Evidence log</a></p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/planning/FOUNDATION_PLANNING_BRIEF.md">docs/planning/FOUNDATION_PLANNING_BRIEF.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

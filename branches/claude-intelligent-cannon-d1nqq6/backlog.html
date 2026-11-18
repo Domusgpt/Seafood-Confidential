@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Backlog · Seafood Confidential project hub</title>
+<meta name="description" content="Sixteen planned tickets with dependencies, critical path and effort.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="assets/hub.js" defer></script>
+<script src="assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="index.html">Overview</a></li><li><a href="backlog.html" aria-current="page">Backlog</a></li><li><a href="acceptance.html">Acceptance</a></li><li><a href="decisions.html">Decisions</a></li><li><a href="editorial.html">Editorial</a></li><li><a href="visual-codex.html">Visual codex</a></li><li><a href="docs/index.html">Docs</a></li><li><a href="devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+
+<div class="page-head">
+  <span class="eyebrow">planning/BACKLOG.json · 16 tickets</span>
+  <h1>Backlog and critical path</h1>
+  <p class="lede">Dependencies in the backlog are authoritative; day ranges are a planning envelope. Status changes only with evidence.</p>
+</div>
+<div class="kpis">
+  <div class="tile">
+  <span class="tile-label">Ticket hours</span>
+  <span class="tile-value">107–149 h</span>
+  <span class="tile-note">+ 11 h reserve</span>
+  
+</div>
+  <div class="tile">
+  <span class="tile-label">Critical path</span>
+  <span class="tile-value">54–74 h</span>
+  <span class="tile-note">7 tickets in sequence</span>
+  
+</div>
+  <div class="tile">
+  <span class="tile-label">Foundation (SC-001–005)</span>
+  <span class="tile-value">30–42 h</span>
+  <span class="tile-note">Scope for the next plan</span>
+  
+</div>
+  <div class="tile">
+  <span class="tile-label">In progress</span>
+  <span class="tile-value">1</span>
+  <span class="tile-note">0 done</span>
+  
+</div>
+</div>
+<div class="grid">
+<figure class="viz-figure" id="deps">
+    <figcaption>
+      <span class="viz-title">Dependency graph and critical path</span>
+      <span class="viz-subtitle">Critical path at high estimates: SC-001 → SC-005 → SC-007 → SC-009 → SC-011 → SC-015 → SC-016 (74 h of work in sequence)</span>
+    </figcaption>
+    <ul class="viz-legend" aria-label="Legend"><li><span class="key key-critical" aria-hidden="true"></span>Critical path</li><li><span class="key key-edge" aria-hidden="true"></span>Other dependency</li><li><span class="key key-progress" aria-hidden="true"></span>In progress (outline)</li></ul>
+    <p class="scroll-hint">Scroll sideways to see the whole graph →</p><div class="scroll-x" tabindex="0" role="region" aria-label="Dependency graph, scrollable"><svg class="viz viz-deps" width="1092" height="396" viewBox="0 0 1092 396" role="list" aria-label="Dependency graph of 16 tickets"><path class="dep-edge" data-from="SC-001" data-to="SC-002" d="M148,198 C156,198 156,236 164,236" /><path class="dep-edge" data-from="SC-002" data-to="SC-003" d="M304,236 C312,236 312,312 320,312" /><path class="dep-edge" data-from="SC-002" data-to="SC-004" d="M304,236 C312,236 312,236 320,236" /><path class="dep-edge" data-from="SC-005" data-to="SC-006" d="M304,160 C312,160 312,84 320,84" /><path class="dep-edge" data-from="SC-002" data-to="SC-007" d="M304,236 C312,236 312,160 320,160" /><path class="dep-edge" data-from="SC-006" data-to="SC-008" d="M460,84 C468,84 468,46 476,46" /><path class="dep-edge" data-from="SC-007" data-to="SC-008" d="M460,160 C468,160 468,46 476,46" /><path class="dep-edge" data-from="SC-005" data-to="SC-009" d="M304,160 C390,160 390,122 476,122" /><path class="dep-edge" data-from="SC-008" data-to="SC-010" d="M616,46 C624,46 624,160 632,160" /><path class="dep-edge" data-from="SC-009" data-to="SC-010" d="M616,122 C624,122 624,160 632,160" /><path class="dep-edge" data-from="SC-007" data-to="SC-011" d="M460,160 C546,160 546,236 632,236" /><path class="dep-edge" data-from="SC-003" data-to="SC-012" d="M460,312 C468,312 468,198 476,198" /><path class="dep-edge" data-from="SC-003" data-to="SC-013" d="M460,312 C468,312 468,274 476,274" /><path class="dep-edge" data-from="SC-006" data-to="SC-013" d="M460,84 C468,84 468,274 476,274" /><path class="dep-edge" data-from="SC-005" data-to="SC-014" d="M304,160 C390,160 390,350 476,350" /><path class="dep-edge" data-from="SC-007" data-to="SC-014" d="M460,160 C468,160 468,350 476,350" /><path class="dep-edge" data-from="SC-003" data-to="SC-015" d="M460,312 C624,312 624,198 788,198" /><path class="dep-edge" data-from="SC-004" data-to="SC-015" d="M460,236 C624,236 624,198 788,198" /><path class="dep-edge" data-from="SC-008" data-to="SC-015" d="M616,46 C702,46 702,198 788,198" /><path class="dep-edge" data-from="SC-009" data-to="SC-015" d="M616,122 C702,122 702,198 788,198" /><path class="dep-edge" data-from="SC-010" data-to="SC-015" d="M772,160 C780,160 780,198 788,198" /><path class="dep-edge" data-from="SC-014" data-to="SC-015" d="M616,350 C702,350 702,198 788,198" /><path class="dep-edge" data-from="SC-012" data-to="SC-016" d="M616,198 C780,198 780,198 944,198" /><path class="dep-edge" data-from="SC-013" data-to="SC-016" d="M616,274 C780,274 780,198 944,198" /><path class="dep-edge is-critical" data-from="SC-001" data-to="SC-005" d="M148,198 C156,198 156,160 164,160" /><path class="dep-edge is-critical" data-from="SC-005" data-to="SC-007" d="M304,160 C312,160 312,160 320,160" /><path class="dep-edge is-critical" data-from="SC-007" data-to="SC-009" d="M460,160 C468,160 468,122 476,122" /><path class="dep-edge is-critical" data-from="SC-009" data-to="SC-011" d="M616,122 C624,122 624,236 632,236" /><path class="dep-edge is-critical" data-from="SC-011" data-to="SC-015" d="M772,236 C780,236 780,198 788,198" /><path class="dep-edge is-critical" data-from="SC-015" data-to="SC-016" d="M928,198 C936,198 936,198 944,198" /><g class="dep-node is-critical status-in_progress" data-id="SC-001" tabindex="0" role="listitem" aria-label="SC-001 Decisions and development environment. In progress. 4–6 h. Depends on: nothing." data-tip="SC-001 Decisions and development environment. In progress. 4–6 h. Depends on: nothing." transform="translate(8,168)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-001<tspan class="dep-hours" dx="7">4–6 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Decisions and</text>
+      <text class="dep-title" x="11" y="51">development environm…</text>
+    </g><g class="dep-node status-planned" data-id="SC-002" tabindex="0" role="listitem" aria-label="SC-002 Ghost publication and role foundation. Planned. 4–6 h. Depends on: SC-001." data-tip="SC-002 Ghost publication and role foundation. Planned. 4–6 h. Depends on: SC-001." transform="translate(164,206)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-002<tspan class="dep-hours" dx="7">4–6 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Ghost publication and</text>
+      <text class="dep-title" x="11" y="51">role foundation</text>
+    </g><g class="dep-node status-planned" data-id="SC-003" tabindex="0" role="listitem" aria-label="SC-003 Existing theme and core public pages. Planned. 8–12 h. Depends on: SC-002." data-tip="SC-003 Existing theme and core public pages. Planned. 8–12 h. Depends on: SC-002." transform="translate(320,282)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-003<tspan class="dep-hours" dx="7">8–12 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Existing theme and</text>
+      <text class="dep-title" x="11" y="51">core public pages</text>
+    </g><g class="dep-node status-planned" data-id="SC-004" tabindex="0" role="listitem" aria-label="SC-004 Newsletter and reader account journey. Planned. 4–6 h. Depends on: SC-002." data-tip="SC-004 Newsletter and reader account journey. Planned. 4–6 h. Depends on: SC-002." transform="translate(320,206)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-004<tspan class="dep-hours" dx="7">4–6 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Newsletter and reader</text>
+      <text class="dep-title" x="11" y="51">account journey</text>
+    </g><g class="dep-node is-critical status-planned" data-id="SC-005" tabindex="0" role="listitem" aria-label="SC-005 Private operations shell and auth. Planned. 10–12 h. Depends on: SC-001." data-tip="SC-005 Private operations shell and auth. Planned. 10–12 h. Depends on: SC-001." transform="translate(164,130)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-005<tspan class="dep-hours" dx="7">10–12 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Private operations</text>
+      <text class="dep-title" x="11" y="51">shell and auth</text>
+    </g><g class="dep-node status-planned" data-id="SC-006" tabindex="0" role="listitem" aria-label="SC-006 Pitch intake and source and rights records. Planned. 8–10 h. Depends on: SC-005." data-tip="SC-006 Pitch intake and source and rights records. Planned. 8–10 h. Depends on: SC-005." transform="translate(320,54)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-006<tspan class="dep-hours" dx="7">8–10 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Pitch intake and</text>
+      <text class="dep-title" x="11" y="51">source and rights re…</text>
+    </g><g class="dep-node is-critical status-planned" data-id="SC-007" tabindex="0" role="listitem" aria-label="SC-007 Editorial queue and Ghost references. Planned. 6–8 h. Depends on: SC-005, SC-002." data-tip="SC-007 Editorial queue and Ghost references. Planned. 6–8 h. Depends on: SC-005, SC-002." transform="translate(320,130)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-007<tspan class="dep-hours" dx="7">6–8 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Editorial queue and</text>
+      <text class="dep-title" x="11" y="51">Ghost references</text>
+    </g><g class="dep-node status-planned" data-id="SC-008" tabindex="0" role="listitem" aria-label="SC-008 Read-only review snapshots and stale detection. Planned. 10–12 h. Depends on: SC-006, SC-007." data-tip="SC-008 Read-only review snapshots and stale detection. Planned. 10–12 h. Depends on: SC-006, SC-007." transform="translate(476,16)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-008<tspan class="dep-hours" dx="7">10–12 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Read-only review</text>
+      <text class="dep-title" x="11" y="51">snapshots and stale…</text>
+    </g><g class="dep-node is-critical status-planned" data-id="SC-009" tabindex="0" role="listitem" aria-label="SC-009 Scoped agent draft gateway. Planned. 12–18 h. Depends on: SC-005, SC-007." data-tip="SC-009 Scoped agent draft gateway. Planned. 12–18 h. Depends on: SC-005, SC-007." transform="translate(476,92)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-009<tspan class="dep-hours" dx="7">12–18 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Scoped agent draft</text>
+      <text class="dep-title" x="11" y="51">gateway</text>
+    </g><g class="dep-node status-planned" data-id="SC-010" tabindex="0" role="listitem" aria-label="SC-010 Two-channel social drafts and Buffer adapter. Planned. 8–12 h. Depends on: SC-008, SC-009." data-tip="SC-010 Two-channel social drafts and Buffer adapter. Planned. 8–12 h. Depends on: SC-008, SC-009." transform="translate(632,130)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-010<tspan class="dep-hours" dx="7">8–12 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Two-channel social</text>
+      <text class="dep-title" x="11" y="51">drafts and Buffer ad…</text>
+    </g><g class="dep-node is-critical status-planned" data-id="SC-011" tabindex="0" role="listitem" aria-label="SC-011 Durable draft jobs and change reconciliation. Planned. 10–12 h. Depends on: SC-007, SC-009." data-tip="SC-011 Durable draft jobs and change reconciliation. Planned. 10–12 h. Depends on: SC-007, SC-009." transform="translate(632,206)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-011<tspan class="dep-hours" dx="7">10–12 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Durable draft jobs</text>
+      <text class="dep-title" x="11" y="51">and change reconcili…</text>
+    </g><g class="dep-node status-planned" data-id="SC-012" tabindex="0" role="listitem" aria-label="SC-012 Podcast-ready episode article template. Planned. 3–5 h. Depends on: SC-003." data-tip="SC-012 Podcast-ready episode article template. Planned. 3–5 h. Depends on: SC-003." transform="translate(476,168)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-012<tspan class="dep-hours" dx="7">3–5 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Podcast-ready episode</text>
+      <text class="dep-title" x="11" y="51">article template</text>
+    </g><g class="dep-node status-planned" data-id="SC-013" tabindex="0" role="listitem" aria-label="SC-013 Editorial policies and corrections visibility. Planned. 4–6 h. Depends on: SC-003, SC-006." data-tip="SC-013 Editorial policies and corrections visibility. Planned. 4–6 h. Depends on: SC-003, SC-006." transform="translate(476,244)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-013<tspan class="dep-hours" dx="7">4–6 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Editorial policies</text>
+      <text class="dep-title" x="11" y="51">and corrections visi…</text>
+    </g><g class="dep-node status-planned" data-id="SC-014" tabindex="0" role="listitem" aria-label="SC-014 Exports backup and restore procedure. Planned. 4–6 h. Depends on: SC-005, SC-007." data-tip="SC-014 Exports backup and restore procedure. Planned. 4–6 h. Depends on: SC-005, SC-007." transform="translate(476,320)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-014<tspan class="dep-hours" dx="7">4–6 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Exports backup and</text>
+      <text class="dep-title" x="11" y="51">restore procedure</text>
+    </g><g class="dep-node is-critical status-planned" data-id="SC-015" tabindex="0" role="listitem" aria-label="SC-015 Launch failure-path and accessibility checks. Planned. 8–12 h. Depends on: SC-003, SC-004, SC-008, SC-009, SC-010, SC-011, SC-014." data-tip="SC-015 Launch failure-path and accessibility checks. Planned. 8–12 h. Depends on: SC-003, SC-004, SC-008, SC-009, SC-010, SC-011, SC-014." transform="translate(788,168)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-015<tspan class="dep-hours" dx="7">8–12 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Launch failure-path</text>
+      <text class="dep-title" x="11" y="51">and accessibility ch…</text>
+    </g><g class="dep-node is-critical status-planned" data-id="SC-016" tabindex="0" role="listitem" aria-label="SC-016 Operator rehearsal and handoff. Planned. 4–6 h. Depends on: SC-012, SC-013, SC-015." data-tip="SC-016 Operator rehearsal and handoff. Planned. 4–6 h. Depends on: SC-012, SC-013, SC-015." transform="translate(944,168)">
+      <rect width="140" height="60" rx="8" />
+      <text class="dep-id" x="11" y="19">SC-016<tspan class="dep-hours" dx="7">4–6 h</tspan></text>
+      <text class="dep-title" x="11" y="37">Operator rehearsal</text>
+      <text class="dep-title" x="11" y="51">and handoff</text>
+    </g></svg></div>
+    <details class="viz-table"><summary>Table view</summary><div class="table-wrap" tabindex="0" role="region" aria-label="Chart data table"><table class="data-table"><caption class="visually-hidden">Ticket dependencies</caption>
+    <thead><tr><th scope="col">Ticket</th><th scope="col">Depends on</th><th scope="col">Hours</th><th scope="col">On critical path</th></tr></thead>
+    <tbody><tr><th scope="row">SC-001 Decisions and development environment</th><td>—</td><td class="num">4–6</td><td>Yes</td></tr><tr><th scope="row">SC-002 Ghost publication and role foundation</th><td>SC-001</td><td class="num">4–6</td><td>—</td></tr><tr><th scope="row">SC-003 Existing theme and core public pages</th><td>SC-002</td><td class="num">8–12</td><td>—</td></tr><tr><th scope="row">SC-004 Newsletter and reader account journey</th><td>SC-002</td><td class="num">4–6</td><td>—</td></tr><tr><th scope="row">SC-005 Private operations shell and auth</th><td>SC-001</td><td class="num">10–12</td><td>Yes</td></tr><tr><th scope="row">SC-006 Pitch intake and source and rights records</th><td>SC-005</td><td class="num">8–10</td><td>—</td></tr><tr><th scope="row">SC-007 Editorial queue and Ghost references</th><td>SC-005, SC-002</td><td class="num">6–8</td><td>Yes</td></tr><tr><th scope="row">SC-008 Read-only review snapshots and stale detection</th><td>SC-006, SC-007</td><td class="num">10–12</td><td>—</td></tr><tr><th scope="row">SC-009 Scoped agent draft gateway</th><td>SC-005, SC-007</td><td class="num">12–18</td><td>Yes</td></tr><tr><th scope="row">SC-010 Two-channel social drafts and Buffer adapter</th><td>SC-008, SC-009</td><td class="num">8–12</td><td>—</td></tr><tr><th scope="row">SC-011 Durable draft jobs and change reconciliation</th><td>SC-007, SC-009</td><td class="num">10–12</td><td>Yes</td></tr><tr><th scope="row">SC-012 Podcast-ready episode article template</th><td>SC-003</td><td class="num">3–5</td><td>—</td></tr><tr><th scope="row">SC-013 Editorial policies and corrections visibility</th><td>SC-003, SC-006</td><td class="num">4–6</td><td>—</td></tr><tr><th scope="row">SC-014 Exports backup and restore procedure</th><td>SC-005, SC-007</td><td class="num">4–6</td><td>—</td></tr><tr><th scope="row">SC-015 Launch failure-path and accessibility checks</th><td>SC-003, SC-004, SC-008, SC-009, SC-010, SC-011, SC-014</td><td class="num">8–12</td><td>Yes</td></tr><tr><th scope="row">SC-016 Operator rehearsal and handoff</th><td>SC-012, SC-013, SC-015</td><td class="num">4–6</td><td>Yes</td></tr></tbody></table></div></details>
+    <p class="viz-note">With one developer the schedule is bounded by total effort; the critical path shows how much a second contributor could compress calendar time. Hover or focus a ticket to highlight its dependencies.</p>
+  </figure>
+<figure class="viz-figure" id="effort-backlog">
+    <figcaption>
+      <span class="viz-title">Estimated effort per sprint window</span>
+      <span class="viz-subtitle">Hours, low to high estimate, against 8 h/day capacity for one developer</span>
+    </figcaption>
+    <ul class="viz-legend" aria-label="Legend"><li><span class="key key-mark" aria-hidden="true"></span>Low estimate</li><li><span class="key key-mark-range" aria-hidden="true"></span>Range to high estimate</li><li><span class="key key-mark-reserve" aria-hidden="true"></span>Delivery reserve</li><li><span class="key key-capacity" aria-hidden="true"></span>Window capacity</li></ul>
+    <div class="hbars" role="list" aria-label="Effort by sprint window"><div class="hbar" role="listitem" tabindex="0" data-tip="Days 1–4: SC-001, SC-002, SC-003, SC-004. Estimate 20–30 h; capacity 32 h." aria-label="Days 1–4: SC-001, SC-002, SC-003, SC-004. Estimate 20–30 h; capacity 32 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 1–4</span><span class="hbar-sub">SC-001–SC-004</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:33.333%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(33.333% + 2px);width:calc(16.667% - 2px)"></span><span class="hbar-ref" style="left:53.333%"></span></div>
+      <div class="hbar-value">20–30 h</div>
+    </div><div class="hbar" role="listitem" tabindex="0" data-tip="Days 5–9: SC-005, SC-006, SC-007. Estimate 24–30 h; capacity 40 h." aria-label="Days 5–9: SC-005, SC-006, SC-007. Estimate 24–30 h; capacity 40 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 5–9</span><span class="hbar-sub">SC-005–SC-007</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:40.000%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(40.000% + 2px);width:calc(10.000% - 2px)"></span><span class="hbar-ref" style="left:66.667%"></span></div>
+      <div class="hbar-value">24–30 h</div>
+    </div><div class="hbar" role="listitem" tabindex="0" data-tip="Days 10–14: SC-008, SC-009, SC-010, SC-011. Estimate 40–54 h; capacity 40 h." aria-label="Days 10–14: SC-008, SC-009, SC-010, SC-011. Estimate 40–54 h; capacity 40 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 10–14</span><span class="hbar-sub">SC-008–SC-011</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:66.667%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(66.667% + 2px);width:calc(23.333% - 2px)"></span><span class="hbar-ref" style="left:66.667%"></span></div>
+      <div class="hbar-value">40–54 h<span class="hbar-flag">▲ 14 h over at high</span></div>
+    </div><div class="hbar" role="listitem" tabindex="0" data-tip="Days 15–17: SC-012, SC-013, SC-014, SC-015. Estimate 19–29 h; capacity 24 h." aria-label="Days 15–17: SC-012, SC-013, SC-014, SC-015. Estimate 19–29 h; capacity 24 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 15–17</span><span class="hbar-sub">SC-012–SC-015</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:31.667%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(31.667% + 2px);width:calc(16.667% - 2px)"></span><span class="hbar-ref" style="left:40.000%"></span></div>
+      <div class="hbar-value">19–29 h<span class="hbar-flag">▲ 5 h over at high</span></div>
+    </div><div class="hbar" role="listitem" tabindex="0" data-tip="Days 18–20: SC-016. Estimate 4–6 h plus 11 h reserve; capacity 24 h." aria-label="Days 18–20: SC-016. Estimate 4–6 h plus 11 h reserve; capacity 24 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 18–20</span><span class="hbar-sub">SC-016</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:6.667%"></span><span class="hbar-seg hbar-range" style="left:calc(6.667% + 2px);width:calc(3.333% - 2px)"></span><span class="hbar-seg hbar-reserve is-end" style="left:calc(10.000% + 2px);width:calc(18.333% - 2px)"></span><span class="hbar-ref" style="left:40.000%"></span></div>
+      <div class="hbar-value">4–6 h + 11</div>
+    </div><div class="hbar hbar-axis " aria-hidden="true"><div></div><div class="hbar-ticks"><span style="left:0.000%">0</span><span style="left:16.667%">10</span><span style="left:33.333%">20</span><span style="left:50.000%">30</span><span style="left:66.667%">40</span><span style="left:83.333%">50</span><span style="left:100.000%">60</span></div><div></div></div></div>
+    <details class="viz-table"><summary>Table view</summary><div class="table-wrap" tabindex="0" role="region" aria-label="Chart data table"><table class="data-table">
+    <caption class="visually-hidden">Effort by sprint window</caption>
+    <thead><tr><th scope="col">Window</th><th scope="col">Tickets</th><th scope="col">Low</th><th scope="col">High</th><th scope="col">Reserve</th><th scope="col">Capacity</th><th scope="col">Headroom at high</th></tr></thead>
+    <tbody><tr><th scope="row">Days 1–4</th><td>SC-001, SC-002, SC-003, SC-004</td><td class="num">20 h</td><td class="num">30 h</td><td class="num">—</td><td class="num">32 h</td><td class="num">2 h</td></tr><tr><th scope="row">Days 5–9</th><td>SC-005, SC-006, SC-007</td><td class="num">24 h</td><td class="num">30 h</td><td class="num">—</td><td class="num">40 h</td><td class="num">10 h</td></tr><tr><th scope="row">Days 10–14</th><td>SC-008, SC-009, SC-010, SC-011</td><td class="num">40 h</td><td class="num">54 h</td><td class="num">—</td><td class="num">40 h</td><td class="num">−14 h</td></tr><tr><th scope="row">Days 15–17</th><td>SC-012, SC-013, SC-014, SC-015</td><td class="num">19 h</td><td class="num">29 h</td><td class="num">—</td><td class="num">24 h</td><td class="num">−5 h</td></tr><tr><th scope="row">Days 18–20</th><td>SC-016</td><td class="num">4 h</td><td class="num">6 h</td><td class="num">11 h</td><td class="num">24 h</td><td class="num">7 h</td></tr></tbody></table></div></details>
+    <p class="viz-note">Day ranges are the planning envelope from docs/SPRINT_PLAN.md; dependencies, not days, are authoritative.</p>
+  </figure>
+</div>
+<section class="window" aria-labelledby="W1-h">
+        <div class="window-head"><h2 id="W1-h">Days 1–4</h2><span class="meta">20–30 h estimated · 32 h capacity</span></div>
+        <div class="tickets"><article class="ticket is-critical" id="SC-001">
+            <div class="ticket-head"><span class="id">SC-001 · P0 · critical path</span><span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 2.5a5.5 5.5 0 0 1 0 11z" fill="currentColor"/></svg>In progress</span></div>
+            <h3>Decisions and development environment</h3>
+            <p>Freeze one launch audience, two social channels, account ownership and existing theme; establish repository, feature branch, staging secrets and vendor API feasibility.</p>
+            <dl>
+              <dt>Estimate</dt><dd>4–6 h</dd>
+              <dt>Depends on</dt><dd>Nothing</dd>
+              <dt>Owner</dt><dd>Developer and founders</dd>
+              <dt>Evidence</dt><dd><a href="devlog/evidence.html#EV-0003">EV-0003</a>, <a href="devlog/evidence.html#EV-0006">EV-0006</a>, <a href="devlog/evidence.html#EV-0007">EV-0007</a>, <a href="devlog/evidence.html#EV-0008">EV-0008</a></dd>
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Named account owners and recovery contacts recorded privately</li><li>Staging access restricted; no production credentials in source</li><li>Ghost and Buffer integration feasibility recorded with manual fallback</li></ul></details>
+          </article><article class="ticket" id="SC-002">
+            <div class="ticket-head"><span class="id">SC-002 · P0</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Ghost publication and role foundation</h3>
+            <p>Configure Ghost publication and staff permissions with founders and a test invited Contributor.</p>
+            <dl>
+              <dt>Estimate</dt><dd>4–6 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-001">SC-001</a></dd>
+              <dt>Owner</dt><dd>Developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Contributor can create own draft and cannot publish or edit another contributor draft</li><li>Reader identity cannot access staff admin</li><li>Site title, timezone and reply address are owner reviewed</li></ul></details>
+          </article><article class="ticket" id="SC-003">
+            <div class="ticket-head"><span class="id">SC-003 · P0</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Existing theme and core public pages</h3>
+            <p>Adapt an existing licensed theme to the chosen brand; implement home, story, sections, author, about and contribute routes.</p>
+            <dl>
+              <dt>Estimate</dt><dd>8–12 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-002">SC-002</a></dd>
+              <dt>Owner</dt><dd>Developer with founder content</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Core routes readable on phone and desktop</li><li>Clear heading structure, contrast, focus state, image alt text and article metadata</li><li>No fabricated social proof, audience totals or invented contributor biographies</li></ul></details>
+          </article><article class="ticket" id="SC-004">
+            <div class="ticket-head"><span class="id">SC-004 · P0</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Newsletter and reader account journey</h3>
+            <p>Configure signup, preference management, confirmation and test-send workflow using native Ghost.</p>
+            <dl>
+              <dt>Estimate</dt><dd>4–6 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-002">SC-002</a></dd>
+              <dt>Owner</dt><dd>Developer and editor</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Consented test signup and unsubscribe complete</li><li>Web publication does not silently send newsletter</li><li>Sender and reply addresses verified before live send</li></ul></details>
+          </article></div>
+      </section><section class="window" aria-labelledby="W2-h">
+        <div class="window-head"><h2 id="W2-h">Days 5–9</h2><span class="meta">24–30 h estimated · 40 h capacity</span></div>
+        <div class="tickets"><article class="ticket is-critical" id="SC-005">
+            <div class="ticket-head"><span class="id">SC-005 · P0 · critical path</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Private operations shell and auth</h3>
+            <p>Create Next.js operations console with Supabase Auth, RLS and explicit staff/agent principals.</p>
+            <dl>
+              <dt>Estimate</dt><dd>10–12 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-001">SC-001</a></dd>
+              <dt>Owner</dt><dd>Developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Unauthorized and disabled accounts cannot retrieve operational data</li><li>RLS policies enforce object ownership and staff-only source access</li><li>Server service keys absent from frontend bundles; no shared member/staff identity</li></ul></details>
+          </article><article class="ticket" id="SC-006">
+            <div class="ticket-head"><span class="id">SC-006 · P0</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Pitch intake and source and rights records</h3>
+            <p>Implement bounded pitch form, moderation disposition and private source/media permission records.</p>
+            <dl>
+              <dt>Estimate</dt><dd>8–10 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-005">SC-005</a></dd>
+              <dt>Owner</dt><dd>Developer with editor review</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Public intake cannot enumerate submissions or upload executable files</li><li>Contact and permission records excluded from public article responses</li><li>Required source and credit fields visible during review</li></ul></details>
+          </article><article class="ticket is-critical" id="SC-007">
+            <div class="ticket-head"><span class="id">SC-007 · P0 · critical path</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Editorial queue and Ghost references</h3>
+            <p>Link editorial items to canonical Ghost post IDs; add assigned owner, editorial status, section, region and species tags.</p>
+            <dl>
+              <dt>Estimate</dt><dd>6–8 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-005">SC-005</a>, <a href="#SC-002">SC-002</a></dd>
+              <dt>Owner</dt><dd>Developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>One unique Ghost post mapping per editorial item</li><li>Friend sees next action and exact native editor link</li><li>Operations states do not overwrite Ghost with unsupported status values</li></ul></details>
+          </article></div>
+      </section><section class="window" aria-labelledby="W3-h">
+        <div class="window-head"><h2 id="W3-h">Days 10–14</h2><span class="meta">40–54 h estimated · 40 h capacity</span></div>
+        <div class="tickets"><article class="ticket" id="SC-008">
+            <div class="ticket-head"><span class="id">SC-008 · P0</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Read-only review snapshots and stale detection</h3>
+            <p>Capture append-only review snapshots, digest and Ghost updated_at; display changes and invalidate stale review indicators.</p>
+            <dl>
+              <dt>Estimate</dt><dd>10–12 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-006">SC-006</a>, <a href="#SC-007">SC-007</a></dd>
+              <dt>Owner</dt><dd>Developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Edit after review creates stale banner and preserves earlier snapshot</li><li>Application role cannot edit or delete a completed snapshot</li><li>Review screen distinguishes web, newsletter and each social destination; no automated release button</li></ul></details>
+          </article><article class="ticket is-critical" id="SC-009">
+            <div class="ticket-head"><span class="id">SC-009 · P0 · critical path</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Scoped agent draft gateway</h3>
+            <p>Implement the proposed internal contract with named agents, scoped access, strict field validation, expected revision and credential revocation.</p>
+            <dl>
+              <dt>Estimate</dt><dd>12–18 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-005">SC-005</a>, <a href="#SC-007">SC-007</a></dd>
+              <dt>Owner</dt><dd>Developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Agent may create/update permitted drafts and suggest metadata</li><li>Agent publish, send, role-change, subscriber-export and published-edit attempts fail</li><li>Revoked agent is denied; request/revision conflicts are clear and logged without secrets</li></ul></details>
+          </article><article class="ticket" id="SC-010">
+            <div class="ticket-head"><span class="id">SC-010 · P0</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Two-channel social drafts and Buffer adapter</h3>
+            <p>Produce exact channel drafts, assets and dates; use a Buffer Needs Approval principal where supported; always provide copy/export fallback.</p>
+            <dl>
+              <dt>Estimate</dt><dd>8–12 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-008">SC-008</a>, <a href="#SC-009">SC-009</a></dd>
+              <dt>Owner</dt><dd>Developer and editor</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Agent-created Buffer output remains awaiting human approval</li><li>Manual export contains exact text, image credits, destination and canonical URL</li><li>Changed source item flags affected packs for human rechecking; native scheduling boundary disclosed</li></ul></details>
+          </article><article class="ticket is-critical" id="SC-011">
+            <div class="ticket-head"><span class="id">SC-011 · P0 · critical path</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Durable draft jobs and change reconciliation</h3>
+            <p>Use Postgres jobs/outbox for draft operations, webhook ingestion and bounded periodic reconciliation; no auto-publication or bulk sends.</p>
+            <dl>
+              <dt>Estimate</dt><dd>10–12 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-007">SC-007</a>, <a href="#SC-009">SC-009</a></dd>
+              <dt>Owner</dt><dd>Developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (4)</summary><ul><li>Repeated request does not create duplicate local work</li><li>Same key plus different payload returns conflict</li><li>Unknown provider acceptance enters needs-attention instead of blind retry</li><li>Duplicate webhook is harmless; missed event reconciliation updates stale status</li></ul></details>
+          </article></div>
+      </section><section class="window" aria-labelledby="W4-h">
+        <div class="window-head"><h2 id="W4-h">Days 15–17</h2><span class="meta">19–29 h estimated · 24 h capacity</span></div>
+        <div class="tickets"><article class="ticket" id="SC-012">
+            <div class="ticket-head"><span class="id">SC-012 · P1</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Podcast-ready episode article template</h3>
+            <p>Add a reusable interview/episode article format with guest bio, show notes, transcript and optional external player; actual podcast hosting remains optional.</p>
+            <dl>
+              <dt>Estimate</dt><dd>3–5 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-003">SC-003</a></dd>
+              <dt>Owner</dt><dd>Developer and editor</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Episode without audio displays cleanly without dead controls</li><li>External media embed is accessible and carries ownership/consent reference</li><li>No unsupported claim of an existing distributed podcast</li></ul></details>
+          </article><article class="ticket" id="SC-013">
+            <div class="ticket-head"><span class="id">SC-013 · P0</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Editorial policies and corrections visibility</h3>
+            <p>Publish approved standards, guest guidance, correction contact and labels for opinion, reporting and sponsorship.</p>
+            <dl>
+              <dt>Estimate</dt><dd>4–6 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-003">SC-003</a>, <a href="#SC-006">SC-006</a></dd>
+              <dt>Owner</dt><dd>Editor with developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Policy pages linked from footer and submission flow</li><li>Correction timestamp and notice can be added without silently rewriting history</li><li>Founders sign off on actual wording and contact details</li></ul></details>
+          </article><article class="ticket" id="SC-014">
+            <div class="ticket-head"><span class="id">SC-014 · P0</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Exports backup and restore procedure</h3>
+            <p>Document and rehearse Ghost exports plus operations database/private asset backup and restore.</p>
+            <dl>
+              <dt>Estimate</dt><dd>4–6 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-005">SC-005</a>, <a href="#SC-007">SC-007</a></dd>
+              <dt>Owner</dt><dd>Developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Recovery rehearsal restores sample content and linked operations records</li><li>Export inventory includes themes, routes, media, members and private rights assets as applicable</li><li>Owner can locate recovery credentials without developer intervention</li></ul></details>
+          </article><article class="ticket is-critical" id="SC-015">
+            <div class="ticket-head"><span class="id">SC-015 · P0 · critical path</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Launch failure-path and accessibility checks</h3>
+            <p>Exercise permission, stale-review, retry and operator critical journeys; review public layout and metadata.</p>
+            <dl>
+              <dt>Estimate</dt><dd>8–12 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-003">SC-003</a>, <a href="#SC-004">SC-004</a>, <a href="#SC-008">SC-008</a>, <a href="#SC-009">SC-009</a>, <a href="#SC-010">SC-010</a>, <a href="#SC-011">SC-011</a>, <a href="#SC-014">SC-014</a></dd>
+              <dt>Owner</dt><dd>Developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Acceptance matrix has actual evidence and results</li><li>No drafts exposed through public routes, feeds, previews or search</li><li>Unmet P0 behavior blocks release; remaining issues named and assigned</li></ul></details>
+          </article></div>
+      </section><section class="window" aria-labelledby="W5-h">
+        <div class="window-head"><h2 id="W5-h">Days 18–20</h2><span class="meta">4–6 h estimated · 24 h capacity · plus 11 h reserve</span></div>
+        <div class="tickets"><article class="ticket is-critical" id="SC-016">
+            <div class="ticket-head"><span class="id">SC-016 · P0 · critical path</span><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span></div>
+            <h3>Operator rehearsal and handoff</h3>
+            <p>Rehearse guest draft to article to newsletter to social, then correction and recovery; capture concise how-to recordings and final runbook.</p>
+            <dl>
+              <dt>Estimate</dt><dd>4–6 h</dd>
+              <dt>Depends on</dt><dd><a href="#SC-012">SC-012</a>, <a href="#SC-013">SC-013</a>, <a href="#SC-015">SC-015</a></dd>
+              <dt>Owner</dt><dd>Friend editor with developer</dd>
+              
+            </dl>
+            <details><summary>Acceptance criteria (3)</summary><ul><li>Friend completes the daily workflow without source-code access</li><li>Accounts, costs, handoff documents and support contact recorded</li><li>A founder authorizes actual launch only after reviewing staging results</li></ul></details>
+          </article></div>
+      </section>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

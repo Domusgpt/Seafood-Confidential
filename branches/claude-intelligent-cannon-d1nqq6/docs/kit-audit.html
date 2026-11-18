@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Kit audit · Seafood Confidential project hub</title>
+<meta name="description" content="Kit audit (docs/KIT_AUDIT.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html" aria-current="page">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="kit-audit">Kit audit</h1>
+<p>Session S01 · 18 November 2026 · Review of the launch packet and development kit delivered 17 November 2026.</p>
+<p>This audit records what was checked, what agrees, and what needs a decision before or during the foundation build. It changes none of the kit&#39;s specifications. Findings that need a choice are carried into the <a href="foundation-planning-brief.html">foundation planning brief</a>.</p>
+<h2 id="source-parity">Source parity</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Result</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Zip contents equal the four uploaded files and the 28 kit files</td>
+<td>Byte-identical (SHA-256)</td>
+<td>EV-0001</td>
+</tr>
+<tr>
+<td>PDF and DOCX carry the same text as <code>docs/LAUNCH_PACKET.md</code></td>
+<td>DOCX similarity 0.997; PDF 0.952, differing only in running headers and table reflow</td>
+<td>EV-0002</td>
+</tr>
+<tr>
+<td>Workbook formulas and cached values match the JSON planning files</td>
+<td>16 tickets, 107–149 h + 11 h reserve; $94 vendor base; $119–169/mo; $588 upfront; 6 weeks; 12 decisions</td>
+<td>EV-0003</td>
+</tr>
+<tr>
+<td>Backlog hours, dependencies and CSV view</td>
+<td>Hours sum to the stated totals; graph is acyclic; CSV matches JSON</td>
+<td><code>pnpm validate</code></td>
+</tr>
+<tr>
+<td>Calendar JSON and CSV</td>
+<td>Identical; every section is one of the six launch sections</td>
+<td><code>pnpm validate</code></td>
+</tr>
+<tr>
+<td>Agent request schema</td>
+<td>Compiles under JSON Schema 2020-12; 17 example requests behave as intended</td>
+<td><code>pnpm validate</code></td>
+</tr>
+</tbody></table></div>
+<p>Both CSV files use RFC 4180 CRLF line endings. <code>.gitattributes</code> stores them byte-for-byte (<code>*.csv -text</code>).</p>
+<h2 id="workbook">Workbook</h2>
+<p>The workbook was generated by <code>planning/build_workbook.mjs</code>, which depends on OpenAI&#39;s proprietary <code>@oai/artifact-tool</code> runtime. It cannot be regenerated with this repository&#39;s toolchain. <a href="workbook.html">WORKBOOK.md</a> asks the team to &quot;choose one working record during execution&quot;. Recommendation: the repository JSON is the working record for engineering; the workbook remains a founder snapshot until a replacement generator is chosen (planning brief, Q12).</p>
+<h2 id="findings">Findings</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Finding</th>
+<th>Where</th>
+<th>Impact</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>K-01</td>
+<td><strong>Social channels disagree.</strong> The packet, decision D10 and the cost model assume LinkedIn and Facebook; the playbook, social checklist and six-week calendar start with LinkedIn only</td>
+<td>LAUNCH_PACKET.md; WORKBOOK_DECISIONS.json D10; EDITORIAL_PLAYBOOK.md; SIX_WEEK_CALENDAR</td>
+<td>$10/mo and one owner&#39;s weekly time; SC-010 scope</td>
+<td>Founders decide D10; build channel-agnostic</td>
+</tr>
+<tr>
+<td>K-02</td>
+<td>Week 3 title differs: &quot;The work behind a shrimp farm&quot; (calendar) vs &quot;a farmed species&quot; (packet)</td>
+<td>SIX_WEEK_CALENDAR; LAUNCH_PACKET.md</td>
+<td>None technical</td>
+<td>Keep the calendar&#39;s specific title; its text already allows a substitute farm</td>
+</tr>
+<tr>
+<td>K-03</td>
+<td>Fixture <code>contentType: &quot;reported_explainer&quot;</code> matches none of the six format labels</td>
+<td>fixtures/example-article.json; EDITORIAL_PLAYBOOK.md</td>
+<td>Data-model enum ambiguity</td>
+<td>Define a format enum (<code>reported_feature</code>, <code>explainer</code>, <code>interview</code>, <code>first_person</code>, <code>opinion</code>, <code>sponsored</code>) in SC-005/SC-007</td>
+</tr>
+<tr>
+<td>K-04</td>
+<td>Several state vocabularies: backlog <code>planned</code>; workbook Proposed/Ready/…; packet story states (Draft, In review, Changes requested, Ready for human release, Published); playbook stages (Pitch → Follow through)</td>
+<td>Multiple</td>
+<td>Ambiguous operations states (SC-007 acceptance requires not overwriting Ghost status)</td>
+<td>Define one operations state machine, separate from Ghost&#39;s draft/scheduled/published, with a documented mapping</td>
+</tr>
+<tr>
+<td>K-05</td>
+<td>Agent contract gaps: SC-009 says agents &quot;suggest metadata&quot; and the playbook&#39;s request pattern asks for suggested tags and three LinkedIn posts, but <code>draftFields</code> has no tags or metadata; response shapes (including redaction for AT-06) are unspecified</td>
+<td>contracts/agent-tools.schema.json; BACKLOG SC-009</td>
+<td>SC-009 cannot meet its own criteria as written</td>
+<td>Contract v1.1 proposal: <code>suggestedTags</code>, <code>suggestedMetadata</code> and per-tool response schemas</td>
+</tr>
+<tr>
+<td>K-06</td>
+<td>Schema hygiene: <code>required: [&quot;idempotencyKey&quot;]</code> inside <code>if/then</code> branches without redeclaring the property fails Ajv&#39;s strictRequired rule</td>
+<td>contracts/agent-tools.schema.json</td>
+<td>None at runtime (valid JSON Schema)</td>
+<td>Optional cleanup in v1.1; the validator relaxes only strictRequired</td>
+</tr>
+<tr>
+<td>K-07</td>
+<td>ID namespaces look alike: tickets <code>SC-001</code> vs content <code>SC-2026-001</code> vs calendar <code>SC-LAUNCH-01</code></td>
+<td>BACKLOG; playbook; calendar</td>
+<td>Confusion in records and search</td>
+<td>Keep ticket IDs; reserve <code>SC-YYYY-NNN</code> for content; never use bare <code>SC-###</code> in editorial records</td>
+</tr>
+<tr>
+<td>K-08</td>
+<td>Workbook generator is not reproducible here (see above)</td>
+<td>planning/build_workbook.mjs</td>
+<td>Drift between workbook and JSON</td>
+<td>Repository JSON is the working record</td>
+</tr>
+<tr>
+<td>K-09</td>
+<td>The kit suggests branch <code>feat/seafood-confidential-mvp</code>; agent sessions must use <code>claude/&lt;name&gt;</code> branches</td>
+<td>DEVELOPMENT_KIT.md; LAUNCH_PACKET.md</td>
+<td>Naming only</td>
+<td>Documented in CONTRIBUTING.md</td>
+</tr>
+<tr>
+<td>K-10</td>
+<td><strong>The repository is public</strong>; the kit assumes a private source repository</td>
+<td>DEVELOPMENT_KIT.md kickoff step 2</td>
+<td>Business plans are world-readable; premium Ghost theme licenses forbid redistribution; the Pages hub is public</td>
+<td>Founders decide visibility (planning brief, Q1)</td>
+</tr>
+<tr>
+<td>K-11</td>
+<td>Capacity is tight at the high estimate: days 10–14 hold 40–54 h against 40 h; days 15–17 hold 19–29 h against 24 h; 160 h equals exactly 20 days × 8 h</td>
+<td>SPRINT_PLAN.md; BACKLOG</td>
+<td>No slack at the high estimate</td>
+<td>Plan for 4–5 elapsed weeks; re-estimate after Day 1 as the kit says</td>
+</tr>
+<tr>
+<td>K-12</td>
+<td>Runtime unpinned in the kit. Ghost 6.78 requires Node ^22.23.5 or ^24.22.3 and gscan ^22.17 or ^24, so Node 26 is excluded</td>
+<td>npm engines</td>
+<td>Tooling compatibility</td>
+<td>Pin Node 24 LTS (done in <code>.nvmrc</code>)</td>
+</tr>
+<tr>
+<td>K-13</td>
+<td>Platform changes since the packet: Next.js 16 renames <code>middleware.ts</code> to <code>proxy.ts</code>; Supabase publishable/secret keys replace legacy keys and new tables need explicit GRANTs; Buffer has a GraphQL API and an official MCP server, and API-key posts act as the owner (skipping approval); TypeScript 7 is incompatible with typescript-eslint; Firebase App Hosting lists Next 16 as preview</td>
+<td>EV-0010</td>
+<td>SC-005, SC-009, SC-010 designs</td>
+<td>Fold into the foundation plan</td>
+</tr>
+<tr>
+<td>K-14</td>
+<td>The concept image shows a second tagline, &quot;Straight talk. Real experience.&quot;, absent from the brand guide</td>
+<td>brand/ concept</td>
+<td>Copy consistency</td>
+<td>Treat as exploration; the guide&#39;s tagline stands</td>
+</tr>
+<tr>
+<td>K-15</td>
+<td>Brand palette contrast: rust on salt is 4.46:1 (below AA for body text); sea glass on salt is 2.36:1</td>
+<td>BRAND_GUIDE.md palette</td>
+<td>Accessibility (SC-003, AT-22)</td>
+<td>Derived accessible steps in brand/tokens.json; asserted on every hub build</td>
+</tr>
+<tr>
+<td>K-16</td>
+<td>Acceptance scenarios are not mapped to tickets</td>
+<td>ACCEPTANCE_TESTS.md</td>
+<td>Planning per ticket</td>
+<td>Proposed mapping for the foundation in the planning brief</td>
+</tr>
+<tr>
+<td>K-17</td>
+<td>Vercel Pro is one deploying seat; two deploying founders would cost $40/mo</td>
+<td>Cost model; EV-0010</td>
+<td>Budget D05</td>
+<td>Make the second founder a free Viewer if they don&#39;t deploy</td>
+</tr>
+</tbody></table></div>
+<h2 id="what-was-not-checked">What was not checked</h2>
+<p>Domain availability, trademarks, company registries and social handles (the packet also leaves these unverified); real Ghost(Pro), Buffer, Supabase or Vercel accounts (none exist); native Excel execution of the workbook. No runtime behavior of the planned application exists to test.</p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/KIT_AUDIT.md">docs/KIT_AUDIT.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Runbook · Seafood Confidential project hub</title>
+<meta name="description" content="Runbook (docs/RUNBOOK.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html" aria-current="page">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="editorial-and-operations-runbook">Editorial and operations runbook</h1>
+<p>This is the proposed runbook. Replace placeholders with real account owners, provider links, support contacts and observed procedures during the sprint. It has not been rehearsed against a deployed application.</p>
+<h2 id="daily-opening">Daily opening</h2>
+<p>The managing editor opens the operations home, reviews due items and failed jobs, checks changed-after-review flags, and chooses the next editorial decision. The dashboard links to the authoritative Ghost draft or Buffer draft. Publication, newsletter and social are three separate decisions.</p>
+<h2 id="invite-and-commission">Invite and commission</h2>
+<p>Confirm the guest&#39;s identity and the intended topic. Invite only a trusted contributor; Ghost staff can create rich HTML and embeds, so review these before publication. Do not share confidential draft preview URLs or upload embargoed source media into public-ready Ghost storage. Create a Ghost Contributor invitation, record the assignment and explain source, credit and disclosure requirements. Keep their personal contact and media permission records private. A public pitch receives an editorial disposition before anyone gets a staff account.</p>
+<h2 id="review-an-article">Review an article</h2>
+<p>Check the thesis, actual sources, attribution, quotations, date/jurisdiction for regulatory claims, rights to each image/audio segment, conflicts and the reporting/opinion/sponsorship label. Capture the reviewed version. If it changes, inspect the difference and create a new review record. AI output is a draft; the human byline remains responsible for the final piece.</p>
+<h2 id="publish-and-distribute">Publish and distribute</h2>
+<p>Preview desktop/mobile article and email in Ghost. Publish or schedule the web article only after the final human review. Send a test email and explicitly select whether to send the live newsletter. Review the exact social copy, destination account, image credits, link and timezone in Buffer; approve or schedule as a human. Agent-generated social items remain drafts until that action.</p>
+<p>If the article later changes, inspect its stale social packs and any posts already scheduled in Buffer. Revise, pause or cancel native scheduled promotion as appropriate. A console flag does not itself cancel Buffer&#39;s queue.</p>
+<h2 id="failed-draft-automation">Failed draft automation</h2>
+<p>Open the job and read its plain-language state. A documented rejected request can be corrected. A transient failure may be retried within the configured limit. If the provider may have accepted the request but the response is unknown, inspect the provider first and reconcile its ID; do not press retry repeatedly. Use the manual social export or native editor if the integration remains unavailable. Record what was done so a later retry does not duplicate it.</p>
+<h2 id="correction">Correction</h2>
+<p>Record the concern and current version. Verify the correction with appropriate evidence. Edit the article and add a visible correction note when substantive. Record reviewer and date. Inspect affected email/social copies: delivered email cannot be edited retroactively, and an already published social post may need an update or follow-up. Preserve the previous review record and state exactly which destinations were corrected.</p>
+<h2 id="security-incident">Security incident</h2>
+<p>If a credential or account appears compromised, pause affected automation, revoke that credential/session using the provider&#39;s native controls, rotate server secrets, inspect audit events and unauthorized changes, and involve the named account owner. Preserve useful evidence without exposing secrets in shared logs. Assess whether readers or contributors need a communication based on actual affected data and appropriate advice. Re-enable only after permission checks and an operator review.</p>
+<h2 id="backup-and-recovery">Backup and recovery</h2>
+<p>The owner keeps access to the domain, Ghost, Buffer, Supabase, hosting, source repository and billing. Export Ghost content/settings, themes, routes, members and media where supported. Back up the operations database and private rights/release assets separately. Keep recovery credentials in an owner-controlled password manager. Rehearse a sample restore before launch and periodically after material changes.</p>
+<p>Proposed initial targets: operations recovery point within one day and essential service restoration within one business day. These are targets until measured. Record the last restore date, what was recovered, how long it took and what remained missing.</p>
+<h2 id="weekly-review">Weekly review</h2>
+<p>Review the next two weeks of assignments, guest follow-ups, corrections and failed jobs. Compare actual editor time per story with the promised cadence. Inspect opt-in audience growth, substantive replies and returning readers; do not make raw AI output volume a success metric. Refresh regulatory articles when their source situation changes. Review agent scopes, active contributors and integration spend.</p>
+<h2 id="required-handoff-fields">Required handoff fields</h2>
+<p>Business/account owner; managing editor; developer support contact; authoritative domain registrar; vendor admin URLs; billing schedule; recovery location; secret rotation owner; backup schedule; last restore evidence; social channels; current API limitations; live launch authorization date. Store sensitive values privately.</p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/RUNBOOK.md">docs/RUNBOOK.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

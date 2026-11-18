@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Development environment · Seafood Confidential project hub</title>
+<meta name="description" content="Development environment (docs/DEVELOPMENT_ENVIRONMENT.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html" aria-current="page">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="development-environment">Development environment</h1>
+<p>Verified 18 November 2026 in a Claude Code cloud container (Linux x86_64) and designed to work on any Linux, macOS or WSL machine with the same tools. Evidence: EV-0004 to EV-0009.</p>
+<h2 id="required">Required</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Node.js</td>
+<td>24 LTS (<code>.nvmrc</code>)</td>
+<td>nvm, fnm, or <code>tools/bootstrap/install-dev-tools.sh --node</code> (installs side-by-side in <code>/opt/node24</code>)</td>
+</tr>
+<tr>
+<td>pnpm</td>
+<td>12.21.0 (<code>packageManager</code>)</td>
+<td>Any pnpm 10 or later switches to the pinned version automatically; or <code>npm i -g pnpm@12.21.0</code></td>
+</tr>
+<tr>
+<td>Git</td>
+<td>any recent</td>
+<td></td>
+</tr>
+</tbody></table></div>
+<p>Then <code>pnpm install</code> and <code>pnpm check</code>.</p>
+<h2 id="installed-by-the-bootstrap-script">Installed by the bootstrap script</h2>
+<p><code>bash tools/bootstrap/install-dev-tools.sh</code> (Linux x86_64; root or sudo). Every download is verified against a pinned SHA-256 and re-runs are idempotent. <code>--check</code> reports versions without changing anything.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>actionlint</td>
+<td>1.7.12</td>
+<td>Lint GitHub Actions workflows</td>
+</tr>
+<tr>
+<td>gitleaks</td>
+<td>8.30.1</td>
+<td>Secret scanning (also in CI)</td>
+</tr>
+<tr>
+<td>shellcheck</td>
+<td>0.11.0</td>
+<td>Lint shell scripts (hash pinned trust-on-first-use; upstream publishes no checksum file)</td>
+</tr>
+<tr>
+<td>firebase-tools</td>
+<td>15.36.0</td>
+<td>Firebase hosting option (planning brief Q4); the team&#39;s usual platform</td>
+</tr>
+<tr>
+<td>vercel</td>
+<td>66.1.0</td>
+<td>The kit&#39;s default host for the operations desk</td>
+</tr>
+<tr>
+<td>gscan</td>
+<td>6.7.0</td>
+<td>Validate Ghost themes (SC-003)</td>
+</tr>
+</tbody></table></div>
+<p>Installed separately in this environment and recommended:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Supabase CLI</td>
+<td>3.2.0</td>
+<td>A pinned dev dependency: <code>pnpm exec supabase …</code></td>
+</tr>
+<tr>
+<td>Docker Engine</td>
+<td>29.x</td>
+<td>Local Supabase and Ghost stacks</td>
+</tr>
+<tr>
+<td>glslang (<code>glslangValidator</code>)</td>
+<td>15.1.0</td>
+<td>Validate WebGL shaders (<code>apt-get install glslang-tools</code>)</td>
+</tr>
+<tr>
+<td>PostgreSQL client (<code>psql</code>)</td>
+<td>16+</td>
+<td>Inspect local databases</td>
+</tr>
+<tr>
+<td>Playwright Chromium</td>
+<td>bundled with Playwright 1.63.0</td>
+<td>Hub screenshots and accessibility scans</td>
+</tr>
+</tbody></table></div>
+<h2 id="docker">Docker</h2>
+<p>In cloud containers the daemon is not running by default. Start it with <code>dockerd</code> (as root, in the background) and check <code>docker info</code>.</p>
+<p>Docker Hub limits anonymous pulls; this environment hit <code>429 Too Many Requests</code>. Configure a registry mirror in <code>/etc/docker/daemon.json</code>, then restart <code>dockerd</code>:</p>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-json">{ &quot;registry-mirrors&quot;: [&quot;https://mirror.gcr.io&quot;] }
+</code></pre>
+<p>Supabase images come from ECR Public and GHCR and need no mirror.</p>
+<h2 id="local-supabase">Local Supabase</h2>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm exec supabase start -x edge-runtime,logflare,vector,imgproxy,supavisor
+</code></pre>
+<p>The first run pulls images in about a minute. The services include Postgres 17.12 (with pgTAP, pg_cron, pg_net, pgsodium and vault), GoTrue, PostgREST, Storage, Realtime, Mailpit and Studio, with the <code>anon</code>, <code>authenticated</code> and <code>service_role</code> roles present. Stop it with <code>pnpm exec supabase stop --no-backup</code>. The local database URL and keys are printed by <code>supabase status</code>; they are local-only and must never be reused for hosted projects.</p>
+<p>Since October 2026, new tables are <strong>not</strong> exposed to the Data API automatically. Every migration grants explicitly, and pgTAP tests assert the grants (AT-25).</p>
+<h2 id="local-ghost">Local Ghost</h2>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">docker run -d --name ghost-local -p 2368:2368 -e NODE_ENV=development -e url=http://localhost:2368 -e server__host=0.0.0.0 ghost:6.78.0-alpine
+</code></pre>
+<p><code>server__host=0.0.0.0</code> is required where IPv6 is unavailable; without it Ghost fails with error code -97 (EAFNOSUPPORT). Admin is at <a href="http://localhost:2368/ghost/">http://localhost:2368/ghost/</a>. Development mode uses SQLite; mail goes to the console unless configured. Use Mailpit (<code>axllent/mailpit:v1.34.0</code>) to catch member emails. A compose file and role-seeding scripts are part of the foundation plan (phase F4).</p>
+<h2 id="package-manager-policy">Package manager policy</h2>
+<p><code>pnpm-workspace.yaml</code> sets supply-chain gates:</p>
+<ul>
+<li><strong><code>allowBuilds</code>:</strong> only listed packages may run install scripts (the Supabase CLI downloads its binary).</li>
+<li><strong><code>minimumReleaseAge: 1440</code>:</strong> versions younger than one day are refused (strict). Example: <code>@supabase/supabase-js</code> 2.119.1 was refused on its release day; 2.119.0 installed.</li>
+<li><strong><code>trustPolicy: no-downgrade</code>:</strong> fails when a package&#39;s publishing trust weakens. Example: the create-next-app default <code>@types/node@^20</code> pulls <code>undici-types@6.21.0</code>, which was flagged; use <code>@types/node@^24</code> to match the runtime.</li>
+</ul>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/DEVELOPMENT_ENVIRONMENT.md">docs/DEVELOPMENT_ENVIRONMENT.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

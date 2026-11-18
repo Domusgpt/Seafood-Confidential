@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Launch packet (full text) · Seafood Confidential project hub</title>
+<meta name="description" content="Launch packet (full text) (docs/LAUNCH_PACKET.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html" aria-current="page">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1>Launch packet (full text)</h1>
+<h2 id="seafood-confidential">Seafood Confidential</h2>
+<h3 id="launch-and-development-packet">Launch and Development Packet</h3>
+<p>Prepared for Paul Phillips and the founding team</p>
+<p>November 17 2026</p>
+<p>Brand direction, editorial operations, product architecture and a four week development sprint</p>
+<p>Seafood Confidential will bring experienced people in fisheries, aquaculture and the seafood trade into a publication that is useful to professionals and readable by anyone who wants to understand the food. This packet defines a practical first release and the operating system behind it.</p>
+<p>The proposed launch combines a public publication, a weekly newsletter, invited contributor access and a small private operations desk. AI agents help prepare and organize work. The managing editor controls what reaches readers.</p>
+<p><strong>Recommended first release:</strong> one substantive article each week, one weekly dispatch, LinkedIn and Facebook distribution, and a prepared path to a monthly interview podcast.</p>
+<p><strong>Planning basis:</strong> two founders, one experienced full stack developer, a theme based public site, English language launch with worldwide coverage, and a modest initial audience. The sprint estimate is 118 to 160 engineering hours, including reserve. Decisions and estimates remain proposed until the founders adopt them.</p>
+<!-- PAGEBREAK --><h2 id="the-founder-decision-brief">The founder decision brief</h2>
+<h3 id="build-a-publication-the-friend-can-operate">Build a publication the friend can operate</h3>
+<p>The central product is a dependable editorial routine. Your friend should be able to open one private desk, see the pieces awaiting a decision, commission a guest, review sources, open the article in its editor and prepare the week&#39;s distribution. The public site should remain available even when an automation is paused.</p>
+<p>Use <strong>Ghost Publisher</strong> for the website, article editor, contributors, member access and newsletter. Add a small <strong>Next.js and TypeScript operations desk</strong>, backed by <strong>Supabase Postgres and Auth</strong>, for pitches, source records, review snapshots, agent permissions and job status. Use <strong>Buffer Team</strong> for the two initial social channels. Add a dedicated podcast host when the audio pilot is ready. These are proposed choices, with the current vendor capabilities documented in the references. [S1-S8]</p>
+<h3 id="decisions-this-packet-recommends">Decisions this packet recommends</h3>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Recommended starting point</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Audience</td>
+<td>Seafood professionals first, with clear explanations for interested food readers</td>
+</tr>
+<tr>
+<td>Editorial identity</td>
+<td>A practitioner owned publication about how seafood actually works</td>
+</tr>
+<tr>
+<td>Core cadence</td>
+<td>One feature and one short dispatch each week</td>
+</tr>
+<tr>
+<td>Contributions</td>
+<td>Public pitches and invited writers; editorial review before publication</td>
+</tr>
+<tr>
+<td>AI authority</td>
+<td>Research, organization and draft preparation; human release in the native publishing tools</td>
+</tr>
+<tr>
+<td>Podcast</td>
+<td>Two private pilots, then a monthly episode if the workload is sustainable</td>
+</tr>
+<tr>
+<td>Software allowance</td>
+<td>$119-$169 per month at the stated launch assumptions, before labor and overages</td>
+</tr>
+</tbody></table></div>
+<h3 id="read-and-use-the-packet">Read and use the packet</h3>
+<p>The brand and reader experience come first. The middle sections specify the portals, content records, agent boundaries and sprint. The final sections cover editorial operations, podcast production, costs and decisions. The separate workbook tracks the work. The development kit contains the specifications, issue backlog, contracts, examples and reusable editorial templates.</p>
+<p>At kickoff, name the managing editor, approve the first audience and weekly capacity, choose the account owner and set the budget. A domain and social handles should be checked and reserved through founder controlled accounts before the public launch.</p>
+<!-- PAGEBREAK --><h2 id="positioning-and-audience">Positioning and audience</h2>
+<h3 id="seafood-from-the-people-who-know-it">Seafood from the people who know it</h3>
+<p><strong>Seafood Confidential</strong></p>
+<p><strong>Seafood, from the people who know it.</strong></p>
+<p>Suggested descriptor: Fisheries, aquaculture, trade, and the people behind the food.</p>
+<p>Your shared decades in the industry give this project a useful starting advantage: experience of decisions that ordinary coverage often encounters only after the outcome. Paul can draw on his work across seafood marketing, markets and logistics. The publication should make room for the friend&#39;s own experience in their approved biography, without assuming details that have not been supplied.</p>
+<p>The first audience is buyers, fishers, farmers, processors, suppliers, chefs and other people whose work touches seafood. Curious consumers are welcome. Explain a trade term at the moment it matters, and anchor each feature in a question a reader can recognize.</p>
+<h3 id="the-editorial-promise">The editorial promise</h3>
+<p>Every substantive piece should help a reader understand a real seafood decision, the people affected and the evidence behind it. A story might explain why a shipment&#39;s value changes between landing and sale, how a farmer manages a difficult production choice, or what a new rule means in a specific fishery.</p>
+<p>Candor is a tone. Reporting still needs dates, attribution, context and a way to correct mistakes. The word Confidential can suggest access and honest conversation; it should not imply that an ordinary contact form provides protected anonymity.</p>
+<h3 id="a-distinct-reason-to-return">A distinct reason to return</h3>
+<p>SeafoodSource already offers expert podcast discussions, while the Responsible Seafood Advocate publishes industry journalism and expert perspectives. This supports choosing a clear founder led point of view: practical decisions, personal experience and thoughtful exchanges between different parts of the trade. It does not establish an unoccupied market. [S16-S17]</p>
+<p>A preliminary indexed web scan did not identify an obvious exact title publication called Seafood Confidential. Domain registration, handles, business registries and trademarks are still unverified. The adjacent food media title Culinary Confidential reinforces the value of a clear fisheries and aquaculture descriptor. [S18]</p>
+<!-- PAGEBREAK --><h2 id="the-initial-visual-identity">The initial visual identity</h2>
+<p><img src="../assets/brand-concept-1536.jpg" alt="Seafood Confidential brand concept" loading="lazy" decoding="async"></p>
+<h3 id="working-waterfront">Working Waterfront</h3>
+<p>The recommended direction combines an editorial masthead, warm paper, dark ink and working maritime imagery. The concept above is an AI generated visual exploration for article, podcast and social formats, not final artwork or documentary photography.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Color</th>
+<th>Hex</th>
+<th>Intended use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ink navy</td>
+<td>#102B3A</td>
+<td>Masthead, body text, primary controls</td>
+</tr>
+<tr>
+<td>Salt paper</td>
+<td>#F3EFE5</td>
+<td>Page backgrounds and quiet reading space</td>
+</tr>
+<tr>
+<td>Sea glass</td>
+<td>#7FA59A</td>
+<td>Secondary surfaces and illustration</td>
+</tr>
+<tr>
+<td>Rust</td>
+<td>#B64D35</td>
+<td>Small accents and selected emphasis</td>
+</tr>
+</tbody></table></div>
+<p>Use serif headlines and a clear sans serif interface. Prepare a wordmark, SC avatar and reusable layouts, checking text contrast. The live image library should represent fisheries, farms and food across regions through credited, permissioned photography. Keep aquaculture and freshwater production visible.</p>
+<!-- PAGEBREAK --><h2 id="the-editorial-structure">The editorial structure</h2>
+<p>Use six sections at launch. Geography, species and format belong in tags and story metadata, which keeps the main navigation understandable.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Editorial purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>On the Water</td>
+<td>Fisheries, harvest communities, gear, livelihoods and working conditions</td>
+</tr>
+<tr>
+<td>At the Farm</td>
+<td>Aquaculture production, husbandry, feed, hatcheries and production choices</td>
+</tr>
+<tr>
+<td>The Trade</td>
+<td>Buying, selling, processing, cold chain, market formation and logistics</td>
+</tr>
+<tr>
+<td>Rules and Reality</td>
+<td>Dated explainers about a defined rule, jurisdiction and practical consequence</td>
+</tr>
+<tr>
+<td>At the Table</td>
+<td>Species knowledge, handling, food culture, chefs, value and consumption</td>
+</tr>
+<tr>
+<td>Voices</td>
+<td>Guest essays, interviews, oral histories and moderated exchanges</td>
+</tr>
+</tbody></table></div>
+<h3 id="give-every-story-a-visible-form">Give every story a visible form</h3>
+<p>Use a format label such as reported feature, explainer, interview, first person account, opinion or sponsored contribution. Readers should be able to distinguish an experienced person&#39;s recollection from a documented finding, and an argument from an impartial account of events.</p>
+<p>Each article has a byline, relevant affiliation, publication date, update date where needed, image credits and source notes. An industry relationship that matters to the story should appear with the story. A guest&#39;s biography is separate from the editor&#39;s assessment of their claims.</p>
+<h3 id="start-with-questions-that-fit-your-access">Start with questions that fit your access</h3>
+<p>Strong early commissions include what the price of a fish actually contains, how a species earns a market, what happens to a tuna shipment between landing and buyer, and the production decisions behind a particular oyster or shrimp farm. These are proposed reporting assignments, not completed findings.</p>
+<p>A six week commissioning plan appears later in the packet. Aim to have three publishable pieces and one reserve idea before launch. The weekly email can point to the main article, add three useful source links and ask one specific question. An interview can supply that week&#39;s feature instead of adding a second production obligation.</p>
+<!-- PAGEBREAK --><h2 id="the-reader-experience">The reader experience</h2>
+<h3 id="make-the-next-useful-action-obvious">Make the next useful action obvious</h3>
+<p>The homepage introduces the publication, features one strong current story and offers a clear newsletter signup. Below that, show recent articles, the six sections and a small invitation to contribute. Keep the founders visible through their own introductions and relevant bylines.</p>
+<p>The article page needs comfortable reading on a phone, a concise summary when useful, relevant source links, photo credit, author context, related stories and a way to submit a correction. A Rules and Reality article should display its jurisdiction and the date on which its status was checked.</p>
+<h3 id="the-launch-page-inventory">The launch page inventory</h3>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Page or action</th>
+<th>First release behavior</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Home and section archives</td>
+<td>Latest content, featured story, clear navigation and tags</td>
+</tr>
+<tr>
+<td>Article and author pages</td>
+<td>Accessible reading, byline, sources, disclosures and related pieces</td>
+</tr>
+<tr>
+<td>About and editorial principles</td>
+<td>Founder biographies, coverage promise and corrections contact</td>
+</tr>
+<tr>
+<td>Newsletter signup and account</td>
+<td>Native Ghost member controls, confirmation and unsubscribe</td>
+</tr>
+<tr>
+<td>Pitch and guest interest</td>
+<td>Short form feeding a private editorial queue</td>
+</tr>
+<tr>
+<td>Contact and policies</td>
+<td>Practical contact routes, privacy information and contribution terms</td>
+</tr>
+<tr>
+<td>Podcast landing page</td>
+<td>Publish only when a trailer or episode is ready; episode pages reuse the article system</td>
+</tr>
+</tbody></table></div>
+<h3 id="participation-without-a-moderation-backlog">Participation without a moderation backlog</h3>
+<p>Let readers send a question, propose an article or express interest in being interviewed. A submission becomes a private pitch. The editor decides whether to commission it and invite the writer. A reader account never automatically grants authoring authority.</p>
+<p>Start with replies and a pitch queue. Add member comments when the friend has a clear moderation routine. The initial site needs no public member directory, direct messaging, open uploads or social network style feed. Those can be evaluated after readership and moderation capacity are understood.</p>
+<p>Native tags and search are enough for the first release. Advanced combinations of species, region, production method and rule status are a later feature when there is enough content to make them useful.</p>
+<!-- PAGEBREAK --><h2 id="portals-and-responsibilities">Portals and responsibilities</h2>
+<p>Five surfaces cover the work. They can share links and branding while using the existing tools suited to each task.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Who uses it</th>
+<th>What they can do</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Public publication</td>
+<td>Readers and prospective contributors</td>
+<td>Read, subscribe, browse and submit a pitch</td>
+</tr>
+<tr>
+<td>Native member portal</td>
+<td>Newsletter members</td>
+<td>Manage their own membership and subscription preferences</td>
+</tr>
+<tr>
+<td>Native Ghost editor</td>
+<td>Founders and invited writers</td>
+<td>Draft and edit within their assigned role</td>
+</tr>
+<tr>
+<td>Private operations desk</td>
+<td>Owner and managing editor</td>
+<td>Triage pitches, assign work, review sources and track distribution</td>
+</tr>
+<tr>
+<td>Agent gateway</td>
+<td>Approved AI service identities</td>
+<td>Perform narrowly permitted draft and reporting actions</td>
+</tr>
+</tbody></table></div>
+<h3 id="the-friend39s-private-desk">The friend&#39;s private desk</h3>
+<p>The default screen should answer: What needs my decision today? Show drafts awaiting review, missing source or rights information, this week&#39;s planned story, social drafts needing attention, connector failures and recent reader questions. Each item should open the actual next action, such as Review sources or Open in Ghost.</p>
+<p>Use five navigation items: Today, Stories, Contributors, Distribution and Settings. Keep implementation details behind an administrator view. A status such as Needs a source is more useful to the editor than a queue identifier.</p>
+<h3 id="role-choices-that-matter">Role choices that matter</h3>
+<p>Paul is the proposed publication owner; the friend is the proposed managing editor. The founders should confirm the legal and billing owner separately. Give trusted backup access to a second human and test account recovery.</p>
+<p>Invite guest writers as Ghost Contributors. That role can edit its own drafts and cannot publish. Ghost Authors can publish their own posts, while Editors can publish other writers&#39; posts. Only grant the broader role deliberately. Ghost&#39;s current Publisher plan includes three counted staff users; Contributors do not count toward that limit. [S1-S2]</p>
+<p>The operations desk is staff only in the first sprint. Guests use the native writer experience, an approved brief and a human managed communications thread. Ghost treats invited staff as trusted content creators, including rich HTML and embeds. Invite trusted guests and review their content; unknown public users stay in the moderated pitch queue. [S25]</p>
+<!-- PAGEBREAK --><h2 id="a-useful-smart-publishing-workflow">A useful smart publishing workflow</h2>
+<h3 id="turn-one-conversation-into-a-reviewed-package">Turn one conversation into a reviewed package</h3>
+<p>Imagine Paul records a fifteen minute voice note about a difficult delivery or interviews a producer. The editor creates a story and attaches the permitted recording. An existing approved assistant prepares a transcript and marks uncertain names and claims. The writer develops the article and source notes. This workflow uses the team&#39;s chosen assistant; an in-house transcription or model service is outside the sprint estimate.</p>
+<p>When the editor reviews a version, the system records which article revision and media assets were checked. An assistant then proposes a title, summary, newsletter introduction and separate LinkedIn and Facebook copy. The editor can compare each proposed derivative with the story that supports it.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Human decision</th>
+<th>Useful automation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pitch</td>
+<td>Is this a worthwhile question?</td>
+<td>Organize the idea and suggest missing context</td>
+</tr>
+<tr>
+<td>Commission</td>
+<td>Who owns it and when is it due?</td>
+<td>Prepare the brief and checklist</td>
+</tr>
+<tr>
+<td>Develop</td>
+<td>Which claims and quotations are justified?</td>
+<td>Transcript, source records and draft assistance</td>
+</tr>
+<tr>
+<td>Review</td>
+<td>Is this version ready for readers?</td>
+<td>Highlight unresolved claims, rights and changes</td>
+</tr>
+<tr>
+<td>Release</td>
+<td>Publish the article, send the email, approve social posts</td>
+<td>Open the correct native tool and record outcomes</td>
+</tr>
+<tr>
+<td>Learn</td>
+<td>What should we follow up?</td>
+<td>Summarize useful replies and aggregate results</td>
+</tr>
+</tbody></table></div>
+<h3 id="keep-control-simple-in-the-first-release">Keep control simple in the first release</h3>
+<p>The first sprint gives agents draft authority. The human editor publishes or schedules in Ghost and approves or schedules in Buffer. A review record in the operations desk supports the workflow; it does not remove the native editor&#39;s publishing permission.</p>
+<p>If an article changes after review, its derivatives become stale in the desk and require another check. The friend receives a specific instruction to inspect or cancel any queued version affected by the change. This is a visible operational control in the first release, not a promise that a custom gate can stop every action inside a separate vendor system.</p>
+<p>Automatic release can follow later, with stronger enforcement, version checks and reconciliation. The useful initial achievement is a complete, traceable publication loop that a human can run comfortably.</p>
+<!-- PAGEBREAK --><h2 id="sources-rights-and-editorial-trust">Sources rights and editorial trust</h2>
+<h3 id="keep-the-information-that-changes-meaning">Keep the information that changes meaning</h3>
+<p>A source record should include its publisher, title, URL, publication date, retrieval date, language, the claim it supports and a page or recording timecode where applicable. Store the statistical period and units separately. Common and scientific species names help where local names could create ambiguity.</p>
+<p>For a regulatory story, also record the jurisdiction, issuing authority, instrument identifier, current stage, effective date and any comment deadline. A proposal, an adopted measure and a rule already in force need different labels. Confirm the operative source before turning an announcement into practical advice.</p>
+<p>NOAA&#39;s rules pages and FAO GLOBEFISH are useful starting points for discovery. Expand the source registry through relevant national authorities, EUR-Lex, regional fisheries bodies and researchers as coverage develops. The registry should support editorial judgment, with the source language preserved and consequential translations checked. [S19-S20]</p>
+<h3 id="rights-belong-to-each-asset">Rights belong to each asset</h3>
+<p>Record permission for an article, image, recording, edited clip and translation separately. Keep the source file, credit, license scope and consent evidence together. An interview release does not automatically authorize synthetic voice use. Do not put sensitive source contacts into the public CMS or general agent context.</p>
+<p>Contribution terms should state attribution, editing, permitted uses, any compensation, prior publication, withdrawal timing and the corrections process. The founders need a jurisdiction appropriate agreement before commissioning work. The kit provides an intake and terms checklist rather than inventing a signed agreement.</p>
+<h3 id="correct-the-whole-publication-package">Correct the whole publication package</h3>
+<p>Give readers a visible corrections contact. When a material fact changes, record the reason, retain the earlier version internally, publish a dated note and inspect linked email, social and audio derivatives. A website edit cannot recall an already delivered email.</p>
+<p>Separate editorial approval from sponsorship approval. Relevant commercial relationships should be disclosed where the audience encounters the content. For endorsements, the FTC&#39;s guidance emphasizes clear disclosure of material connections; other jurisdictions may also apply. [S15] The brand should be candid about the founders&#39; industry relationships and precise about the reporting that supports each piece.</p>
+<!-- PAGEBREAK --><h2 id="the-recommended-backend">The recommended backend</h2>
+<h3 id="use-managed-publishing-and-build-the-missing-workflow">Use managed publishing and build the missing workflow</h3>
+<p>Ghost remains the authoritative home for article bodies, published URLs, authors, members and newsletters. The operations database holds pitches, assignments, sources, permissions, review snapshots and distribution records linked to Ghost identifiers. This avoids maintaining two competing article editors.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsibility</th>
+<th>First release</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ghost Publisher</td>
+<td>Publication, editor, writers, members and email</td>
+<td>Theme configuration and small brand customizations</td>
+</tr>
+<tr>
+<td>Next.js and TypeScript</td>
+<td>Private operations desk and server routes</td>
+<td>One app with a small staff interface</td>
+</tr>
+<tr>
+<td>Supabase Postgres and Auth</td>
+<td>Operations records and staff identity</td>
+<td>Row permissions, private files and exportable data</td>
+</tr>
+<tr>
+<td>Buffer Team</td>
+<td>Social drafts and human scheduling</td>
+<td>LinkedIn and Facebook only</td>
+</tr>
+<tr>
+<td>Vercel Pro</td>
+<td>Commercial hosting for the private app</td>
+<td>One deploying developer and separate preview configuration</td>
+</tr>
+<tr>
+<td>Podcast host</td>
+<td>Audio and RSS distribution</td>
+<td>Add after the pilot decision</td>
+</tr>
+</tbody></table></div>
+<p>Ghost exposes both content and administration APIs. The administration API is powerful, so its credentials belong on the server behind the narrow application gateway. The browser and general agents must not receive them. Draft writes must preserve Ghost&#39;s concurrency checks. [S3-S4]</p>
+<h3 id="why-this-route">Why this route</h3>
+<p>The first sprint should spend its engineering time on editorial work that a general publication tool does not already solve. Payload provides granular access controls and supports a custom deployment; choosing that route also creates database, storage and email integration responsibilities. [S27-S28] A fully custom publishing workflow becomes worthwhile when its control is central to the product. If the friend already has a dependable publishing setup, evaluate its migration cost before replacing it.</p>
+<p>Reconsider the default if a mandatory approval chain must govern every human publishing action, or if custom contributor workspaces and complex content permissions become central. Those are concrete reasons for a custom CMS. At launch, native publishing and a bounded operations desk offer a smaller maintenance commitment.</p>
+<!-- PAGEBREAK --><h2 id="content-records-and-ownership">Content records and ownership</h2>
+<p>The database should preserve enough context to explain why a story is ready and how each derivative was produced. It should not copy every vendor record or store subscriber data merely because an API makes it available.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Record</th>
+<th>Essential content</th>
+<th>Authority</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Story</td>
+<td>Ghost post ID, assignment, section, format, region and species</td>
+<td>Ghost body; operations metadata</td>
+</tr>
+<tr>
+<td>Source and claim</td>
+<td>Source URL, dates, supported claim, passage or timecode, review state</td>
+<td>Operations database</td>
+</tr>
+<tr>
+<td>Contributor</td>
+<td>Ghost user ID, contact, biography, affiliation and terms status</td>
+<td>Staff controlled records</td>
+</tr>
+<tr>
+<td>Asset and permission</td>
+<td>File reference, credit, permitted uses, expiry or restrictions</td>
+<td>Private asset store and consent record</td>
+</tr>
+<tr>
+<td>Review snapshot</td>
+<td>Article version, content hash, reviewer, timestamp, scope and findings</td>
+<td>Immutable application record</td>
+</tr>
+<tr>
+<td>Derivative</td>
+<td>Article revision, destination, exact proposed text and asset references</td>
+<td>Operations record linked to provider draft</td>
+</tr>
+<tr>
+<td>Distribution job</td>
+<td>Destination, provider ID, attempts, state and last observation</td>
+<td>Local intent plus observed provider state</td>
+</tr>
+<tr>
+<td>Agent grant</td>
+<td>Allowed tools, assigned stories, expiry and usage limit</td>
+<td>Server enforced authorization</td>
+</tr>
+</tbody></table></div>
+<h3 id="use-fields-where-they-are-reliable">Use fields where they are reliable</h3>
+<p>Rich article metadata lives in Postgres. Do not assume Ghost&#39;s advertised custom fields are general post fields; the documented feature concerns members. [S24] For the first release, publish selected, reviewed metadata through tags and a visible article source note. Keep confidential source detail private.</p>
+<p>A story can be Draft, In review, Changes requested, Ready for human release or Published. Readiness applies to a specific version. If a number, quote, image, source status or relevant disclosure changes, review that affected output again.</p>
+<p>Store an IANA timezone with scheduled intent and persist timestamps in UTC. Show the editor their chosen local time. A distributed team should not have to infer whether Friday at nine means Philadelphia, London or the source&#39;s location.</p>
+<p>Keep account mappings explicit. A Ghost member is a reader. A Ghost contributor is a writer. A staff user in the operations desk is a separate authorized identity. Matching email addresses do not grant new roles.</p>
+<!-- PAGEBREAK --><h2 id="how-ai-agents-should-work">How AI agents should work</h2>
+<h3 id="give-agents-small-jobs-with-useful-evidence">Give agents small jobs with useful evidence</h3>
+<p>The first release should support the friend&#39;s existing agents through documented tools. It does not require a new autonomous agent platform. An HTTP contract can serve approved clients; an MCP adapter can expose the same bounded actions when the chosen client needs it.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Agent role</th>
+<th>Useful work</th>
+<th>Information it receives</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Research</td>
+<td>Suggest briefs and attach source records</td>
+<td>Approved public sources and assigned questions</td>
+</tr>
+<tr>
+<td>Interview</td>
+<td>Prepare transcripts and timecoded excerpts</td>
+<td>Recordings explicitly permitted for processing</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>Propose headlines, summaries and channel variants</td>
+<td>Assigned draft or reviewed article revision</td>
+</tr>
+<tr>
+<td>Distribution</td>
+<td>Create social drafts and read their status</td>
+<td>Exact approved draft payload and allowed channels</td>
+</tr>
+<tr>
+<td>Audience</td>
+<td>Summarize aggregate results and reader themes</td>
+<td>Aggregates and editor selected messages</td>
+</tr>
+</tbody></table></div>
+<p>The v1 contract contains briefs.list, items.read, drafts.propose, drafts.revise, social.propose and jobs.read. Humans attach sources and record reviews. Brief creation and aggregate metrics tools are later additions. Transcription and analysis use existing approved assistants. The developer maps these internal tools to current vendor APIs.</p>
+<h3 id="enforce-the-limits-in-code">Enforce the limits in code</h3>
+<p>Each agent has a separate revocable credential, allowed actions, assigned resources and expiry. Validate every request against a schema and check authorization before accessing a row or calling a provider. Deny publication, newsletter sending, member export, role changes, spending and outbound invitations in the first sprint.</p>
+<p>Buffer&#39;s current Needs Approval role preserves the draft approval requirement across API and MCP usage. Use a dedicated restricted identity, not an owner key. Test that an agent&#39;s attempted release never publishes and remains a draft; the provider may save a draft instead of returning an error. [S6]</p>
+<p>Source pages, documents and transcripts cannot change agent permissions. Embedded instructions to reveal credentials or publish have no authority. Mask private contacts from logs, approve model data handling, meter calls and let the editor pause an agent without taking the publication offline.</p>
+<!-- PAGEBREAK --><h2 id="reliability-and-recovery">Reliability and recovery</h2>
+<h3 id="record-intent-before-calling-another-service">Record intent before calling another service</h3>
+<p>Use a durable Postgres job record for each external draft operation. It records the story revision, destination, exact payload, request key, provider identifier, attempts and last observed outcome. A repeated request with the same key returns the existing job. The same key with different content is a conflict.</p>
+<p>If the provider may have accepted a request before a timeout, mark the job Needs reconciliation. Check the provider or ask the editor to reconcile it before trying another creation. A local unique key alone cannot guarantee exactly one external post when a provider lacks suitable idempotency support.</p>
+<p>For incoming webhooks, deduplicate notifications and treat them as cues to verify upstream state. Do not assume a vendor supports signed webhooks until its deployed interface has been checked. A bounded periodic comparison should recover a missed update. Ghost provides content event webhooks; the precise trust and retry behavior belongs in the integration implementation. [S23]</p>
+<h3 id="keep-private-work-private">Keep private work private</h3>
+<p>Enforce staff and resource permissions on every server route and relevant database table. Supabase administrative secrets can bypass row policies; keep them out of the browser and restrict their use to deliberate server operations. [S9] Check public feeds, sitemaps, previews, media links and search results for accidental draft exposure.</p>
+<p>Bound uploads by size and type, sanitize rendered text, and restrict server URL fetching to approved destinations. Keep embargoed media and sensitive drafts in private operations storage. Ghost&#39;s shareable preview links can be read by their holders; a draft article does not make an uploaded asset confidential. [S25-S26]</p>
+<h3 id="recovery-is-a-demonstrated-task">Recovery is a demonstrated task</h3>
+<p>The founders own the domain, vendor accounts, billing and recovery contacts. Keep the theme, routes and application code under version control. Export publication content and member preferences, back up the operations database and private assets, and retain original media separately. Ghost documents exports for these publication assets. [S10]</p>
+<p>Proposed recovery targets are a daily operations backup and a same business day restoration path for a small launch. They become commitments only after a restore rehearsal measures them. Test restoring one article, its source permissions and its operations mapping. Record the recovery steps and the person responsible.</p>
+<!-- PAGEBREAK --><h2 id="sprint-scope-and-first-half">Sprint scope and first half</h2>
+<h3 id="a-twenty-working-day-target">A twenty working day target</h3>
+<p>The estimated development effort is <strong>107-149 hours plus 11 hours of reserve</strong>, or <strong>118-160 engineering hours</strong>. One experienced developer could fit this into roughly four working weeks if accounts, theme choices and founder feedback are available. Allow another <strong>10-16 founder hours</strong> for kickoff decisions, content approval and rehearsal. These estimates do not include the continuing editorial workload.</p>
+<p>Use an existing licensed Ghost theme, two social channels and one private operations app. Re-estimate after checking provider access on Day 1 and after the first complete draft workflow. There is no assumed calendar start date, and external account approvals can move the schedule.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Window</th>
+<th>Work</th>
+<th>Visible outcome</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Days 1-4</td>
+<td>SC-001 through SC-004</td>
+<td>Founder decisions, private staging, brand shell, contributor roles and newsletter test journey</td>
+</tr>
+<tr>
+<td>Days 5-9</td>
+<td>SC-005 through SC-007</td>
+<td>Staff desk, pitch intake, source and rights records, and links to canonical Ghost drafts</td>
+</tr>
+</tbody></table></div>
+<h3 id="the-first-useful-demonstration">The first useful demonstration</h3>
+<p>By the first milestone, the friend should be able to open the publication, invite a test contributor, see that person&#39;s draft and verify that the contributor cannot publish it. A test reader can subscribe and unsubscribe. The site already has About, contribution and policy routes with approved copy or clearly private staging placeholders.</p>
+<p>By the second milestone, a new pitch appears in the private queue, receives an owner and becomes a linked draft. The editor can see its brief, source notes, missing rights and next action. Public submissions cannot inspect one another or confer staff access.</p>
+<h3 id="development-discipline">Development discipline</h3>
+<p>Start a dedicated project repository and feature branch such as feat/seafood-confidential-mvp. Follow the kit&#39;s AGENTS.md and task dependencies. Pin package versions when implementation begins, keep secrets in the hosting environment, and record decisions with their rationale. Every completed ticket needs an observed result, a commit and any remaining limitation. The current kit is a specification package; application tests start UNRUN.</p>
+<!-- PAGEBREAK --><h2 id="sprint-completion-and-release">Sprint completion and release</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Window</th>
+<th>Work</th>
+<th>Visible outcome</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Days 10-14</td>
+<td>SC-008 through SC-011</td>
+<td>Versioned review snapshots, scoped agent drafts, social draft adapter and durable jobs</td>
+</tr>
+<tr>
+<td>Days 15-17</td>
+<td>SC-012 through SC-015</td>
+<td>Episode format, editorial labels, recovery rehearsal and critical failure checks</td>
+</tr>
+<tr>
+<td>Days 18-20</td>
+<td>SC-016 and reserve</td>
+<td>Friend runs the workflow, issues are corrected and founders review launch readiness</td>
+</tr>
+</tbody></table></div>
+<h3 id="what-the-sprint-must-deliver">What the sprint must deliver</h3>
+<p>The public site works on a phone and desktop. An invited writer can draft safely. The private desk organizes stories and evidence. An approved agent can prepare assigned drafts without gaining publication authority. The editor can produce a web article, a test newsletter and two social drafts, then see their real status.</p>
+<p>The developer demonstrates a blocked cross-user draft request, a blocked agent publish attempt, a conflicting revision, a repeated request, an uncertain provider outcome and a late article change. The friend rehearses the normal editorial journey and a correction without reading source code.</p>
+<h3 id="preserve-the-essential-work-if-time-tightens">Preserve the essential work if time tightens</h3>
+<p>Keep permissions, clear sources and rights, correction handling, recovery and operator usability. If a provider integration is blocked, retain the exact manual copy/export package and mark its integration ticket blocked. The public publication can still be ready for a founder approved manual launch; that does not turn an unimplemented integration into a passed feature.</p>
+<p>Defer a custom contributor editor, unified cross-vendor login, automatic publishing, model orchestration, open comments, large media transcoding, paid memberships and actual podcast distribution. The episode article template remains useful without an active feed.</p>
+<h3 id="launch-evidence">Launch evidence</h3>
+<p>Record the staging URL, tested commit, permission results, send previews, restore result and operator rehearsal. Founders then choose the real launch time and approve actual audience facing publication. The plan does not assume permission to register accounts, incur subscriptions, contact guests or publish on their behalf.</p>
+<p>The full sixteen-ticket backlog includes effort ranges, dependencies, owners and acceptance criteria. The workbook can track status; the repository remains the place where code, decisions and implementation evidence are reviewed together.</p>
+<!-- PAGEBREAK --><h2 id="acceptance-criteria-that-matter">Acceptance criteria that matter</h2>
+<p>The acceptance matrix in the kit contains twenty six scenarios. These are planned tests, not claims of implemented behavior. The following groups define what success looks like to the founders.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Required result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Contributor isolation</td>
+<td>One guest cannot retrieve another guest&#39;s draft or any member list; readers cannot enter staff tools</td>
+</tr>
+<tr>
+<td>Agent authority</td>
+<td>Draft work succeeds; publishing, sending, role changes, member exports and edits to live articles are rejected</td>
+</tr>
+<tr>
+<td>Review integrity</td>
+<td>A change after review preserves the earlier snapshot and flags affected derivatives as stale</td>
+</tr>
+<tr>
+<td>Native tool boundary</td>
+<td>The editor understands that native Ghost and Buffer permissions remain authoritative for human release</td>
+</tr>
+<tr>
+<td>Safe retries</td>
+<td>Duplicate local requests reuse work; uncertain provider acceptance triggers reconciliation</td>
+</tr>
+<tr>
+<td>Privacy</td>
+<td>Drafts, private contacts and rights records stay out of public pages, feeds, media and logs</td>
+</tr>
+<tr>
+<td>Reader journey</td>
+<td>Signup, confirmation, preferences and unsubscribe work with a consented test address</td>
+</tr>
+<tr>
+<td>Accessibility</td>
+<td>Keyboard use, focus, contrast, alt text, heading order and mobile reading are checked</td>
+</tr>
+<tr>
+<td>Recovery</td>
+<td>Sample content and associated records are restored and the owner can follow the runbook</td>
+</tr>
+<tr>
+<td>Daily usability</td>
+<td>The friend completes a publication cycle on laptop and phone with clear next actions</td>
+</tr>
+</tbody></table></div>
+<h3 id="a-founder-acceptance-session">A founder acceptance session</h3>
+<p>Use a harmless test story with an invented company clearly identified as a fixture. Submit a pitch, assign it to a test contributor, add a source and a permitted image, return an edit and capture a review. Create two social drafts from that revision. Change a fact in the article and confirm that the desk flags the older variants.</p>
+<p>Complete a test send only to approved test recipients. Exercise unsubscribe. Then make a correction, inspect the resulting note and retrieve the previous version. Turn off an agent and verify that its credential immediately fails. Restore a sample backup in an isolated environment.</p>
+<p>The friend signs off on the workflow, and the developer supplies the evidence. A visually attractive homepage alone does not establish that these operational paths work.</p>
+<!-- PAGEBREAK --><h2 id="the-first-six-weeks-of-content">The first six weeks of content</h2>
+<p>These are commissioning ideas. The founders should select real sources and permissions before turning them into factual copy. The publication rhythm is one feature and one short dispatch each week, with up to three reusable social treatments per chosen channel.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Main feature</th>
+<th>Reporting need</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Why we are opening the conversation</td>
+<td>Approved founder biographies, editorial principles and reader invitation</td>
+</tr>
+<tr>
+<td>2</td>
+<td>What the price of a fish actually includes</td>
+<td>Buyer, seller and logistics perspectives; permissioned figures or a labeled example</td>
+</tr>
+<tr>
+<td>3</td>
+<td>The work behind a farmed species</td>
+<td>One accessible farmer, production context and original permissioned photographs</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Better questions about wild and farmed seafood</td>
+<td>Sources from both systems and an optional pilot interview</td>
+</tr>
+<tr>
+<td>5</td>
+<td>A rule on paper and a working day on the water</td>
+<td>One defined jurisdiction, current official instrument and affected operator</td>
+</tr>
+<tr>
+<td>6</td>
+<td>The fishmonger and the chef</td>
+<td>Two practitioners explaining how their decisions connect</td>
+</tr>
+</tbody></table></div>
+<h3 id="use-your-own-stories-carefully-and-well">Use your own stories carefully and well</h3>
+<p>Paul&#39;s experience in market development and seafood logistics offers material for an oral history series. Potential pieces include how a previously overlooked species finds buyers, how a distribution decision changes product placement, and what a seller learns from a difficult shipment. Distinguish personal recollection from independently checked historical claims and request permission before identifying a commercial counterparty.</p>
+<h3 id="create-a-reserve">Create a reserve</h3>
+<p>Before launching, prepare three complete pieces, a short welcome email, one evergreen backup outline and a list of five plausible guest contributors. Obtain the first contributor&#39;s consent and confirm availability. A source falling through should not force an improvised story on publication day.</p>
+<p>Every feature can produce one insight with a link, one contextualized excerpt or visual, and one useful question for practitioners. Avoid manufacturing a quote or claim merely to fill a social slot. The calendar is editable in the workbook and the editorial kit.</p>
+<!-- PAGEBREAK --><h2 id="the-weekly-operating-rhythm">The weekly operating rhythm</h2>
+<h3 id="plan-for-a-workload-two-people-can-sustain">Plan for a workload two people can sustain</h3>
+<p>Set an initial target of <strong>8-12 combined founder hours each week</strong> for a short feature, dispatch and distribution. This is a planning allowance to measure during the first two weeks, not a claim about how long reporting will always take. Travel, substantial investigations and audio editing add time.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Managing editor and founders</th>
+<th>Assistant support</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Monday</td>
+<td>Choose one question, assign an owner and confirm the angle</td>
+<td>Organize source leads and prepare the brief</td>
+</tr>
+<tr>
+<td>Tuesday</td>
+<td>Interview, research or record a voice note</td>
+<td>Transcript and uncertain names or claims</td>
+</tr>
+<tr>
+<td>Wednesday</td>
+<td>Shape the piece and resolve missing evidence</td>
+<td>Draft options, source cards and terminology checks</td>
+</tr>
+<tr>
+<td>Thursday</td>
+<td>Review the article and each output preview</td>
+<td>Newsletter and channel specific draft package</td>
+</tr>
+<tr>
+<td>Friday</td>
+<td>Publish, send, schedule and respond</td>
+<td>Record results and summarize useful reader questions</td>
+</tr>
+</tbody></table></div>
+<p>The friend is the proposed daily operator. Paul supplies perspective, writing, interviews and relationships. Both can contribute to commissioning; one named editor makes the final release decision. A backup person must be able to handle a correction or a failed send.</p>
+<h3 id="make-progress-visible">Make progress visible</h3>
+<p>Review confirmed subscriptions, clicks, useful replies, repeat readership, contributor pitches and production time. Treat email opens as a supporting signal. During the first month, favor operating goals: four completed issues, two contributor cycles, one restore rehearsal and prompt resolution of correction requests. Set audience growth goals after an actual baseline exists.</p>
+<p>Each Monday, ask which piece was useful, where the workflow stalled and what the next reader question should be. Add one improvement at a time. If publishing is taking too long, shorten the feature or reduce frequency before adding another channel.</p>
+<h3 id="keep-knowledge-reusable">Keep knowledge reusable</h3>
+<p>Maintain a living terminology list, source directory, consent template and set of successful briefs. Store story-specific evidence with the story. That gives an assistant useful context without allowing it to treat a past claim as current merely because it appeared in the archive.</p>
+<!-- PAGEBREAK --><h2 id="the-podcast-and-media-path">The podcast and media path</h2>
+<h3 id="prove-one-conversation-before-committing-to-a-series">Prove one conversation before committing to a series</h3>
+<p>Record two private pilots. A useful starting format is a twenty five to forty minute conversation around one concrete decision, with an introduction, the guest&#39;s experience, a difficult question and practical takeaways. The friend should time the booking, recording, edit and approval work. An initial <strong>3-5 additional hours per episode</strong> is a planning allowance to test.</p>
+<p>Once the sound and workload are acceptable, publish a trailer and launch with one episode plus another ready behind it. A monthly rhythm is enough to begin. The interview can supply that week&#39;s article rather than becoming an unrelated production stream.</p>
+<h3 id="keep-the-article-and-the-recording-connected">Keep the article and the recording connected</h3>
+<p>The episode page carries the guest biography, player, summary, chapters, source links and transcript. Check the transcript&#39;s names, species, units and meaningful quotes. Store consent for the full recording and clips separately. Retain a clean audio master and avoid using generated imagery as evidence of a real visit or event.</p>
+<p>Use a dedicated audio host for RSS and delivery. Transistor&#39;s current Starter plan is a reasonable shortlist choice at $19 per month, with 20,000 monthly audio downloads. Its RSS feed uses a Transistor domain; portability depends on feed redirects rather than a custom RSS domain. [S13,S22]</p>
+<p>Apple&#39;s published requirements include a public valid RSS feed, artwork and an episode, with stable episode identifiers. Account setup and directory submission are explicit launch tasks. [S14] Keep the show account and recovery email under founder control, and use a role mailbox where a feed may expose a contact address.</p>
+<h3 id="expand-formats-with-a-clear-owner">Expand formats with a clear owner</h3>
+<p>A recorded interview can later supply short video, an illustrated explainer or a regional dispatch. Each extra format needs approved context, rights and someone accountable for finishing it. Add recurring video only after the existing publication cycle is dependable.</p>
+<p>The first development sprint prepares the episode format and operating checklist. It does not promise a distributed show, recording equipment, licensed music or an audio production service.</p>
+<!-- PAGEBREAK --><h2 id="operating-costs-and-development-effort">Operating costs and development effort</h2>
+<p>Prices checked November 17 2026. The baseline assumes one small publication, up to the displayed 1,000-member Ghost band, two social channels, one deploying developer and modest operations usage. Taxes, labor, equipment, theme purchases and overages are excluded.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Monthly equivalent</th>
+<th>Billing basis</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ghost Publisher</td>
+<td>$29</td>
+<td>$348 billed annually [S1]</td>
+</tr>
+<tr>
+<td>Buffer Team for two channels</td>
+<td>$20</td>
+<td>$240 billed annually [S5]</td>
+</tr>
+<tr>
+<td>Supabase Pro</td>
+<td>$25</td>
+<td>Starting monthly cost for one small project [S7]</td>
+</tr>
+<tr>
+<td>Vercel Pro</td>
+<td>$20</td>
+<td>Monthly base with one deploying seat [S8]</td>
+</tr>
+<tr>
+<td>Vendor base</td>
+<td>$94</td>
+<td>Sum of the four services</td>
+</tr>
+<tr>
+<td>AI usage allowance</td>
+<td>$15-$50</td>
+<td>Proposed budget, not a vendor quote</td>
+</tr>
+<tr>
+<td>Domain and role mailboxes</td>
+<td>$10-$25</td>
+<td>Proposed allowance; vendors unselected</td>
+</tr>
+<tr>
+<td>Initial operating range</td>
+<td>$119-$169</td>
+<td>Before optional podcast and exclusions</td>
+</tr>
+<tr>
+<td>Optional podcast host</td>
+<td>Add $19</td>
+<td>Transistor Starter monthly [S13]</td>
+</tr>
+<tr>
+<td>Optional audio software</td>
+<td>Add $0-$30</td>
+<td>Planning allowance</td>
+</tr>
+</tbody></table></div>
+<p>Annual billing matters: Ghost and Buffer together require <strong>$588 upfront</strong> at these displayed annual prices. The table expresses their monthly equivalents; it does not imply every charge is monthly. More members, deploying seats, database projects or traffic can change costs.</p>
+<p>The workbook exposes these assumptions and calculates the totals. A manual publication using only Ghost and Buffer has a <strong>$49 monthly-equivalent vendor base</strong>, plus domain, mailbox and any AI costs. That is a viable first publishing milestone while the private desk is being completed.</p>
+<p>Development is estimated at <strong>118-160 engineering hours</strong>, including reserve. At an illustrative rate of $100 per hour, that is <strong>$11,800-$16,000</strong>. This is arithmetic for planning, not a contractor quotation. Founder time, reporting, original photography, legal review and podcast production need separate decisions. Existing tools or founder development can change cash expenditure without removing the work.</p>
+<!-- PAGEBREAK --><h2 id="growth-revenue-and-later-development">Growth revenue and later development</h2>
+<h3 id="build-a-habit-and-learn-who-values-it">Build a habit and learn who values it</h3>
+<p>For the first thirty days, establish the editorial rhythm and ask readers what helped them. Invite existing industry contacts to subscribe rather than importing a sales contact list as an opted-in audience. Make the newsletter&#39;s reply address usable and keep suppression preferences intact.</p>
+<p>Ghost supports custom sending domains on Publisher and above. Follow the actual DNS setup and test delivery. Gmail&#39;s guidelines distinguish requirements for all senders from those for higher volume senders; configure authentication deliberately rather than treating deliverability as a theme setting. [S11-S12]</p>
+<p>Start distribution with LinkedIn and Facebook, subject to confirming where your intended readers already engage. Give each channel its own useful treatment. Instagram and short video can follow when existing images and interviews support them. Keep a copy/export path if an integration changes; Buffer&#39;s API documents experimental surfaces, so isolate that dependency. [S21]</p>
+<h3 id="earn-the-right-to-add-revenue-products">Earn the right to add revenue products</h3>
+<p>Potential revenue includes clearly labeled newsletter sponsorship, a podcast sponsor, paid member briefings, live industry conversations and commissioned educational work. Choose a product after conversations establish who would pay and what they would receive. The packet contains no revenue forecast or claimed audience size.</p>
+<p>Preserve editorial control in sponsor terms. A sponsor can buy a defined placement; it should not buy a favorable factual conclusion. Separate sponsored work, founder consulting and ordinary editorial commissioning in the public labels and internal records.</p>
+<h3 id="a-ninety-day-development-sequence">A ninety day development sequence</h3>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Period</th>
+<th>Editorial goal</th>
+<th>Product focus</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Days 1-30 after launch</td>
+<td>Publish consistently and understand replies</td>
+<td>Fix friction, validate recovery, tune briefs and source fields</td>
+</tr>
+<tr>
+<td>Days 31-60</td>
+<td>Complete guest cycles and the audio pilots</td>
+<td>Add the most repeated contributor need or podcast distribution</td>
+</tr>
+<tr>
+<td>Days 61-90</td>
+<td>Test one revenue conversation and repeat readership</td>
+<td>Consider segmentation, archive search or carefully scoped automation</td>
+</tr>
+</tbody></table></div>
+<p>Future opportunities include a dated regulation watch, a source-linked species library, regional correspondents and multilingual summaries reviewed by competent speakers. Add them when the reporting ownership and demand are visible. A searchable archive of real expertise can become a substantial asset over time.</p>
+<!-- PAGEBREAK --><h2 id="founder-decisions-and-developer-handoff">Founder decisions and developer handoff</h2>
+<h3 id="settle-these-at-kickoff">Settle these at kickoff</h3>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Proposed owner</th>
+<th>Working recommendation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Name and domain</td>
+<td>Both founders</td>
+<td>Retain Seafood Confidential subject to availability checks</td>
+</tr>
+<tr>
+<td>Daily editor and final release authority</td>
+<td>Both founders</td>
+<td>Friend manages operations; name one final editor and backup</td>
+</tr>
+<tr>
+<td>Business and account ownership</td>
+<td>Both founders</td>
+<td>Founder controlled entity or accounts with documented recovery</td>
+</tr>
+<tr>
+<td>First reader and cadence</td>
+<td>Editor and Paul</td>
+<td>Professional readership, weekly feature and dispatch</td>
+</tr>
+<tr>
+<td>Budget and developer availability</td>
+<td>Account owner</td>
+<td>Use the editable cost and effort model before purchasing</td>
+</tr>
+<tr>
+<td>Contributor terms and privacy</td>
+<td>Editor</td>
+<td>Agree rights, compensation, attribution and source handling</td>
+</tr>
+<tr>
+<td>Social destinations and sender</td>
+<td>Editor</td>
+<td>Confirm actual account owners, channels and role mailbox</td>
+</tr>
+<tr>
+<td>Podcast commitment</td>
+<td>Both founders</td>
+<td>Two pilots, then decide on a monthly launch</td>
+</tr>
+</tbody></table></div>
+<p>These decisions are proposed. Resolve account access, real contact details and purchases before deployment. Domain ownership, subscriptions and live accounts remain to be established.</p>
+<h3 id="start-the-development-work">Start the development work</h3>
+<p>Give the developer or coding agent the complete development kit. Begin with README.md, AGENTS.md, PRODUCT_SPEC.md and ADR-001. Follow the ordered backlog. Implement one complete editorial slice before expanding the interface, and keep the manual publishing path available.</p>
+<p>The kit includes the agent contract, illustrative fixture, acceptance scenarios, runbook, brand guide and editorial templates. They define what to build and how to verify it.</p>
+<p><strong>Handoff instruction:</strong> Build the first release described in this packet on a dedicated feature branch. Keep Ghost authoritative for articles and members. Keep the private desk focused on editorial coordination. Implement scoped draft operations and human native-tool release. Report each completed ticket with its evidence and any blocked dependency. Do not claim that a stub, exported draft or proposed integration is a live capability.</p>
+<p>The first review should examine a real path from pitch to guest draft to reviewed article and social draft. That is the most useful evidence that the system will serve the friend who has to run it.</p>
+<!-- PAGEBREAK --><h2 id="sources-for-platform-decisions">Sources for platform decisions</h2>
+<p>Official pages checked November 17 2026. Prices and capabilities are time sensitive; verify them again before purchase and implementation. Estimates, operating policies and proposed architecture are planning judgments.</p>
+<p><strong>S1 Ghost pricing.</strong> Plan prices, staff allowances, contributors and displayed member band.
+<a href="https://ghost.org/pricing/">https://ghost.org/pricing/</a></p>
+<p><strong>S2 Ghost team roles.</strong> Contributor, Author, Editor and Administrator permissions.
+<a href="https://ghost.org/help/managing-your-team/">https://ghost.org/help/managing-your-team/</a></p>
+<p><strong>S3 Ghost Admin API.</strong> API authority, authentication and server integration.
+<a href="https://docs.ghost.org/admin-api">https://docs.ghost.org/admin-api</a></p>
+<p><strong>S4 Ghost post updates.</strong> Collision detection using updated_at and revision handling.
+<a href="https://docs.ghost.org/admin-api/posts/updating-a-post">https://docs.ghost.org/admin-api/posts/updating-a-post</a></p>
+<p><strong>S5 Buffer pricing.</strong> Team plan, annual per-channel prices and approval features.
+<a href="https://buffer.com/pricing">https://buffer.com/pricing</a></p>
+<p><strong>S6 Buffer draft approvals.</strong> Needs Approval role across dashboard, API and MCP.
+<a href="https://support.buffer.com/en-us/articles/managing-and-approving-draft-posts-57li7M8tDA">https://support.buffer.com/en-us/articles/managing-and-approving-draft-posts-57li7M8tDA</a></p>
+<p><strong>S7 Supabase pricing.</strong> Starting Pro price, compute treatment and usage allowances.
+<a href="https://supabase.com/pricing">https://supabase.com/pricing</a></p>
+<p><strong>S8 Vercel Pro plan.</strong> Base monthly fee, deploying seats and usage charges.
+<a href="https://vercel.com/docs/plans/pro-plan">https://vercel.com/docs/plans/pro-plan</a></p>
+<p><strong>S9 Supabase row security.</strong> Row policies, privileged keys and bypass behavior.
+<a href="https://supabase.com/docs/guides/database/postgres/row-level-security">https://supabase.com/docs/guides/database/postgres/row-level-security</a></p>
+<p><strong>S10 Ghost exports.</strong> Publication, members, theme, route and media export options.
+<a href="https://ghost.org/help/exports/">https://ghost.org/help/exports/</a></p>
+<p><strong>S11 Ghost sending domains.</strong> Eligibility and DNS setup for newsletter sending.
+<a href="https://ghost.org/help/custom-sending-domains/">https://ghost.org/help/custom-sending-domains/</a></p>
+<p><strong>S12 Gmail sender guidelines.</strong> Authentication and sender requirements.
+<a href="https://support.google.com/mail/answer/81126">https://support.google.com/mail/answer/81126</a></p>
+<!-- PAGEBREAK --><h2 id="sources-for-editorial-and-media-decisions">Sources for editorial and media decisions</h2>
+<p><strong>S13 Transistor pricing.</strong> Current Starter audio plan and stated content ownership.
+<a href="https://transistor.fm/pricing/">https://transistor.fm/pricing/</a></p>
+<p><strong>S14 Apple podcast RSS requirements.</strong> Feed, artwork, episode and stable identifier requirements.
+<a href="https://podcasters.apple.com/support/823-podcast-requirements">https://podcasters.apple.com/support/823-podcast-requirements</a></p>
+<p><strong>S15 FTC endorsement guidance.</strong> Clear disclosure of material connections in endorsements.
+<a href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking">https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking</a></p>
+<p><strong>S16 SeafoodSource Deep Dive.</strong> Adjacent expert interview publication.
+<a href="https://www.seafoodsource.com/deepdivepodcast">https://www.seafoodsource.com/deepdivepodcast</a></p>
+<p><strong>S17 Responsible Seafood Advocate.</strong> Mission and editorial coverage policies.
+<a href="https://www.globalseafood.org/about-the-advocate/">https://www.globalseafood.org/about-the-advocate/</a></p>
+<p><strong>S18 Culinary Confidential.</strong> Adjacent food and hospitality media name.
+<a href="https://culinaryconfidentialchristina.com/">https://culinaryconfidentialchristina.com/</a></p>
+<p><strong>S19 NOAA Fisheries rules and regulations.</strong> U.S. fisheries source discovery.
+<a href="https://www.fisheries.noaa.gov/rules-and-regulations">https://www.fisheries.noaa.gov/rules-and-regulations</a></p>
+<p><strong>S20 FAO GLOBEFISH.</strong> Seafood trade, market and species analysis source.
+<a href="https://www.fao.org/in-action/globefish/en">https://www.fao.org/in-action/globefish/en</a></p>
+<p><strong>S21 Buffer API reference.</strong> Provider contract and experimental API surfaces.
+<a href="https://developers.buffer.com/reference.html">https://developers.buffer.com/reference.html</a></p>
+<p><strong>S22 Transistor RSS domains.</strong> Provider feed domain and redirect migration option.
+<a href="https://support.transistor.fm/en/article/can-i-use-a-custom-domain-for-my-rss-feed-co7owl/">https://support.transistor.fm/en/article/can-i-use-a-custom-domain-for-my-rss-feed-co7owl/</a></p>
+<p><strong>S23 Ghost webhooks.</strong> Published event notification interface.
+<a href="https://docs.ghost.org/webhooks">https://docs.ghost.org/webhooks</a></p>
+<p><strong>S24 Ghost custom fields.</strong> Member field feature, distinct from the proposed article metadata model.
+<a href="https://ghost.org/help/custom-fields/">https://ghost.org/help/custom-fields/</a></p>
+<p><strong>S25 Ghost security.</strong> Invited staff as trusted content creators and rich content behavior.
+<a href="https://docs.ghost.org/security">https://docs.ghost.org/security</a></p>
+<p><strong>S26 Ghost publishing.</strong> Separate web and email choices and shareable preview links.
+<a href="https://ghost.org/help/publishing-content/">https://ghost.org/help/publishing-content/</a></p>
+<p><strong>S27 Payload deployment.</strong> Hosting and database, file storage and email responsibilities.
+<a href="https://payloadcms.com/docs/production/deployment">https://payloadcms.com/docs/production/deployment</a></p>
+<p><strong>S28 Payload access control.</strong> Operation and resource based permissions.
+<a href="https://payloadcms.com/docs/access-control/overview">https://payloadcms.com/docs/access-control/overview</a></p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/LAUNCH_PACKET.md">docs/LAUNCH_PACKET.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

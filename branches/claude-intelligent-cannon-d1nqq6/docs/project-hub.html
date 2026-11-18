@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Project hub and previews · Seafood Confidential project hub</title>
+<meta name="description" content="Project hub and previews (docs/PROJECT_HUB.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html" aria-current="page">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="project-hub-and-branch-previews">Project hub and branch previews</h1>
+<p>The project hub is a static site generated from the repository&#39;s canonical sources by <code>pnpm hub:build</code>. Its pages: overview, backlog with dependency graph and critical path, acceptance scenarios, decisions, editorial plan, visual codex, rendered documentation, dev log and evidence. It never contains data that the repository does not already hold.</p>
+<h2 id="where-it-is-published">Where it is published</h2>
+<p>The <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/.github/workflows/pages.yml">Pages workflow</a> builds the hub for <strong>every pushed branch</strong> and publishes it to the <code>gh-pages</code> branch:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>URL</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>https://domusgpt.github.io/Seafood-Confidential/</code></td>
+<td>Index of all branch previews, newest first</td>
+</tr>
+<tr>
+<td><code>…/branches/&lt;branch-slug&gt;/</code></td>
+<td>The hub as built from that branch (for example <code>branches/claude-intelligent-cannon-d1nqq6/</code>)</td>
+</tr>
+<tr>
+<td><code>…/latest/</code></td>
+<td>Redirects to the most recently updated branch</td>
+</tr>
+</tbody></table></div>
+<p>When a branch is deleted its preview is removed. The index keeps the 20 most recently updated branches; older previews are pruned automatically.</p>
+<h2 id="one-time-setup-repository-owner">One-time setup (repository owner)</h2>
+<p>GitHub Pages must be switched on once. Workflows cannot do this with the default token.</p>
+<ol>
+<li>Open the repository&#39;s <strong>Settings → Pages</strong>.</li>
+<li>Under <strong>Build and deployment</strong>, choose <strong>Source: Deploy from a branch</strong>.</li>
+<li>Choose branch <strong><code>gh-pages</code></strong> and folder <strong><code>/ (root)</code></strong>, then <strong>Save</strong>.</li>
+</ol>
+<p>The <code>gh-pages</code> branch appears after the first workflow run on any branch. If Pages is enabled before then, re-run the latest &quot;Pages previews&quot; workflow afterwards. The site is public, like the repository. Every page is marked <code>noindex</code>, and the hub is a planning view: it is not the publication.</p>
+<h2 id="local-use">Local use</h2>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm hub:build
+</code></pre>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm hub:serve
+</code></pre>
+<p>Then open <a href="http://127.0.0.1:4173/">http://127.0.0.1:4173/</a>. <code>pnpm hub:check</code> verifies every internal link and asset and each page&#39;s structure. <code>pnpm hub:shots --out &lt;dir&gt;</code> captures desktop, mobile and dark-mode screenshots and runs an axe accessibility scan.</p>
+<h2 id="how-it-is-built">How it is built</h2>
+<ul>
+<li><strong>Data:</strong> <code>tools/lib/project.mjs</code> reads the backlog, acceptance matrix, decisions, calendar, sessions, evidence and dev log, and derives the critical path, window capacity and counts.</li>
+<li><strong>Gates:</strong> the build fails if a brand contrast pair drops below its minimum, or if the launch packet&#39;s cost table stops reconciling with the workbook totals.</li>
+<li><strong>Design:</strong> Working Waterfront tokens from <code>brand/tokens.json</code> (light and dark), self-hosted Fraunces and Source Sans 3, and charts that follow the dataviz method (table view for every chart, no color-only encoding). The WebGL2 bathymetry masthead falls back to CSS, renders a static frame for reduced-motion users and pauses offscreen.</li>
+<li><strong>Security:</strong> a strict Content-Security-Policy (no third-party scripts, styles or fonts; the one inline script is allowed by hash), <code>noindex</code>, and no forms or network calls.</li>
+</ul>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/PROJECT_HUB.md">docs/PROJECT_HUB.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

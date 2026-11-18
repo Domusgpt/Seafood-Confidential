@@ -1,0 +1,66 @@
+/* Generated from brand/tokens.json by tools/hub/tokens.mjs. Do not edit by hand. */
+:root {
+  color-scheme: light;
+  --paper: #F3EFE5;
+  --surface: #FBF9F4;
+  --surface-2: #ECE6D8;
+  --ink: #102B3A;
+  --ink-2: #3E5563;
+  --muted: #52666F;
+  --accent: #B64D35;
+  --accent-text: #A24430;
+  --sea: #7FA59A;
+  --sea-text: #3F6B60;
+  --link: #2C5A70;
+  --mark: #2C5A70;
+  --mark-range: #9DBCCB;
+  --progress: #2C5A70;
+  --status-good: #0CA30C;
+  --status-warning: #FAB219;
+  --status-serious: #EC835A;
+  --status-critical: #D03B3B;
+  --masthead-background: #102B3A;
+  --masthead-text: #F3EFE5;
+  --masthead-line: #7FA59A;
+  --masthead-index-line: #8FB8AB;
+  --masthead-rule: #B64D35;
+  --font-display: Fraunces, 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-text: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) {
+    color-scheme: dark;
+    --paper: #0B202C;
+    --surface: #102B3A;
+    --surface-2: #173A4D;
+    --ink: #F3EFE5;
+    --ink-2: #C5D0CC;
+    --muted: #9FB0AF;
+    --accent: #E08A72;
+    --accent-text: #E08A72;
+    --sea: #7FA59A;
+    --sea-text: #8FB8AB;
+    --link: #8DB8CC;
+    --mark: #8DB8CC;
+    --mark-range: #3F6F86;
+    --progress: #8DB8CC;
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #0B202C;
+  --surface: #102B3A;
+  --surface-2: #173A4D;
+  --ink: #F3EFE5;
+  --ink-2: #C5D0CC;
+  --muted: #9FB0AF;
+  --accent: #E08A72;
+  --accent-text: #E08A72;
+  --sea: #7FA59A;
+  --sea-text: #8FB8AB;
+  --link: #8DB8CC;
+  --mark: #8DB8CC;
+  --mark-range: #3F6F86;
+  --progress: #8DB8CC;
+}

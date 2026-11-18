@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Repository README · Seafood Confidential project hub</title>
+<meta name="description" content="Repository README (README.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html" aria-current="page">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="seafood-confidential">Seafood-Confidential</h1>
+<p>A Seafood industry blog on fisheries, food, and the effects of marine harvest on the world.
+Seafood Confidential will bring experienced people in fisheries, aquaculture and the seafood trade into a publication that is useful to professionals and readable by anyone who wants to understand the food. This packet defines a practical first release and the operating system behind it.</p>
+<hr>
+<p><strong>Status: planning.</strong> This repository holds the founder launch packet, the development kit (specifications, backlog, contracts, templates), the delivery tracking system and the project hub. No application has been built or deployed; all 26 acceptance scenarios are UNRUN. See <a href="implementation-status.html">docs/IMPLEMENTATION_STATUS.md</a>.</p>
+<h2 id="start-here">Start here</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>If you are…</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A founder</td>
+<td><a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/packet/Seafood_Confidential_Launch_Packet.pdf">Launch packet (PDF)</a> · <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/packet/Seafood_Confidential_Sprint_Workbook.xlsx">workbook</a> · <a href="foundation-planning-brief.html">foundation planning brief</a></td>
+</tr>
+<tr>
+<td>A developer or coding agent</td>
+<td><a href="agents.html">AGENTS.md</a> → <a href="product-spec.html">product spec</a> → <a href="adr-001.html">ADR-001</a> → <a href="sprint-plan.html">sprint plan</a> → <a href="acceptance-tests.html">acceptance tests</a> → <a href="contributing.html">CONTRIBUTING.md</a></td>
+</tr>
+<tr>
+<td>The managing editor</td>
+<td><a href="editorial-playbook.html">Editorial playbook</a> · <a href="brand-guide.html">brand guide</a> · <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/editorial/templates/">templates</a> · <a href="runbook.html">runbook</a></td>
+</tr>
+</tbody></table></div>
+<p><strong>Project hub:</strong> branch previews are published to GitHub Pages at <a href="https://domusgpt.github.io/Seafood-Confidential/">https://domusgpt.github.io/Seafood-Confidential/</a> once Pages is enabled (see <a href="project-hub.html">docs/PROJECT_HUB.md</a>).</p>
+<h2 id="the-plan-in-one-paragraph">The plan in one paragraph</h2>
+<p>Ghost(Pro) runs the public publication, contributors and newsletter. A small private Next.js and Supabase operations desk handles pitches, sources, rights, review snapshots and a draft-only agent gateway. Buffer handles human-approved social distribution on one or two channels. Humans publish; agents only draft. The estimate is 118–160 engineering hours over a four-week sprint, and the operating cost is $119–169 a month before optional podcast hosting (<a href="adr-001.html">ADR-001</a>, <a href="launch-packet.html">launch packet</a>).</p>
+<h2 id="repository-map">Repository map</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>packet/</code></td>
+<td>Founder originals (PDF, DOCX, XLSX, cover note) with SHA-256 checksums</td>
+</tr>
+<tr>
+<td><code>docs/</code></td>
+<td>Product spec, architecture, acceptance tests, sprint plan, runbook, launch packet text, implementation status, kit audit, planning brief</td>
+</tr>
+<tr>
+<td><code>decisions/</code></td>
+<td>Architecture decision records</td>
+</tr>
+<tr>
+<td><code>planning/</code></td>
+<td>Backlog (canonical JSON + CSV view), workbook notes and decision register</td>
+</tr>
+<tr>
+<td><code>editorial/</code></td>
+<td>Brand guide, editorial playbook, six-week calendar, templates</td>
+</tr>
+<tr>
+<td><code>contracts/</code></td>
+<td>Draft-only agent request contract and executable examples</td>
+</tr>
+<tr>
+<td><code>fixtures/</code></td>
+<td>Clearly fictional test data (never publishable)</td>
+</tr>
+<tr>
+<td><code>brand/</code></td>
+<td>Concept board, web derivatives and design tokens (visual codex)</td>
+</tr>
+<tr>
+<td><code>devlog/</code></td>
+<td>Timestamped log of every working turn</td>
+</tr>
+<tr>
+<td><code>devtrack/</code></td>
+<td>Sessions, workstreams and evidence records with schemas</td>
+</tr>
+<tr>
+<td><code>tools/</code></td>
+<td>Validators, tracking CLIs, project hub generator, tool bootstrap</td>
+</tr>
+<tr>
+<td><code>.github/</code></td>
+<td>CI, Pages previews, templates and ownership</td>
+</tr>
+</tbody></table></div>
+<h2 id="working-on-the-repository">Working on the repository</h2>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">bash tools/bootstrap/install-dev-tools.sh
+</code></pre>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm install
+</code></pre>
+<pre tabindex="0" role="region" aria-label="Code block"><code class="language-bash">pnpm check
+</code></pre>
+<p><code>pnpm check</code> validates the kit and tracking, runs the tool tests, builds the hub and checks it, then verifies formatting. See <a href="contributing.html">CONTRIBUTING.md</a> for branches, the dev log, evidence rules and pull-request conventions, and <a href="development-environment.html">docs/DEVELOPMENT_ENVIRONMENT.md</a> for local Supabase and Ghost.</p>
+<h2 id="license">License</h2>
+<p>© 2026 the Seafood Confidential founders. All rights reserved; see <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/LICENSE">LICENSE</a>. Third-party components keep their own licenses (<a href="third-party-notices.html">THIRD_PARTY_NOTICES.md</a>).</p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/README.md">README.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

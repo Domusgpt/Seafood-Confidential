@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Agent request contract · Seafood Confidential project hub</title>
+<meta name="description" content="Agent request contract (contracts/README.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html" aria-current="page">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="agent-request-contract">Agent request contract</h1>
+<p><a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/contracts/agent-tools.schema.json">agent-tools.schema.json</a> is the proposed internal contract for draft-only agent requests (JSON Schema 2020-12, version 1.0). It is a planning schema, not a live endpoint. Authentication supplies the principal and scopes; a request can never choose its own authority, and no publish or send operation exists.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Purpose</th>
+<th>Write?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>briefs.list</code></td>
+<td>List assigned briefs (bounded pagination)</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>items.read</code></td>
+<td>Read one assigned editorial item (server applies scope and redaction)</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>drafts.propose</code></td>
+<td>Propose a draft for a brief with source IDs</td>
+<td>Yes, needs <code>idempotencyKey</code></td>
+</tr>
+<tr>
+<td><code>drafts.revise</code></td>
+<td>Revise a draft bound to <code>expectedRevision</code></td>
+<td>Yes, needs <code>idempotencyKey</code></td>
+</tr>
+<tr>
+<td><code>social.propose</code></td>
+<td>Propose channel copy bound to a review snapshot</td>
+<td>Yes, needs <code>idempotencyKey</code></td>
+</tr>
+<tr>
+<td><code>jobs.read</code></td>
+<td>Read a job&#39;s plain-language state</td>
+<td>No</td>
+</tr>
+</tbody></table></div>
+<h2 id="executable-examples">Executable examples</h2>
+<p><a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/contracts/examples/valid/">examples/valid/</a> and <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/contracts/examples/invalid/">examples/invalid/</a> hold example requests. <code>pnpm validate</code> asserts that the schema accepts every valid example and rejects every invalid one. Each file records <code>why</code> and the acceptance scenarios it supports.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Invalid example</th>
+<th>Rejected because</th>
+<th>Scenario</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>publish-tool.json</code></td>
+<td><code>posts.publish</code> is not a tool</td>
+<td>AT-04</td>
+</tr>
+<tr>
+<td><code>draft-sets-published-status.json</code></td>
+<td>Draft content cannot carry <code>status</code></td>
+<td>AT-04</td>
+</tr>
+<tr>
+<td><code>subscriber-export-tool.json</code></td>
+<td><code>members.export</code> is not a tool</td>
+<td>AT-06</td>
+</tr>
+<tr>
+<td><code>client-supplied-principal.json</code></td>
+<td>Requests cannot carry <code>principalId</code> or <code>scopes</code></td>
+<td>AT-07</td>
+</tr>
+<tr>
+<td><code>write-without-idempotency-key.json</code></td>
+<td>Writes need a durable idempotency key</td>
+<td>AT-12, AT-13</td>
+</tr>
+<tr>
+<td><code>revise-without-expected-revision.json</code></td>
+<td>Revisions must bind to a revision</td>
+<td>AT-08</td>
+</tr>
+<tr>
+<td><code>social-without-review-snapshot.json</code></td>
+<td>Social copy must derive from a reviewed snapshot</td>
+<td>AT-09</td>
+</tr>
+<tr>
+<td><code>unbounded-page-size.json</code>, <code>unknown-argument.json</code>, <code>wrong-schema-version.json</code>, <code>short-request-id.json</code></td>
+<td>Bounds, argument allowlists, version and request ID rules</td>
+<td>—</td>
+</tr>
+</tbody></table></div>
+<p><strong>Schema validation is only the first layer.</strong> These examples prove the contract&#39;s <em>shape</em> rejects dangerous requests. Authorization (principal, scopes, object access, revocation), redaction, content sanitization, idempotency storage and revision checks happen server-side in the gateway (SC-009) and are verified by the acceptance scenarios, which remain UNRUN until the gateway exists.</p>
+<p>Known gaps for a v1.1 proposal (docs/KIT_AUDIT.md K-05, K-06): suggested tags and metadata, per-tool response schemas, and redeclaring <code>idempotencyKey</code> in the conditional branches.</p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/contracts/README.md">contracts/README.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Architecture · Seafood Confidential project hub</title>
+<meta name="description" content="Architecture (docs/ARCHITECTURE.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html" aria-current="page">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="architecture">Architecture</h1>
+<h2 id="recommended-systems-and-data-ownership">Recommended systems and data ownership</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>System</th>
+<th>Owns</th>
+<th>Does not own</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ghost(Pro) Publisher</td>
+<td>Canonical article drafts/published content, authors, public theme, newsletters, members</td>
+<td>Private pitch/source workflow or unrestricted agent access</td>
+</tr>
+<tr>
+<td>Next.js operations console</td>
+<td>Private workflow views and authenticated internal API</td>
+<td>A second article editor or newsletter engine</td>
+</tr>
+<tr>
+<td>Supabase Postgres and Auth</td>
+<td>Operations principals, RLS-protected records, jobs and review snapshots</td>
+<td>Ghost member identity or publication content authority</td>
+</tr>
+<tr>
+<td>Buffer Team</td>
+<td>Channel connections, human social approval and scheduling</td>
+<td>Article verification or an automatic authority to publish new claims</td>
+</tr>
+<tr>
+<td>Dedicated podcast host later</td>
+<td>Audio files and podcast RSS if a pilot warrants it</td>
+<td>Launch dependency</td>
+</tr>
+</tbody></table></div>
+<p>Use one private operations application and a small durable job runner. Avoid microservices. Deployment provider selection may follow an existing founder account; the product design does not depend on a specific Next.js hosting vendor. Use a paid plan appropriate for commercial hosting where required. Pin runtime/package versions at implementation time.</p>
+<h2 id="access-and-identity">Access and identity</h2>
+<p>Ghost member, Ghost staff, operations human and operations agent are distinct identities. Link known staff IDs when needed; do not infer that matching email addresses confer extra authority. Supabase Auth permits entry to operations only after explicit staff assignment. Enable RLS on exposed tables and storage, and explicitly revoke/grant only the required database privileges in the same migrations. Adding policies does not remove pre-existing grants. Check views and privileged functions as well as tables. Set policies by authenticated principal, role and item ownership; unauthenticated callers may only submit a bounded pitch through the vetted service endpoint. Service-role keys bypass ordinary RLS and belong exclusively in carefully authorized server code.</p>
+<p>Agent credentials are unique, scoped, revocable and stored as hashes or in the provider&#39;s supported secure credential store. They grant only documented draft operations and specific object access. No owner/admin token is given directly to a model, browser or guest. Ghost Admin API credentials remain server-side. Prefer a dedicated Contributor identity for draft writes if supported by the chosen deployment&#39;s API actions; verify negative permissions rather than assuming them. Provider integration tokens can have broader rights than the internal gateway exposes.</p>
+<h2 id="operations-tables">Operations tables</h2>
+<p>Principals; pitches; editorial_items with a unique Ghost post reference; sources; asset_rights; append-only review_snapshots; social_drafts with channel/account and upstream snapshot; jobs/outbox with idempotency key and payload hash; audit_events. Keep raw private contacts and releases in restricted tables/storage. Store source metadata, not unbounded scraped copies of copyrighted articles. Schemas in this kit describe design intent; migrations must be implemented and reviewed.</p>
+<p>Ghost&#39;s advertised custom fields currently refer to member fields, not arbitrary article schemas. Keep detailed species, jurisdiction, claim and review metadata in operations Postgres linked by ghost_post_id. Only selected approved metadata is copied into article source-note blocks, excerpts or supported tags. Public browsing uses tags and native search in the MVP; advanced species and legal-status faceting is phase two.</p>
+<p>Ghost stays canonical for editable article content. Review snapshots are exact historical payloads used for comparison, not a separately editable content system. The agent uses expected revisions; Ghost updates use its documented updated_at collision control and deliberate save_revision behavior. Edits mark old review snapshots and attached social packs stale.</p>
+<h2 id="phase-one-execution-boundary">Phase one execution boundary</h2>
+<p>Humans publish/schedule in Ghost, explicitly choose newsletter sends, and approve/schedule in Buffer. The operations console provides review information and exact proposed promotional copy. Agents never invoke publication, email sends or approval. A native Ghost editor or Buffer approver can act outside the console; this is documented, trained and checked operationally, not claimed as technically impossible.</p>
+<p>If content changes after a social post was scheduled in Buffer, flag the pack and ask the editor to inspect, revise or pause the native scheduled post. A console banner cannot revoke an already accepted third-party queue operation by itself.</p>
+<h2 id="jobs-and-provider-failures">Jobs and provider failures</h2>
+<p>At acceptance, write the request and job durably in one transaction. Enforce uniqueness on principal plus operation plus idempotency key; an identical replay returns the existing job, while a different payload with the same key returns conflict. Workers use bounded leases, retry limits and a dead-letter/needs-attention state. Record provider IDs when returned. If a request times out after possible acceptance and the provider cannot authoritatively deduplicate/reconcile it, do not blindly retry. Require human inspection and reconciliation. Never promise exactly-once external delivery.</p>
+<p>Webhook handlers authenticate according to current supported vendor mechanisms, reject malformed payloads, deduplicate notifications and re-fetch canonical content before deriving a change. Periodic reconciliation catches missed events. Webhooks may trigger draft preparation; they do not authorize publication.</p>
+<h2 id="data-and-media-boundaries">Data and media boundaries</h2>
+<p>Public-ready assets and private releases/source contacts use separate access policies. Do not assume a Ghost media URL becomes private because its parent article is still a draft. Keep embargoed or sensitive source media in private operations storage until the editor clears public use. Ghost shareable preview URLs may be read by anyone holding the link; use native authenticated staff review for confidential drafts and do not expose those links to broad workflows.</p>
+<p>Ghost considers invited staff trusted content creators, including their use of HTML/scripts. Contributor permissions prevent publication, but are not a hostile-user content sandbox. Invite trusted guests only, accept unknown public contributions through moderated pitch intake, validate agent-produced content and review native HTML/embed cards before publication.</p>
+<p>Public assets and private releases/source contacts use separate access policies. Check file type and size, sanitize rich text and avoid fetching internal network addresses from user-supplied URLs. Keep a test that attempts public retrieval of draft media, including social previews, feeds, search and source maps. Staff-only previews require real access restriction; robots noindex is insufficient.</p>
+<h2 id="future-hard-automation-gate">Future hard automation gate</h2>
+<p>A later release service would require human approval bound to exact payload digest, destination, assets, schedule, expiry and reviewer authority. Before execution it rechecks revision and approval. Changed content invalidates authorization. Revisit whether native human publication paths remain allowed. This is phase two, not an implemented feature or launch claim.</p>
+<h2 id="primary-references-checked-november-17-2026">Primary references checked November 17, 2026</h2>
+<ul>
+<li>Ghost roles: <a href="https://ghost.org/help/managing-your-team/">https://ghost.org/help/managing-your-team/</a></li>
+<li>Ghost Admin API auth: <a href="https://docs.ghost.org/admin-api">https://docs.ghost.org/admin-api</a></li>
+<li>Ghost updates and revisions: <a href="https://docs.ghost.org/admin-api/posts/updating-a-post">https://docs.ghost.org/admin-api/posts/updating-a-post</a></li>
+<li>Ghost webhooks: <a href="https://docs.ghost.org/admin-api/webhooks/overview">https://docs.ghost.org/admin-api/webhooks/overview</a></li>
+<li>Ghost publishing and email choices: <a href="https://ghost.org/help/publishing-content/">https://ghost.org/help/publishing-content/</a></li>
+<li>Buffer approvals including API/MCP: <a href="https://support.buffer.com/en-us/articles/managing-and-approving-draft-posts-57li7M8tDA">https://support.buffer.com/en-us/articles/managing-and-approving-draft-posts-57li7M8tDA</a></li>
+<li>Supabase RLS: <a href="https://supabase.com/docs/guides/database/postgres/row-level-security">https://supabase.com/docs/guides/database/postgres/row-level-security</a></li>
+<li>Ghost trusted-staff security model: <a href="https://docs.ghost.org/security">https://docs.ghost.org/security</a></li>
+<li>Ghost exports: <a href="https://ghost.org/help/exports/">https://ghost.org/help/exports/</a></li>
+</ul>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/ARCHITECTURE.md">docs/ARCHITECTURE.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Visual codex · Seafood Confidential project hub</title>
+<meta name="description" content="Working Waterfront tokens, contrast, type and motif.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="assets/hub.js" defer></script>
+<script src="assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="index.html">Overview</a></li><li><a href="backlog.html">Backlog</a></li><li><a href="acceptance.html">Acceptance</a></li><li><a href="decisions.html">Decisions</a></li><li><a href="editorial.html">Editorial</a></li><li><a href="visual-codex.html" aria-current="page">Visual codex</a></li><li><a href="docs/index.html">Docs</a></li><li><a href="devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+
+<div class="page-head">
+  <span class="eyebrow">brand/tokens.json · visual codex entry</span>
+  <h1>Working Waterfront: visual codex</h1>
+  <p class="lede">An independent trade journal with maritime character: credible on a buying desk, inviting at a kitchen table. Version 0.1 for founder review; the tokens below are the single source for this hub and future surfaces.</p>
+</div>
+<figure class="concept">
+  <img src="assets/brand-concept-1536.jpg" srcset="assets/brand-concept-768.jpg 768w, assets/brand-concept-1536.jpg 1536w" sizes="(min-width: 1180px) 1130px, 100vw" width="1536" height="1024" alt="Concept board: a heavy serif SEAFOOD CONFIDENTIAL wordmark with the tagline 'Seafood, from the people who know it', an SC monogram, an illustrated harbor with a fishing boat, net pens and oyster cages, podcast and social cover variants, and four color swatches.">
+  <figcaption>Brand concept from the founder packet: an AI-generated visual exploration, not production artwork or documentary photography (editorial/BRAND_GUIDE.md).</figcaption>
+</figure>
+<h2>Brand colors</h2>
+<div class="swatches"><div class="swatch">
+    <div class="swatch-chip" style="background:#102B3A;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>ink</strong><code>#102B3A</code><br>Masthead, primary text, dark covers, navigation</div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#F3EFE5;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>salt</strong><code>#F3EFE5</code><br>Main background, paper surfaces, light text on ink</div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#7FA59A;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>sea-glass</strong><code>#7FA59A</code><br>Secondary panels, rules, charts, quiet accents. Decorative on salt (2.36:1); text-capable on ink (5.43:1)</div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#B64D35;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>rust</strong><code>#B64D35</code><br>Small emphasis, selected labels, calls to action after contrast testing. 4.46:1 on salt: large text and accents only</div></div></div>
+<div class="notice" role="note" style="margin-top:18px"><span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.2" y="7" width="1.6" height="4.5" fill="currentColor"/><circle cx="8" cy="4.9" r="1" fill="currentColor"/></svg>info</span><p><strong>Computed, not assumed.</strong> Rust on salt measures 4.46:1, just under WCAG AA for body text, so small rust text uses <code>rust-text</code> #A24430. Sea glass on salt measures 2.36:1: decorative only on paper, but 5.43:1 on ink.</p></div>
+<h2>Theme roles</h2>
+<div class="grid grid-2">
+  <div class="swatches"><div class="swatch">
+    <div class="swatch-chip" style="background:#F3EFE5;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>light · paper</strong><code>#F3EFE5</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#FBF9F4;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>light · surface</strong><code>#FBF9F4</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#ECE6D8;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>light · surface-2</strong><code>#ECE6D8</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#102B3A;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>light · ink</strong><code>#102B3A</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#3E5563;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>light · ink-2</strong><code>#3E5563</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#52666F;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>light · muted</strong><code>#52666F</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#B64D35;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>light · accent</strong><code>#B64D35</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#A24430;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>light · accent-text</strong><code>#A24430</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#7FA59A;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>light · sea</strong><code>#7FA59A</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#3F6B60;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>light · sea-text</strong><code>#3F6B60</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#2C5A70;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>light · link</strong><code>#2C5A70</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#2C5A70;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>light · mark</strong><code>#2C5A70</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#9DBCCB;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>light · mark-range</strong><code>#9DBCCB</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#2C5A70;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>light · progress</strong><code>#2C5A70</code><br></div></div></div>
+  <div class="swatches"><div class="swatch">
+    <div class="swatch-chip" style="background:#0B202C;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>dark · paper</strong><code>#0B202C</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#102B3A;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>dark · surface</strong><code>#102B3A</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#173A4D;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>dark · surface-2</strong><code>#173A4D</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#F3EFE5;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · ink</strong><code>#F3EFE5</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#C5D0CC;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · ink-2</strong><code>#C5D0CC</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#9FB0AF;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · muted</strong><code>#9FB0AF</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#E08A72;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · accent</strong><code>#E08A72</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#E08A72;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · accent-text</strong><code>#E08A72</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#7FA59A;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · sea</strong><code>#7FA59A</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#8FB8AB;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · sea-text</strong><code>#8FB8AB</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#8DB8CC;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · link</strong><code>#8DB8CC</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#8DB8CC;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · mark</strong><code>#8DB8CC</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#3F6F86;color:#F3EFE5">Aa</div>
+    <div class="swatch-body"><strong>dark · mark-range</strong><code>#3F6F86</code><br></div></div><div class="swatch">
+    <div class="swatch-chip" style="background:#8DB8CC;color:#102B3A">Aa</div>
+    <div class="swatch-body"><strong>dark · progress</strong><code>#8DB8CC</code><br></div></div></div>
+</div>
+<h2>Contrast assertions</h2>
+<p>The hub build fails if any pair below drops under its minimum. WCAG 2.2 ratios are normative here; APCA Lc is shown for reference (positive: dark on light).</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+  <thead><tr><th scope="col">Theme</th><th scope="col">Use</th><th scope="col">Text</th><th scope="col">On</th><th scope="col">Ratio</th><th scope="col">APCA Lc</th><th scope="col">Requirement</th><th scope="col">Result</th></tr></thead>
+  <tbody><tr><td>light</td><td>Body text</td><td><code>ink</code> #102B3A</td><td><code>paper</code> #F3EFE5</td><td class="num">12.80:1</td><td class="num">92</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Card text</td><td><code>ink</code> #102B3A</td><td><code>surface</code> #FBF9F4</td><td class="num">13.97:1</td><td class="num">98</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Table headers</td><td><code>ink</code> #102B3A</td><td><code>surface-2</code> #ECE6D8</td><td class="num">11.81:1</td><td class="num">87</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Secondary text</td><td><code>ink-2</code> #3E5563</td><td><code>paper</code> #F3EFE5</td><td class="num">6.81:1</td><td class="num">78</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Secondary text on cards</td><td><code>ink-2</code> #3E5563</td><td><code>surface</code> #FBF9F4</td><td class="num">7.43:1</td><td class="num">84</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Captions on cards</td><td><code>muted</code> #52666F</td><td><code>surface</code> #FBF9F4</td><td class="num">5.72:1</td><td class="num">77</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Captions in table headers</td><td><code>muted</code> #52666F</td><td><code>surface-2</code> #ECE6D8</td><td class="num">4.84:1</td><td class="num">66</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Links</td><td><code>link</code> #2C5A70</td><td><code>paper</code> #F3EFE5</td><td class="num">6.52:1</td><td class="num">76</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Links on cards</td><td><code>link</code> #2C5A70</td><td><code>surface</code> #FBF9F4</td><td class="num">7.12:1</td><td class="num">82</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Rust labels on cards</td><td><code>accent-text</code> #A24430</td><td><code>surface</code> #FBF9F4</td><td class="num">5.86:1</td><td class="num">77</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Sea-glass labels on cards</td><td><code>sea-text</code> #3F6B60</td><td><code>surface</code> #FBF9F4</td><td class="num">5.73:1</td><td class="num">76</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Rust large display text only</td><td><code>accent</code> #B64D35</td><td><code>paper</code> #F3EFE5</td><td class="num">4.46:1</td><td class="num">65</td><td>3:1 large/UI</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>light</td><td>Chart marks</td><td><code>mark</code> #2C5A70</td><td><code>surface</code> #FBF9F4</td><td class="num">7.12:1</td><td class="num">82</td><td>3:1 large/UI</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Body text</td><td><code>ink</code> #F3EFE5</td><td><code>paper</code> #0B202C</td><td class="num">14.55:1</td><td class="num">-96</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Card text</td><td><code>ink</code> #F3EFE5</td><td><code>surface</code> #102B3A</td><td class="num">12.80:1</td><td class="num">-94</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Table headers</td><td><code>ink</code> #F3EFE5</td><td><code>surface-2</code> #173A4D</td><td class="num">10.46:1</td><td class="num">-91</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Secondary text on cards</td><td><code>ink-2</code> #C5D0CC</td><td><code>surface</code> #102B3A</td><td class="num">9.29:1</td><td class="num">-73</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Captions on cards</td><td><code>muted</code> #9FB0AF</td><td><code>surface</code> #102B3A</td><td class="num">6.51:1</td><td class="num">-54</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Captions in table headers</td><td><code>muted</code> #9FB0AF</td><td><code>surface-2</code> #173A4D</td><td class="num">5.32:1</td><td class="num">-51</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Links on cards</td><td><code>link</code> #8DB8CC</td><td><code>surface</code> #102B3A</td><td class="num">6.90:1</td><td class="num">-57</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Rust labels on cards</td><td><code>accent-text</code> #E08A72</td><td><code>surface</code> #102B3A</td><td class="num">5.63:1</td><td class="num">-48</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Sea-glass labels on cards</td><td><code>sea-text</code> #8FB8AB</td><td><code>surface</code> #102B3A</td><td class="num">6.73:1</td><td class="num">-56</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>dark</td><td>Chart marks</td><td><code>mark</code> #8DB8CC</td><td><code>surface</code> #102B3A</td><td class="num">6.90:1</td><td class="num">-57</td><td>3:1 large/UI</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>masthead</td><td>Masthead wordmark and copy</td><td><code>text</code> #F3EFE5</td><td><code>background</code> #102B3A</td><td class="num">12.80:1</td><td class="num">-94</td><td>AA text</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr><tr><td>masthead</td><td>Contour lines (decorative, non-text)</td><td><code>line</code> #7FA59A</td><td><code>background</code> #102B3A</td><td class="num">5.43:1</td><td class="num">-46</td><td>3:1 large/UI</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td></tr></tbody>
+</table></div>
+<h2>Type</h2>
+<div class="grid grid-2">
+  <div class="card"><p class="specimen">Seafood<br>Confidential</p><p class="specimen-italic">Seafood, from the people who know it.</p><p class="viz-note">Fraunces variable, weight 860, SOFT 0, WONK 0, optical size 144 for the masthead; italic at optical size 36 for the tagline. SIL OFL 1.1, self-hosted.</p></div>
+  <div class="card"><p style="font-size:1.25rem;margin-top:0">Explain the trade term that matters, then use it accurately.</p><p>Source Sans 3 variable carries body text, interface and every chart figure, including large numbers, which use proportional figures; tables use tabular figures. SIL OFL 1.1, self-hosted.</p><p class="viz-note">Fallbacks: Iowan Old Style, Palatino, Georgia for display; system-ui for text.</p></div>
+</div>
+<h2>Charts and status</h2>
+<div class="grid grid-2">
+  <div class="card"><ul class="viz-legend" style="flex-direction:column;gap:8px">
+    <li><span class="key key-mark"></span><code>mark</code>: primary mark (harbor)</li>
+    <li><span class="key key-mark-range"></span><code>mark-range</code>: estimate range, a lighter step of the same ramp; values always also in labels or the table view</li>
+    <li><span class="key key-mark-reserve"></span><code>sea</code>: reserve or secondary context</li>
+    <li><span class="key key-critical"></span><code>accent</code>: the one emphasized path or series (emphasis form)</li>
+    <li><span class="key key-capacity"></span><code>ink</code>: reference lines such as capacity</li>
+  </ul><p class="viz-note">Method: thin marks of 24px or less, one baseline, solid hairline grid, legend for two or more series, selective direct labels, a table view for every chart, no dual axes.</p></div>
+  <div class="card"><p><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Planned</span> &nbsp; <span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 2.5a5.5 5.5 0 0 1 0 11z" fill="currentColor"/></svg>In progress</span> &nbsp; <span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Done</span> &nbsp; <span class="badge tone-critical"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><rect x="4.5" y="7" width="7" height="2" fill="var(--surface)"/></svg>Blocked</span> &nbsp; <span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>UNRUN</span> &nbsp; <span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>PASS</span> &nbsp; <span class="badge tone-critical"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round"/></svg>FAIL</span> &nbsp; <span class="badge tone-warning"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 2.5a5.5 5.5 0 0 1 5.5 5.5H8z" fill="currentColor"/></svg>Discussing</span> &nbsp; <span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><rect x="3" y="7" width="10" height="2" rx="1" fill="currentColor"/></svg>Deferred</span></p><p class="viz-note">Status colors are fixed (good #0CA30C, warning #FAB219, serious #EC835A, critical #D03B3B) and always carry an icon and a label. Work in progress uses harbor, not a status color.</p></div>
+</div>
+<h2>Motif: bathymetry</h2>
+<p>The masthead's moving contour field draws nautical depth contours in sea glass on ink, with every fifth line as an index contour. It is WebGL2 with a CSS fallback. It renders one static frame for reduced-motion users, pauses offscreen and in background tabs, and caps the pixel ratio for battery. A gradient scrim keeps the wordmark at full contrast. The motif is ready to reuse in a Ghost theme header or a newsletter banner as a rendered still.</p>
+<p class="viz-note">Sources: <a href="docs/brand-guide.html">brand guide</a> · <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/brand/tokens.json">brand/tokens.json</a> · <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/.claude/skills/sc-visual-codex/SKILL.md">project skill: sc-visual-codex</a> · <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/tools/hub/assets/shaders/bathymetry.frag">bathymetry.frag</a></p>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

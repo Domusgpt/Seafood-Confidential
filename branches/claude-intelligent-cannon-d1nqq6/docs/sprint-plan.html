@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Sprint plan · Seafood Confidential project hub</title>
+<meta name="description" content="Sprint plan (docs/SPRINT_PLAN.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html" aria-current="page">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="development-sprint-plan">Development sprint plan</h1>
+<h2 id="commitment-and-assumptions">Commitment and assumptions</h2>
+<p>Target twenty working days from a chosen kickoff, with one experienced full-stack developer and available founders. Engineering estimate 107–149 hours plus 11 hours reserve, 118–160 hours total. Founder/editor input is approximately 10–16 hours in addition. Choose one existing theme and two social channels. Do not treat external account/API approvals as guaranteed completion dates.</p>
+<h2 id="sequence">Sequence</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+<thead>
+<tr>
+<th>Working days</th>
+<th>Outcome</th>
+<th>Tickets</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1–4</td>
+<td>Accounts, permission baseline, public shell and email journey</td>
+<td>SC-001 to SC-004</td>
+</tr>
+<tr>
+<td>5–9</td>
+<td>Private operations, pitches, evidence records and canonical Ghost links</td>
+<td>SC-005 to SC-007</td>
+</tr>
+<tr>
+<td>10–14</td>
+<td>Review snapshots, constrained agent drafts, provider adapter and durable jobs</td>
+<td>SC-008 to SC-011</td>
+</tr>
+<tr>
+<td>15–17</td>
+<td>Episode-ready format, editorial policies, recovery and failure checks</td>
+<td>SC-012 to SC-015</td>
+</tr>
+<tr>
+<td>18–20</td>
+<td>Operator rehearsal, corrections, findings and reserve</td>
+<td>SC-016 and necessary fixes</td>
+</tr>
+</tbody></table></div>
+<p>Dependencies in planning/BACKLOG.json are authoritative; the day ranges are a planning envelope, not evidence of work completed. Re-estimate after the Day 1 vendor/API check and after the first vertical slice.</p>
+<h2 id="founder-decisions-at-kickoff">Founder decisions at kickoff</h2>
+<p>Name the managing editor and business account owner. Choose the launch audience, brand direction, theme, two channels and initial publishing cadence. Supply approved founder bios, real contact details and three seed article briefs. Confirm whether existing subscriber data has permission for this publication before importing it. Decide which details may be used by AI agents and which remain private.</p>
+<h2 id="cut-line">Cut line</h2>
+<p>Keep permission tests, source/rights review, exact drafts, corrections, recovery and operator usability. If API access blocks a provider adapter, deliver the exact copy/export pack and keep the integration ticket explicitly blocked rather than claiming it works. Defer custom SSO, custom contributor editor, autonomous publication, built-in model orchestration and actual podcast distribution.</p>
+<h2 id="release-demonstration">Release demonstration</h2>
+<p>The managing editor accepts a pitch, reviews a guest draft and its evidence, returns changes, publishes in Ghost, sends a test newsletter, makes the live send decision, approves two Buffer drafts, detects an after-review edit, adds a correction and finds a recoverable version. The developer demonstrates agent publish denial, cross-user draft denial, duplicate request handling and unknown provider outcome handling. The friend performs the daily workflow without reading source code.</p>
+<h2 id="gate-record">Gate record</h2>
+<p>For each ticket record commit, owner, observed acceptance result and unresolved item. Application test status starts UNRUN. Do not infer a pass from document completeness. Founder review of staging precedes any real public launch, email send or social posting.</p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/SPRINT_PLAN.md">docs/SPRINT_PLAN.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

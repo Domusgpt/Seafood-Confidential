@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Decisions · Seafood Confidential project hub</title>
+<meta name="description" content="Founder decisions and architecture decision records.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="assets/hub.js" defer></script>
+<script src="assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="index.html">Overview</a></li><li><a href="backlog.html">Backlog</a></li><li><a href="acceptance.html">Acceptance</a></li><li><a href="decisions.html" aria-current="page">Decisions</a></li><li><a href="editorial.html">Editorial</a></li><li><a href="visual-codex.html">Visual codex</a></li><li><a href="docs/index.html">Docs</a></li><li><a href="devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+
+<div class="page-head">
+  <span class="eyebrow">planning/WORKBOOK_DECISIONS.json · decisions/</span>
+  <h1>Decisions</h1>
+  <p class="lede">Founder decisions stay Proposed until the founders decide. Engineering decisions are recorded as ADRs; product-shaping ADRs remain proposals for founder confirmation.</p>
+</div>
+<h2>Founder decisions</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+  <caption class="visually-hidden">Founder decisions</caption>
+  <thead><tr><th scope="col">ID</th><th scope="col">Decision and proposed choice</th><th scope="col">Owner</th><th scope="col">Needed by</th><th scope="col">Status</th></tr></thead>
+  <tbody><tr><td class="id">D01</td><td><strong>Founders and account owner</strong><br>Name the legal account owner, managing editor and backup.</td><td>Paul and friend</td><td>Before purchases</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D02</td><td><strong>Name domain and handles</strong><br>Review existing name uses and select available domain and handles.</td><td>Paul and friend</td><td>Before brand registration</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D03</td><td><strong>Primary reader</strong><br>Lead with seafood professionals and curious serious food readers.</td><td>Paul and friend</td><td>Before launch copy</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D04</td><td><strong>Launch scope</strong><br>Ghost publication plus a small private operations portal.</td><td>Managing editor and developer</td><td>Sprint week 1</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D05</td><td><strong>Operating budget</strong><br>Approve monthly allowances and annual prepaid subscriptions.</td><td>Account owner</td><td>Before purchases</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D06</td><td><strong>Publication authority</strong><br>Designate human final approval. Agents create restricted drafts.</td><td>Managing editor</td><td>Sprint week 1</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D07</td><td><strong>Contributor terms</strong><br>Set attribution, rights, editing, compensation and withdrawal terms.</td><td>Paul and friend</td><td>Before first invitation</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D08</td><td><strong>Sources and corrections</strong><br>Set private-source access, corrections handling and disclosure rules.</td><td>Managing editor</td><td>Before pilot publication</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D09</td><td><strong>Newsletter identity</strong><br>Choose sending domain, working reply address and signup consent wording.</td><td>Account owner</td><td>Sprint week 2</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D10</td><td><strong>Social channels</strong><br>Begin with LinkedIn and Facebook. Assign account access.</td><td>Managing editor</td><td>Sprint week 3</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D11</td><td><strong>Kickoff and launch</strong><br>Choose kickoff after staffing and access are known. Launch follows acceptance.</td><td>Paul and friend</td><td>Before sprint starts</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr><tr><td class="id">D12</td><td><strong>Podcast gate</strong><br>Approve a recurring show after two private pilots meet quality and workload targets.</td><td>Managing editor</td><td>After launch rhythm is tested</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span></td></tr></tbody>
+</table></div>
+<h2>Architecture decision records</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table>
+  <caption class="visually-hidden">Architecture decision records</caption>
+  <thead><tr><th scope="col">ADR</th><th scope="col">Title</th><th scope="col">Date</th><th scope="col">Status</th></tr></thead>
+  <tbody><tr><td class="id">ADR-001</td><td><a href="docs/adr-001.html">ADR 001 managed publishing foundation</a></td><td>November 17, 2026</td><td><span class="badge tone-neutral"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Proposed</span><br><span class="tile-note">proposed default for founder confirmation at kickoff</span></td></tr><tr><td class="id">ADR-002</td><td><a href="docs/adr-002.html">ADR 002 repository foundation, delivery tracking and previews</a></td><td>November 18, 2026</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Accepted</span><br><span class="tile-note">accepted for repository tooling (session S01); product and vendor choices remain with ADR-001 and the founders</span></td></tr></tbody>
+</table></div>
+<p>Open questions for the next plan, each with a recommendation, are in the <a href="docs/foundation-planning-brief.html#questions-for-plan-mode">foundation planning brief</a>.</p>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>ADR-002 repository foundation, delivery tracking and previews · Seafood Confidential project hub</title>
+<meta name="description" content="ADR-002 repository foundation, delivery tracking and previews (decisions/ADR-002-repository-foundation.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html" aria-current="page">ADR-002 repository foundation, delivery tracking and previews</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="adr-002-repository-foundation-delivery-tracking-and-previews">ADR 002 repository foundation, delivery tracking and previews</h1>
+<p>Date: November 18, 2026. Status: accepted for repository tooling (session S01); product and vendor choices remain with ADR-001 and the founders.</p>
+<h2 id="context">Context</h2>
+<p>The founders delivered a launch packet and development kit as a zip committed to a public GitHub repository. The kit is a specification with no application. Its rules: work from a branch, keep implementation status with evidence, mark unrun checks UNRUN, never claim a mock is live. The team also wants every turn logged with timestamps, previews of current and recent branches on GitHub Pages, and professional supply-chain, licensing and telemetry practice from the start.</p>
+<h2 id="decision">Decision</h2>
+<ol>
+<li><strong>Layout.</strong> The kit&#39;s tree lives at the repository root, so every path in its documents stays valid. The founder originals (PDF, DOCX, XLSX, cover note) live in <code>packet/</code> with SHA-256 checksums. The zip is removed from the working tree; it remains recoverable from commit <code>2eb9723</code>.</li>
+<li><strong>Runtime and packages.</strong> Node 24 LTS (<code>.nvmrc</code>) because Ghost 6.78 and gscan exclude Node 26. pnpm 12 with supply-chain gates: dependency build scripts denied unless approved, a one-day minimum release age, and trust-downgrade failure. Exact version pins with a lockfile.</li>
+<li><strong>Tool bootstrap.</strong> <code>tools/bootstrap/install-dev-tools.sh</code> installs pinned, SHA-256-verified CLIs (actionlint, gitleaks, shellcheck, Node LTS side-by-side, Firebase and Vercel CLIs, gscan) idempotently.</li>
+<li><strong>Tracking.</strong> Kit planning files stay canonical. <code>devtrack/</code> adds sessions, workstreams and append-only evidence records with JSON Schemas. <code>devlog/</code> holds one timestamped entry per turn. <code>docs/IMPLEMENTATION_STATUS.md</code> carries a generated, deterministic status block.</li>
+<li><strong>Validation.</strong> <code>pnpm validate</code> checks backlog integrity and CSV parity, calendar parity, decisions, the acceptance matrix, the agent contract against example requests, the fixture guard, packet checksums, Markdown links and the evidence rules (no &quot;done&quot; without passing evidence). CI runs it on every push.</li>
+<li><strong>Project hub and previews.</strong> A static hub generated from canonical sources: status, backlog and critical path, acceptance, decisions, editorial plan, visual codex, rendered docs, dev log and evidence. A workflow publishes every pushed branch to <code>gh-pages</code> under <code>/branches/&lt;slug&gt;/</code> with an index of recent previews at the site root; pruning keeps the newest 20. Branch-based publishing was chosen over the Actions-artifact Pages deployment because the <code>github-pages</code> environment restricts deployments to the default branch, which would block previews of unmerged session branches.</li>
+<li><strong>Brand tokens.</strong> <code>brand/tokens.json</code> is the single source of color and type roles. The hub compiles CSS from it and fails the build if a declared text pair drops below WCAG 2.2 AA.</li>
+<li><strong>Licensing.</strong> An interim proprietary notice (all rights reserved) until the founders choose otherwise; third-party components keep their licenses (<code>THIRD_PARTY_NOTICES.md</code>).</li>
+</ol>
+<h2 id="consequences">Consequences</h2>
+<p>Status claims are mechanically tied to evidence. Previews exist for unmerged work, matching the team&#39;s habit of working from the latest pull-request branch. Because the repository is public, the hub is public; it is marked <code>noindex</code> and contains only what the repository already shows. Enabling Pages is a one-time owner action (docs/PROJECT_HUB.md). The tooling adds a small Node codebase that must be maintained; it is covered by its own tests.</p>
+<h2 id="alternatives-considered">Alternatives considered</h2>
+<ul>
+<li><strong>Keep the zip as the source of truth:</strong> rejected; documents could not be reviewed, linked or validated.</li>
+<li><strong>Docs frameworks (VitePress, Astro, Docusaurus):</strong> heavier dependency trees for a hub whose value is derived data and checks, not prose navigation.</li>
+<li><strong>Git LFS for binaries:</strong> unnecessary at under 10 MB of originals.</li>
+<li><strong>Actions-artifact Pages deployment:</strong> default-branch-only environment rules conflict with branch previews (see Decision 6).</li>
+</ul>
+<h2 id="review-triggers">Review triggers</h2>
+<p>Revisit when the repository visibility changes (planning brief Q1), when the operations desk needs authenticated previews, when Ghost supports Node 26, or when the number of active branches makes per-branch previews noisy.</p>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/decisions/ADR-002-repository-foundation.md">decisions/ADR-002-repository-foundation.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>

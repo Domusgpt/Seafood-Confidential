@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Overview · Seafood Confidential project hub</title>
+<meta name="description" content="Status, sprint shape and next steps for Seafood Confidential.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="assets/hub.js" defer></script>
+<script src="assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.1.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">Commit <code>79bbae5</code></a>
+      <span>Built Nov 18, 2026, 11:56 AM EST</span>
+      <a href="../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="index.html" aria-current="page">Overview</a></li><li><a href="backlog.html">Backlog</a></li><li><a href="acceptance.html">Acceptance</a></li><li><a href="decisions.html">Decisions</a></li><li><a href="editorial.html">Editorial</a></li><li><a href="visual-codex.html">Visual codex</a></li><li><a href="docs/index.html">Docs</a></li><li><a href="devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+
+<div class="page-head">
+  <span class="eyebrow">Launch and development · status</span>
+  <h1>Where Seafood Confidential stands</h1>
+  <p class="lede">A practitioner-led publication about fisheries, aquaculture, trade and the people behind the food: Ghost for the publication and newsletter, a small private operations desk, and human-approved social distribution.</p>
+</div>
+<div class="notice" role="note">
+  <span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.2" y="7" width="1.6" height="4.5" fill="currentColor"/><circle cx="8" cy="4.9" r="1" fill="currentColor"/></svg>info</span>
+  <p><strong>Planning stage.</strong> The repository holds the founder packet, specifications, tooling and tracking. No application has been built or deployed, no account has been purchased, and all 26 acceptance scenarios are UNRUN.</p>
+</div>
+<div class="kpis">
+  <div class="tile">
+  <span class="tile-label">Kit tickets done</span>
+  <span class="tile-value">0 of 16</span>
+  <span class="tile-note">1 in progress · 15 planned</span>
+  <div class="meter" role="img" aria-label="0% complete"><span style="width:0.0%"></span></div>
+</div>
+  <div class="tile">
+  <span class="tile-label">Acceptance scenarios run</span>
+  <span class="tile-value">0 of 26</span>
+  <span class="tile-note">26 UNRUN</span>
+  <div class="meter" role="img" aria-label="0% complete"><span style="width:0.0%"></span></div>
+</div>
+  <div class="tile">
+  <span class="tile-label">Founder decisions made</span>
+  <span class="tile-value">0 of 12</span>
+  <span class="tile-note">All proposed, none decided</span>
+  <div class="meter" role="img" aria-label="0% complete"><span style="width:0.0%"></span></div>
+</div>
+  <div class="tile">
+  <span class="tile-label">Engineering estimate</span>
+  <span class="tile-value">118–160 h</span>
+  <span class="tile-note">incl. 11 h reserve · ~20 working days</span>
+  
+</div>
+  <div class="tile">
+  <span class="tile-label">Operating cost</span>
+  <span class="tile-value">$119–169/mo</span>
+  <span class="tile-note">$588 annual upfront</span>
+  
+</div>
+</div>
+<div class="grid grid-main-side">
+  <section class="card" aria-labelledby="next-h">
+    <span class="eyebrow">Next turn</span>
+    <h2 id="next-h">Plan the foundation</h2>
+    <p>The next working session enters plan mode with the <a href="docs/foundation-planning-brief.html">foundation planning brief</a>: complete SC-001, build the private operations shell (SC-005) and prepare local Ghost groundwork for SC-002 to SC-004. Foundation tickets estimate <strong>30–42 h</strong>.</p>
+    <p>Before building, the founders need answers on repository visibility, runtime and hosting, the TypeScript line, the social channels, and who owns which accounts. The brief lists every question with a recommendation.</p>
+    <p><a href="docs/kit-audit.html">Kit audit</a> · <a href="docs/implementation-status.html">Implementation status</a> · <a href="backlog.html">Backlog and critical path</a></p>
+  </section>
+  <section class="card" aria-labelledby="session-h">
+    <span class="eyebrow">Current session</span>
+    <h2 id="session-h">S01: Repository foundation, tooling and planning readiness</h2>
+    <p>Unpacked and audited the launch packet; installed and verified the toolchain; built dev log, delivery tracking, validators, CI and the Pages project hub; researched current vendor facts; wrote the foundation planning brief for the next turn&#39;s plan mode.</p>
+    <p><strong>Version</strong> 0.1.0 · <strong>Branch</strong> <code class="id">claude/intelligent-cannon-d1nqq6</code><br><strong>Started</strong> Nov 18, 2026, 10:43 AM EST</p>
+  </section>
+</div>
+<h2>Sprint shape</h2>
+<div class="grid grid-2">
+  <figure class="viz-figure" id="effort">
+    <figcaption>
+      <span class="viz-title">Estimated effort per sprint window</span>
+      <span class="viz-subtitle">Hours, low to high estimate, against 8 h/day capacity for one developer</span>
+    </figcaption>
+    <ul class="viz-legend" aria-label="Legend"><li><span class="key key-mark" aria-hidden="true"></span>Low estimate</li><li><span class="key key-mark-range" aria-hidden="true"></span>Range to high estimate</li><li><span class="key key-mark-reserve" aria-hidden="true"></span>Delivery reserve</li><li><span class="key key-capacity" aria-hidden="true"></span>Window capacity</li></ul>
+    <div class="hbars" role="list" aria-label="Effort by sprint window"><div class="hbar" role="listitem" tabindex="0" data-tip="Days 1–4: SC-001, SC-002, SC-003, SC-004. Estimate 20–30 h; capacity 32 h." aria-label="Days 1–4: SC-001, SC-002, SC-003, SC-004. Estimate 20–30 h; capacity 32 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 1–4</span><span class="hbar-sub">SC-001–SC-004</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:33.333%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(33.333% + 2px);width:calc(16.667% - 2px)"></span><span class="hbar-ref" style="left:53.333%"></span></div>
+      <div class="hbar-value">20–30 h</div>
+    </div><div class="hbar" role="listitem" tabindex="0" data-tip="Days 5–9: SC-005, SC-006, SC-007. Estimate 24–30 h; capacity 40 h." aria-label="Days 5–9: SC-005, SC-006, SC-007. Estimate 24–30 h; capacity 40 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 5–9</span><span class="hbar-sub">SC-005–SC-007</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:40.000%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(40.000% + 2px);width:calc(10.000% - 2px)"></span><span class="hbar-ref" style="left:66.667%"></span></div>
+      <div class="hbar-value">24–30 h</div>
+    </div><div class="hbar" role="listitem" tabindex="0" data-tip="Days 10–14: SC-008, SC-009, SC-010, SC-011. Estimate 40–54 h; capacity 40 h." aria-label="Days 10–14: SC-008, SC-009, SC-010, SC-011. Estimate 40–54 h; capacity 40 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 10–14</span><span class="hbar-sub">SC-008–SC-011</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:66.667%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(66.667% + 2px);width:calc(23.333% - 2px)"></span><span class="hbar-ref" style="left:66.667%"></span></div>
+      <div class="hbar-value">40–54 h<span class="hbar-flag">▲ 14 h over at high</span></div>
+    </div><div class="hbar" role="listitem" tabindex="0" data-tip="Days 15–17: SC-012, SC-013, SC-014, SC-015. Estimate 19–29 h; capacity 24 h." aria-label="Days 15–17: SC-012, SC-013, SC-014, SC-015. Estimate 19–29 h; capacity 24 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 15–17</span><span class="hbar-sub">SC-012–SC-015</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:31.667%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(31.667% + 2px);width:calc(16.667% - 2px)"></span><span class="hbar-ref" style="left:40.000%"></span></div>
+      <div class="hbar-value">19–29 h<span class="hbar-flag">▲ 5 h over at high</span></div>
+    </div><div class="hbar" role="listitem" tabindex="0" data-tip="Days 18–20: SC-016. Estimate 4–6 h plus 11 h reserve; capacity 24 h." aria-label="Days 18–20: SC-016. Estimate 4–6 h plus 11 h reserve; capacity 24 h.">
+      <div class="hbar-label"><span class="hbar-name">Days 18–20</span><span class="hbar-sub">SC-016</span></div>
+      <div class="hbar-track" style="--ticks:6" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:6.667%"></span><span class="hbar-seg hbar-range" style="left:calc(6.667% + 2px);width:calc(3.333% - 2px)"></span><span class="hbar-seg hbar-reserve is-end" style="left:calc(10.000% + 2px);width:calc(18.333% - 2px)"></span><span class="hbar-ref" style="left:40.000%"></span></div>
+      <div class="hbar-value">4–6 h + 11</div>
+    </div><div class="hbar hbar-axis " aria-hidden="true"><div></div><div class="hbar-ticks"><span style="left:0.000%">0</span><span style="left:16.667%">10</span><span style="left:33.333%">20</span><span style="left:50.000%">30</span><span style="left:66.667%">40</span><span style="left:83.333%">50</span><span style="left:100.000%">60</span></div><div></div></div></div>
+    <details class="viz-table"><summary>Table view</summary><div class="table-wrap" tabindex="0" role="region" aria-label="Chart data table"><table class="data-table">
+    <caption class="visually-hidden">Effort by sprint window</caption>
+    <thead><tr><th scope="col">Window</th><th scope="col">Tickets</th><th scope="col">Low</th><th scope="col">High</th><th scope="col">Reserve</th><th scope="col">Capacity</th><th scope="col">Headroom at high</th></tr></thead>
+    <tbody><tr><th scope="row">Days 1–4</th><td>SC-001, SC-002, SC-003, SC-004</td><td class="num">20 h</td><td class="num">30 h</td><td class="num">—</td><td class="num">32 h</td><td class="num">2 h</td></tr><tr><th scope="row">Days 5–9</th><td>SC-005, SC-006, SC-007</td><td class="num">24 h</td><td class="num">30 h</td><td class="num">—</td><td class="num">40 h</td><td class="num">10 h</td></tr><tr><th scope="row">Days 10–14</th><td>SC-008, SC-009, SC-010, SC-011</td><td class="num">40 h</td><td class="num">54 h</td><td class="num">—</td><td class="num">40 h</td><td class="num">−14 h</td></tr><tr><th scope="row">Days 15–17</th><td>SC-012, SC-013, SC-014, SC-015</td><td class="num">19 h</td><td class="num">29 h</td><td class="num">—</td><td class="num">24 h</td><td class="num">−5 h</td></tr><tr><th scope="row">Days 18–20</th><td>SC-016</td><td class="num">4 h</td><td class="num">6 h</td><td class="num">11 h</td><td class="num">24 h</td><td class="num">7 h</td></tr></tbody></table></div></details>
+    <p class="viz-note">Day ranges are the planning envelope from docs/SPRINT_PLAN.md; dependencies, not days, are authoritative.</p>
+  </figure>
+  <figure class="viz-figure" id="costs">
+    <figcaption>
+      <span class="viz-title">Proposed monthly operating cost</span>
+      <span class="viz-subtitle">USD, monthly equivalent, ranked by high value; allowances shown as a range</span>
+    </figcaption>
+    <ul class="viz-legend" aria-label="Legend"><li><span class="key key-mark" aria-hidden="true"></span>Committed or low value</li><li><span class="key key-mark-range" aria-hidden="true"></span>Allowance range to high value</li></ul>
+    <div class="hbars" role="list" aria-label="Monthly operating cost by line item"><div class="hbar hbar-wide" role="listitem" tabindex="0" data-tip="AI usage allowance: $15–50 per month equivalent (Proposed budget, not a vendor quote)." aria-label="AI usage allowance: $15–50 per month equivalent (Proposed budget, not a vendor quote).">
+      <div class="hbar-label"><span class="hbar-name">AI usage allowance</span></div>
+      <div class="hbar-track" style="--ticks:5" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:30.000%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(30.000% + 2px);width:calc(70.000% - 2px)"></span></div>
+      <div class="hbar-value">$15–50</div>
+    </div><div class="hbar hbar-wide" role="listitem" tabindex="0" data-tip="Ghost Publisher: $29 per month equivalent ($348 billed annually)." aria-label="Ghost Publisher: $29 per month equivalent ($348 billed annually).">
+      <div class="hbar-label"><span class="hbar-name">Ghost Publisher</span></div>
+      <div class="hbar-track" style="--ticks:5" aria-hidden="true"><span class="hbar-seg hbar-mark is-end" style="left:0;width:58.000%"></span></div>
+      <div class="hbar-value">$29</div>
+    </div><div class="hbar hbar-wide" role="listitem" tabindex="0" data-tip="Supabase Pro: $25 per month equivalent (Starting monthly cost for one small project)." aria-label="Supabase Pro: $25 per month equivalent (Starting monthly cost for one small project).">
+      <div class="hbar-label"><span class="hbar-name">Supabase Pro</span></div>
+      <div class="hbar-track" style="--ticks:5" aria-hidden="true"><span class="hbar-seg hbar-mark is-end" style="left:0;width:50.000%"></span></div>
+      <div class="hbar-value">$25</div>
+    </div><div class="hbar hbar-wide" role="listitem" tabindex="0" data-tip="Domain and role mailboxes: $10–25 per month equivalent (Proposed allowance; vendors unselected)." aria-label="Domain and role mailboxes: $10–25 per month equivalent (Proposed allowance; vendors unselected).">
+      <div class="hbar-label"><span class="hbar-name">Domain and role mailboxes</span></div>
+      <div class="hbar-track" style="--ticks:5" aria-hidden="true"><span class="hbar-seg hbar-mark" style="left:0;width:20.000%"></span><span class="hbar-seg hbar-range is-end" style="left:calc(20.000% + 2px);width:calc(30.000% - 2px)"></span></div>
+      <div class="hbar-value">$10–25</div>
+    </div><div class="hbar hbar-wide" role="listitem" tabindex="0" data-tip="Buffer Team for two channels: $20 per month equivalent ($240 billed annually)." aria-label="Buffer Team for two channels: $20 per month equivalent ($240 billed annually).">
+      <div class="hbar-label"><span class="hbar-name">Buffer Team for two channels</span></div>
+      <div class="hbar-track" style="--ticks:5" aria-hidden="true"><span class="hbar-seg hbar-mark is-end" style="left:0;width:40.000%"></span></div>
+      <div class="hbar-value">$20</div>
+    </div><div class="hbar hbar-wide" role="listitem" tabindex="0" data-tip="Vercel Pro: $20 per month equivalent (Monthly base with one deploying seat)." aria-label="Vercel Pro: $20 per month equivalent (Monthly base with one deploying seat).">
+      <div class="hbar-label"><span class="hbar-name">Vercel Pro</span></div>
+      <div class="hbar-track" style="--ticks:5" aria-hidden="true"><span class="hbar-seg hbar-mark is-end" style="left:0;width:40.000%"></span></div>
+      <div class="hbar-value">$20</div>
+    </div><div class="hbar hbar-axis hbar-wide" aria-hidden="true"><div></div><div class="hbar-ticks"><span style="left:0.000%">$0</span><span style="left:20.000%">$10</span><span style="left:40.000%">$20</span><span style="left:60.000%">$30</span><span style="left:80.000%">$40</span><span style="left:100.000%">$50</span></div><div></div></div></div>
+    <details class="viz-table"><summary>Table view</summary><div class="table-wrap" tabindex="0" role="region" aria-label="Chart data table"><table class="data-table"><caption class="visually-hidden">Monthly operating cost by line item</caption>
+    <thead><tr><th scope="col">Line item</th><th scope="col">Monthly equivalent</th><th scope="col">Billing basis</th></tr></thead>
+    <tbody><tr><th scope="row">AI usage allowance</th><td class="num">$15–$50</td><td>Proposed budget, not a vendor quote</td></tr><tr><th scope="row">Ghost Publisher</th><td class="num">$29</td><td>$348 billed annually</td></tr><tr><th scope="row">Supabase Pro</th><td class="num">$25</td><td>Starting monthly cost for one small project</td></tr><tr><th scope="row">Domain and role mailboxes</th><td class="num">$10–$25</td><td>Proposed allowance; vendors unselected</td></tr><tr><th scope="row">Buffer Team for two channels</th><td class="num">$20</td><td>$240 billed annually</td></tr><tr><th scope="row">Vercel Pro</th><td class="num">$20</td><td>Monthly base with one deploying seat</td></tr></tbody></table></div></details>
+    <p class="viz-note">Prices checked 17 November 2026 and re-checked 18 November 2026. Taxes, labor, equipment, theme purchases and overages excluded.</p>
+  </figure>
+</div>
+<p class="viz-note">Optional, outside the operating range: Optional podcast host ($19/mo); Optional audio software ($0–30/mo). Development at an illustrative $100/h would be $11,800–$16,000; that is arithmetic, not a quote.</p>
+<div class="grid grid-2">
+  <section aria-labelledby="log-h">
+    <h2 id="log-h">Latest dev log</h2>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">Entry</th><th scope="col">Recorded</th><th scope="col">Status</th></tr></thead><tbody><tr><td><a href="devlog/2026-11-18-s01-repository-foundation.html">Repository foundation, tooling and planning readiness</a><br><span class="id">DL-20261118-01 · S01 · v0.1.0</span></td><td>Nov 18, 2026, 11:55 AM EST</td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Complete</span></td></tr></tbody></table></div>
+  </section>
+  <section aria-labelledby="packet-h">
+    <h2 id="packet-h">Founder packet</h2>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">File</th><th scope="col">Contents</th></tr></thead><tbody><tr><td><a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/packet/Seafood_Confidential_Launch_Packet.pdf">Seafood_Confidential_Launch_Packet.pdf</a></td><td>24-page founder plan (PDF)</td></tr><tr><td><a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/packet/Seafood_Confidential_Launch_Packet.docx">Seafood_Confidential_Launch_Packet.docx</a></td><td>Editable founder plan (Word)</td></tr><tr><td><a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/packet/Seafood_Confidential_Sprint_Workbook.xlsx">Seafood_Confidential_Sprint_Workbook.xlsx</a></td><td>Sprint, costs, calendar and decisions workbook</td></tr><tr><td><a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/packet/START_HERE.txt">START_HERE.txt</a></td><td>Packet cover note</td></tr></tbody></table></div>
+    <p class="viz-note">Originals are preserved byte-for-byte with SHA-256 checksums in packet/SHA256SUMS. The Markdown sources render under <a href="docs/index.html">Docs</a>.</p>
+  </section>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/79bbae5c2b0acf41df39ab4de81f6789923d90a5">79bbae5</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
