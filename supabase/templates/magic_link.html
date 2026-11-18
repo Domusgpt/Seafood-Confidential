@@ -1,0 +1,16 @@
+<!-- Colors are brand/tokens.json values (ink, link, muted): email clients need inline styles. -->
+<h2 style="font-family: Georgia, serif; color: #102b3a">Seafood Confidential</h2>
+<p style="font-family: system-ui, sans-serif; color: #102b3a">
+  Use this link to sign in to the operations desk. It works once and expires in 15 minutes.
+</p>
+<p>
+  <a
+    href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/"
+    style="font-family: system-ui, sans-serif; color: #2c5a70"
+    >Sign in to the desk</a
+  >
+</p>
+<p style="font-family: system-ui, sans-serif; color: #52666f; font-size: 13px">
+  If you did not ask for this, you can ignore this email. Nobody can use the link without access to your
+  inbox.
+</p>

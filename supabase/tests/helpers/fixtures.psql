@@ -1,0 +1,115 @@
+-- Shared pgTAP fixtures for the desk policy tests, included by each test file inside its own
+-- transaction (\ir helpers/fixtures.psql) and rolled back with it. Synthetic data only
+-- (example.test addresses, fixture names).
+
+create extension if not exists pgtap with schema extensions;
+
+create schema if not exists tests;
+grant usage on schema tests to anon, authenticated, desk_agent;
+
+-- The test runner (postgres) administers desk_agent but cannot switch to it by default (PG16+
+-- membership options). Allow it for this transaction only; the rollback removes the grant.
+grant desk_agent to postgres with inherit false, set true;
+-- pgTAP lives in the extensions schema; let assertions run while acting as an agent (test only).
+grant usage on schema extensions to desk_agent;
+
+-- Create an auth user and (optionally) a human principal with staff roles. Returns the auth user id.
+create or replace function tests.make_human(
+  p_email text,
+  p_roles text[] default '{}',
+  p_status text default 'active',
+  p_with_principal boolean default true
+)
+returns uuid
+language plpgsql
+as $$
+declare
+  uid uuid := gen_random_uuid();
+  pid uuid;
+  r text;
+begin
+  -- Unique per call, so fixtures never collide with identities that already exist in a dev database.
+  insert into auth.users (id, instance_id, email, aud, role, created_at, updated_at)
+  values (
+    uid, '00000000-0000-0000-0000-000000000000',
+    split_part(p_email, '@', 1) || '+' || left(replace(uid::text, '-', ''), 8) || '@' || split_part(p_email, '@', 2),
+    'authenticated', 'authenticated', now(), now()
+  );
+  if p_with_principal then
+    insert into app.principals (kind, display_name, status, auth_user_id)
+    values ('human', split_part(p_email, '@', 1), p_status, uid)
+    returning id into pid;
+    foreach r in array p_roles loop
+      insert into app.staff_assignments (principal_id, role) values (pid, r);
+    end loop;
+  end if;
+  return uid;
+end
+$$;
+
+create or replace function tests.principal_of(p_uid uuid)
+returns uuid language sql stable as $$ select id from app.principals where auth_user_id = p_uid $$;
+
+-- Create an agent principal with a credential; the token secret is never stored, only its hash.
+create or replace function tests.make_agent(p_name text, p_prefix text, p_secret text, p_scopes text[])
+returns uuid
+language plpgsql
+as $$
+declare
+  pid uuid;
+begin
+  insert into app.principals (kind, display_name) values ('agent', p_name) returning id into pid;
+  insert into private.agent_credentials (principal_id, token_prefix, token_hash, scopes)
+  values (pid, p_prefix, encode(sha256(convert_to(p_secret, 'UTF8')), 'hex'), p_scopes);
+  return pid;
+end
+$$;
+
+create or replace function tests.make_item(p_content_id text, p_title text default 'Fixture item title')
+returns uuid language sql as $$
+  insert into app.editorial_items (content_id, title, section, format)
+  values (p_content_id, p_title, 'the_trade', 'explainer')
+  returning id
+$$;
+
+-- Act as a signed-in user (claims as the desk server sets them after verifying the session).
+create or replace function tests.act_as_user(p_uid uuid)
+returns void
+language plpgsql
+as $$
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  perform set_config('app.agent_principal_id', '', true);
+  set local role authenticated;
+end
+$$;
+
+create or replace function tests.act_as_anon()
+returns void
+language plpgsql
+as $$
+begin
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('app.agent_principal_id', '', true);
+  set local role anon;
+end
+$$;
+
+-- Act as an agent: hash the secret, switch role, then authenticate (as the gateway does).
+create or replace function tests.act_as_agent(p_prefix text, p_secret text)
+returns integer
+language plpgsql
+as $$
+declare
+  token_hash text := encode(sha256(convert_to(p_secret, 'UTF8')), 'hex');
+  n integer;
+begin
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('app.agent_principal_id', '', true);
+  set local role desk_agent;
+  select count(*) into n from app.authenticate_agent(p_prefix, token_hash);
+  return n;
+end
+$$;
+
+grant execute on all functions in schema tests to anon, authenticated, desk_agent;
