@@ -29,7 +29,8 @@ const HEADERS = {
 async function resolveFile(urlPath) {
   const clean = decodeURIComponent(urlPath.split('?')[0]);
   const target = path.resolve(dir, `.${clean}`);
-  if (!target.startsWith(dir)) return null;
+  // Inside the site directory only (a bare prefix check would also match a sibling such as .site-output.old-x).
+  if (target !== dir && !target.startsWith(dir + path.sep)) return null;
   for (const candidate of [target, path.join(target, 'index.html')]) {
     try {
       if ((await stat(candidate)).isFile()) return candidate;

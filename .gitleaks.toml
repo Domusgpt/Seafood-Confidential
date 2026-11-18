@@ -15,3 +15,10 @@ paths = [
   # Local-only, git-ignored env files written by apps/desk/scripts/write-local-env.mjs.
   '''^apps/desk/\.env(\.ops)?\.local$''',
 ]
+
+[[allowlists]]
+# Only the matched text is allowlisted (not the file), so any real secret elsewhere in the same file
+# is still reported. Contract examples use placeholder idempotency keys such as idem-publish-0001.
+description = "Placeholder idempotency keys (idem-…) are not credentials"
+regexTarget = "match"
+regexes = ['''idempotencyKey"?\s*[:=]\s*"idem-[a-z0-9-]{4,64}"''']
