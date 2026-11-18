@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0",
+  "description": "Enabling workstreams that sit outside the kit's SC-### delivery backlog. Kit tickets stay authoritative in planning/BACKLOG.json.",
+  "workstreams": [
+    {
+      "id": "WS-REPO",
+      "title": "Repository foundation",
+      "status": "done",
+      "scope": "Unpack the launch packet, preserve originals with checksums, repository conventions, licensing notice, security and contribution policy."
+    },
+    {
+      "id": "WS-ENV",
+      "title": "Development environment and tooling",
+      "status": "done",
+      "scope": "Pinned, checksum-verified CLI bootstrap; Node LTS; pnpm supply-chain gates; Docker, local Supabase and Ghost feasibility in cloud sessions."
+    },
+    {
+      "id": "WS-TRACK",
+      "title": "Dev log and delivery tracking",
+      "status": "done",
+      "scope": "Timestamped dev log, sessions, evidence records, generated implementation status, integrity validators and CI."
+    },
+    {
+      "id": "WS-HUB",
+      "title": "Project hub and branch previews",
+      "status": "in_progress",
+      "scope": "Static project hub (status, backlog, decisions, docs, dev log, visual codex) deployed to GitHub Pages for main and recent branches. Live once Pages is enabled on the gh-pages branch."
+    },
+    {
+      "id": "WS-PLAN",
+      "title": "Foundation planning readiness",
+      "status": "done",
+      "scope": "Kit audit, current vendor and runtime research, foundation planning brief and open questions for plan mode."
+    }
+  ]
+}

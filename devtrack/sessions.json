@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0",
+  "sessions": [
+    {
+      "id": "S01",
+      "title": "Repository foundation, tooling and planning readiness",
+      "version": "0.1.0",
+      "branch": "claude/intelligent-cannon-d1nqq6",
+      "baseCommit": "2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "startedAt": "2026-11-18T10:43:00-05:00",
+      "endedAt": null,
+      "agent": "Claude Code (cloud session) for Paul Phillips",
+      "sessionUrl": "https://claude.ai/code/session_01UqrwabKwbwqBof6T64sqFU",
+      "pullRequest": null,
+      "previewUrl": "https://domusgpt.github.io/Seafood-Confidential/branches/claude-intelligent-cannon-d1nqq6/",
+      "status": "open",
+      "summary": "Unpacked and audited the launch packet; installed and verified the toolchain; built dev log, delivery tracking, validators, CI and the Pages project hub; researched current vendor facts; wrote the foundation planning brief for the next turn's plan mode.",
+      "devlog": ["devlog/entries/2026-11-18-s01-repository-foundation.md"]
+    }
+  ]
+}

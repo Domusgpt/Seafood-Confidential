@@ -1,0 +1,18 @@
+{
+  "why": "Social copy must bind to a review snapshot and an explicit channel connection; a human approves in Buffer (AT-11).",
+  "acceptance": ["AT-09", "AT-11"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0005",
+    "idempotencyKey": "idem-social-demo-li-01",
+    "tool": "social.propose",
+    "arguments": {
+      "itemId": "demo-item-001",
+      "reviewSnapshotId": "snap-demo-001",
+      "channelConnectionId": "chan-linkedin-company",
+      "text": "FIXTURE ONLY: What sits between a landed price and a delivered price?",
+      "suggestedLocalTime": "Friday 09:00",
+      "timeZone": "America/New_York"
+    }
+  }
+}

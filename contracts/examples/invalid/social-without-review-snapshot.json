@@ -1,0 +1,11 @@
+{
+  "why": "Promotional copy must derive from a reviewed snapshot so later edits can mark it stale.",
+  "acceptance": ["AT-09"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0107",
+    "idempotencyKey": "idem-social-no-snap",
+    "tool": "social.propose",
+    "arguments": { "itemId": "demo-item-001", "channelConnectionId": "chan-linkedin-company", "text": "x" }
+  }
+}

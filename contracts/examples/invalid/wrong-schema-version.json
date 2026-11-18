@@ -1,0 +1,5 @@
+{
+  "why": "Only contract version 1.0 is accepted.",
+  "acceptance": [],
+  "request": { "schemaVersion": "2.0", "requestId": "req-2026-0110", "tool": "briefs.list", "arguments": {} }
+}

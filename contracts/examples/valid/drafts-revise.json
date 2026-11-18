@@ -1,0 +1,19 @@
+{
+  "why": "Agent revises its draft bound to the revision it read; a stale revision must conflict server-side (AT-08).",
+  "acceptance": ["AT-08"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0004",
+    "idempotencyKey": "idem-demo-item-001-v2",
+    "tool": "drafts.revise",
+    "arguments": {
+      "draftId": "draft-demo-001",
+      "expectedRevision": "2026-11-18T16:00:00.000Z",
+      "content": {
+        "title": "Questions to ask before a seafood shipment",
+        "bodyMarkdown": "FIXTURE ONLY.",
+        "sourceIds": []
+      }
+    }
+  }
+}

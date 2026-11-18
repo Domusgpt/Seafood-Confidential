@@ -1,0 +1,14 @@
+{
+  "why": "Revisions must bind to the revision the agent read so stale writes conflict.",
+  "acceptance": ["AT-08"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0106",
+    "idempotencyKey": "idem-revise-no-rev",
+    "tool": "drafts.revise",
+    "arguments": {
+      "draftId": "draft-demo-001",
+      "content": { "title": "x", "bodyMarkdown": "x", "sourceIds": [] }
+    }
+  }
+}

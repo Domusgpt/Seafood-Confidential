@@ -1,0 +1,9 @@
+title = "Seafood Confidential secret scanning"
+
+# Use gitleaks' maintained default rules; only generated or vendored paths are excluded.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated output and installed dependencies (never committed)"
+paths = ['''(^|/)node_modules/''', '''(^|/)_site/''', '''(^|/)test-results/''']

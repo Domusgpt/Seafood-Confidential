@@ -1,0 +1,254 @@
+{
+  "schemaVersion": "1.0",
+  "records": [
+    {
+      "id": "EV-0001",
+      "recordedAt": "2026-11-18T11:16:00-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Linux x86_64, Python 3.13",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-REPO"
+      ],
+      "kind": "verification",
+      "summary": "Launch packet unpacked byte-identical; uploaded files equal the zip contents",
+      "steps": "Extracted Seafood_Confidential_Launch_Packet.zip (sha256 4871128f…fd934b04, commit 2eb9723) to an isolated scratch directory; compared SHA-256 of every extracted file with its repository copy; compared the four uploaded files with their zip counterparts; recorded packet/SHA256SUMS.",
+      "observed": "verified 32 files byte-identical; mismatches: none. Upload SHA-256 values equal the zip members (START_HERE cdc26087…, PDF 98c02e8c…, DOCX 9945ea43…, XLSX 1950ec5f…).",
+      "result": "pass",
+      "location": "packet/SHA256SUMS; packet/README.md"
+    },
+    {
+      "id": "EV-0002",
+      "recordedAt": "2026-11-18T11:16:30-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, poppler pdftotext 24.02.0, pandoc 3.1.3",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-REPO"
+      ],
+      "kind": "verification",
+      "summary": "PDF and DOCX founder packet carry the same text as docs/LAUNCH_PACKET.md",
+      "steps": "pdftotext -layout on the PDF; pandoc -t plain on the DOCX; word-level difflib comparison against docs/LAUNCH_PACKET.md with Markdown syntax stripped.",
+      "observed": "DOCX similarity 0.9968 (differences: punctuation spacing, title block, image alt text). PDF similarity 0.9520 (differences: running headers/footers and table-cell reflow from layout extraction). No substantive wording differences found. 24 pages; producer LibreOfficeDev 26.8.",
+      "result": "pass",
+      "location": "docs/KIT_AUDIT.md#source-parity"
+    },
+    {
+      "id": "EV-0003",
+      "recordedAt": "2026-11-18T11:17:00-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, openpyxl 3.1.5",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-REPO",
+        "SC-001"
+      ],
+      "kind": "verification",
+      "summary": "Sprint workbook formulas and cached values reconcile with the JSON planning sources",
+      "steps": "Loaded packet/Seafood_Confidential_Sprint_Workbook.xlsx with formulas and with cached values; compared Sprint, Costs, Editorial and Decisions sheets against planning/BACKLOG.json, editorial/SIX_WEEK_CALENDAR.json, planning/WORKBOOK_DECISIONS.json and planning/WORKBOOK_VERIFICATION.json.",
+      "observed": "16 tickets with identical ids, owners, dependencies and hour ranges; totals 107–149 h + 11 reserve = 118–160 h; costs: vendor base $94, operation $119–169/mo, with podcast $138–218/mo, annual upfront $588; 6 editorial weeks; 12 decisions all Proposed; no formula error values. Note: workbook statuses use Proposed/Ready/In progress/Blocked/Done while BACKLOG.json uses planned; the workbook is not regenerable here because planning/build_workbook.mjs depends on the proprietary @oai/artifact-tool runtime.",
+      "result": "pass",
+      "location": "docs/KIT_AUDIT.md#workbook"
+    },
+    {
+      "id": "EV-0004",
+      "recordedAt": "2026-11-18T11:17:30-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Docker Engine 29.10.0 (cgroup v1, overlayfs)",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-ENV"
+      ],
+      "kind": "environment",
+      "summary": "Docker daemon runs in cloud sessions; Docker Hub anonymous pulls are rate limited; mirror.gcr.io resolves it",
+      "steps": "Started dockerd (not running by default); docker pull ghost:6.78.0-alpine; on failure configured /etc/docker/daemon.json registry-mirrors [https://mirror.gcr.io], restarted dockerd and pulled again; pulled axllent/mailpit:v1.34.0.",
+      "observed": "First pull failed at 15:57:28Z: '429 Too Many Requests' from registry-1.docker.io. With the mirror both images pulled (ghost digest sha256:baa6dbff…). public.ecr.aws and ghcr.io (used by Supabase CLI) were reachable without a mirror.",
+      "result": "pass",
+      "location": "docs/DEVELOPMENT_ENVIRONMENT.md#docker"
+    },
+    {
+      "id": "EV-0005",
+      "recordedAt": "2026-11-18T11:18:00-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Linux x86_64",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-ENV"
+      ],
+      "kind": "environment",
+      "summary": "Pinned developer tools installed by tools/bootstrap/install-dev-tools.sh with checksum verification",
+      "steps": "Verified the Node 26.13.1 and 24.22.3 tarballs, actionlint 1.7.12 and gitleaks 8.30.1 against upstream SHASUMS256/checksums files and pinned the hashes; pinned shellcheck 0.11.0 trust-on-first-use (no upstream checksum file); ran the script with --all (first pinned to Node 26, then re-pinned to Node 24 after EV-0009), then --check; shellcheck on the script itself.",
+      "observed": "Installed: actionlint 1.7.12, gitleaks 8.30.1, shellcheck 0.11.0, firebase-tools 15.36.0, vercel 66.1.0, gscan 6.7.0 (npm global); Node 24.22.3 present at /opt/node24 (default node 22.23.5 unchanged); glslang 15.1.0 via apt. Re-run is idempotent. shellcheck: clean after fixing SC2015.",
+      "result": "pass",
+      "location": "tools/bootstrap/install-dev-tools.sh"
+    },
+    {
+      "id": "EV-0006",
+      "recordedAt": "2026-11-18T11:18:30-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Docker 29.10.0, Supabase CLI 3.2.0",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-ENV",
+        "SC-001"
+      ],
+      "kind": "environment",
+      "summary": "Local Supabase stack starts in cloud sessions with pgTAP and the Supabase roles available",
+      "steps": "In a scratch project: supabase init; supabase start -x edge-runtime,logflare,vector,imgproxy,supavisor; psql to 127.0.0.1:54322 for version, extensions and roles; supabase stop --no-backup.",
+      "observed": "Stack healthy after 67 s (first run including image pulls): postgres 17.12.0.000, gotrue v2.198.0, postgrest v16.5, realtime v2.167.0, storage-api v1.96.0, kong 2.8.1, mailpit v1.31.3, studio, postgres-meta v0.100.0. Extensions available: pgtap 1.3.3, pg_cron 1.6.4, pg_net 0.20.4, pgsodium 3.1.8, supabase_vault 0.3.2. Roles present: anon, authenticated, authenticator, service_role, supabase_admin.",
+      "result": "pass",
+      "location": "docs/planning/FOUNDATION_PLANNING_BRIEF.md#environment-feasibility"
+    },
+    {
+      "id": "EV-0007",
+      "recordedAt": "2026-11-18T11:19:00-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Docker 29.10.0, image ghost:6.78.0-alpine",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-ENV",
+        "SC-001"
+      ],
+      "kind": "environment",
+      "summary": "Ghost 6.78 runs locally (SQLite, development mode) once bound to IPv4",
+      "steps": "docker run ghost:6.78.0-alpine with NODE_ENV=development and url=http://localhost:2368; on failure added server__host=0.0.0.0; polled /ghost/api/admin/site/ and /.",
+      "observed": "First start failed at 16:06:08Z with 'There was an error starting your server' (Code -97, EAFNOSUPPORT: default IPv6 bind, container has no IPv6). With server__host=0.0.0.0 the admin site endpoint returned HTTP 200 after ~4 s with version 6.78; public home HTTP 200. Container removed; image kept.",
+      "result": "pass",
+      "location": "docs/DEVELOPMENT_ENVIRONMENT.md#local-ghost"
+    },
+    {
+      "id": "EV-0008",
+      "recordedAt": "2026-11-18T11:19:30-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Node 24.22.3, pnpm 12.21.0 (minimumReleaseAge 1440, trustPolicy no-downgrade)",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-ENV",
+        "SC-001"
+      ],
+      "kind": "observation",
+      "summary": "Next.js 16.4.6 scaffold builds under the proposed supply-chain policy after two adjustments",
+      "steps": "Scratch-only probe (not committed): pnpm dlx create-next-app@16.4.6 (TypeScript, App Router, ESLint, src dir); pnpm install; pnpm add @supabase/supabase-js @supabase/ssr @tryghost/admin-api zod @modelcontextprotocol/sdk ajv; next build.",
+      "observed": "1) trustPolicy no-downgrade rejected undici-types@6.21.0 (via template default @types/node ^20) as a high-risk trust downgrade; aligning @types/node to ^24 (24.19.2) resolved it. 2) minimumReleaseAge rejected @supabase/supabase-js 2.119.1 (published 2026-11-18T14:42Z); 2.119.0 installed. Template defaults: next 16.4.6, react 19.3.0, typescript ^5 (5.9.3), eslint ^9 (9.39.5 flagged deprecated; 10.15.0 current). Build succeeded (static routes / and /_not-found); add+build 5 s with a warm store.",
+      "result": "pass",
+      "location": "docs/planning/FOUNDATION_PLANNING_BRIEF.md#environment-feasibility"
+    },
+    {
+      "id": "EV-0009",
+      "recordedAt": "2026-11-18T11:20:00-05:00",
+      "session": "S01",
+      "environment": "npm registry metadata",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-ENV",
+        "WS-PLAN"
+      ],
+      "kind": "observation",
+      "summary": "Runtime constraint: Ghost tooling excludes Node 26; repository pins Node 24 LTS",
+      "steps": "npm view ghost@6.78.0 engines; npm view gscan@6.7.0 engines; nodejs.org/dist/index.json release lines.",
+      "observed": "ghost@6.78.0 engines node ^22.23.5 || ^24.22.3; gscan@6.7.0 engines node ^22.17.0 || ^24.0.0. Release lines: 26.13.1 (LTS Lithium), 24.22.3 (LTS Krypton), 22.23.5 (LTS Jod). .nvmrc set to 24.",
+      "result": "info",
+      "location": ".nvmrc; docs/planning/FOUNDATION_PLANNING_BRIEF.md"
+    },
+    {
+      "id": "EV-0010",
+      "recordedAt": "2026-11-18T11:20:30-05:00",
+      "session": "S01",
+      "environment": "Web research against vendor primary sources (delegated research agent)",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01 (research delegated to a sub-agent; findings spot-checked against npm metadata)",
+      "subjects": [
+        "WS-PLAN",
+        "D05",
+        "D10"
+      ],
+      "kind": "review",
+      "summary": "Vendor prices in the packet still hold; several platform changes affect the foundation design",
+      "steps": "Checked nodejs.org, nextjs.org, supabase.com docs/changelog, docs.ghost.org and ghost source 6.78.0, ghost.org/pricing, support.buffer.com, developers.buffer.com, vercel.com docs and firebase.google.com docs on 2026-11-18.",
+      "observed": "Ghost Publisher $29/mo yearly ($35 monthly), 3 staff, Contributors free; Buffer Team $10/channel/mo yearly; Supabase Pro from $25/mo; Vercel Pro $20/mo incl. one deploying seat. Changes: Next 16 proxy.ts replaces middleware.ts; Supabase publishable/secret keys replace legacy anon/service_role (legacy deprecating end of 2026) and new tables need explicit GRANTs (since 2026-10-30); Buffer GraphQL API + official MCP server, API-key posts act as owner (approval only enforced for Needs Approval members via MCP/OAuth); TypeScript 7.0 is npm latest but typescript-eslint supports < 6.1; Firebase App Hosting lists Next 16 as preview only.",
+      "result": "info",
+      "location": "docs/planning/FOUNDATION_PLANNING_BRIEF.md#current-platform-facts"
+    },
+    {
+      "id": "EV-0011",
+      "recordedAt": "2026-11-18T11:53:50-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Linux x86_64, Node 22.23.5 (tooling) with Node 24.22.3 available, pnpm 12.21.0",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-TRACK",
+        "WS-HUB",
+        "WS-REPO"
+      ],
+      "kind": "verification",
+      "summary": "Repository gate passes: pnpm check (validators, tool tests, hub build and check, formatting)",
+      "steps": "pnpm check = pnpm validate && pnpm test && pnpm hub:build && pnpm hub:check && pnpm format:check",
+      "observed": "Validators 9/9 pass (16 tickets, 107-149 h + 11; 6 calendar weeks; 12 decisions; 26 scenarios UNRUN; 6 valid + 11 invalid contract examples; 4 packet checksums; 74 relative links in 37 Markdown files; tracking rules). Tests 26/26 pass, including negative cases: dangling dependency, cycle, hour drift, CSV drift, done without evidence, PASS without a test record, publish tool in the valid corpus, publishable fixture, tampered packet, non-sequential evidence IDs. Hub: 44 pages, 1,997 internal links and assets resolve. Prettier clean.",
+      "result": "pass",
+      "location": "package.json scripts; tools/**/*.test.mjs"
+    },
+    {
+      "id": "EV-0012",
+      "recordedAt": "2026-11-18T11:53:50-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Linux x86_64, Node 22.23.5 (tooling) with Node 24.22.3 available, pnpm 12.21.0; Playwright 1.63.0 Chromium (SwiftShader WebGL), @axe-core/playwright 4.14.0",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-HUB"
+      ],
+      "kind": "test",
+      "summary": "Project hub visual and accessibility verification across desktop, phone, dark and reduced-motion profiles",
+      "steps": "pnpm hub:shots over 11 pages x 4 profiles (desktop 1440x900 at 2x, iPhone 13, dark 1440x900, reduced motion 1280x800); axe tags wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa; manual review of screenshots (four rounds).",
+      "observed": "Final round: 44/44 renders clean: 0 axe violations, 0 console errors, 0 horizontal overflow; WebGL masthead running in 33 renders and static in all 11 reduced-motion renders; Fraunces and Source Sans 3 loaded. Earlier rounds found and fixed: scrollable regions not keyboard-focusable (WCAG 2.1.1), a 2.87:1 swatch label, SVG chart text scaling to about 9.5 px (rebuilt as HTML/CSS bars), 24 h1s on the launch packet page, GMT-5 instead of EST, a JPEG size limit on a very long mobile page.",
+      "result": "pass",
+      "location": "devlog/assets/2026-11-18-s01/"
+    },
+    {
+      "id": "EV-0013",
+      "recordedAt": "2026-11-18T11:53:51-05:00",
+      "session": "S01",
+      "environment": "Local bare git repository simulating GitHub Actions checkouts; git 2.43.0; rsync 3.2.7",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-HUB"
+      ],
+      "kind": "verification",
+      "summary": "Pages preview publishing simulated end to end with CI-style fresh shallow clones",
+      "steps": "Extracted the 'Publish to gh-pages' script from .github/workflows/pages.yml; ran it in fresh depth-1 clones for two branches against a bare origin, first creating an orphan gh-pages and then updating it; ran previews-index removal.",
+      "observed": "gh-pages created and updated; branches/claude-intelligent-cannon-d1nqq6 and branches/feat-second-branch published; root index lists both; latest/ redirects to the newest; each branch hub links to All branch previews; removal deletes the preview and rewrites the index. Found and fixed: a fixed ../pages worktree path that collides on reused runners (now mktemp), and hub:check rejecting the intentional previews-index link (now exempted via build.json; a stray escaping link still fails).",
+      "result": "pass",
+      "location": ".github/workflows/pages.yml; tools/hub/previews-index.mjs"
+    },
+    {
+      "id": "EV-0014",
+      "recordedAt": "2026-11-18T11:53:51-05:00",
+      "session": "S01",
+      "environment": "Claude Code cloud container, Linux x86_64, Node 22.23.5 (tooling) with Node 24.22.3 available, pnpm 12.21.0; actionlint 1.7.12, shellcheck 0.11.0, glslang 15.1.0, gitleaks 8.30.1",
+      "commit": "WORKTREE@2eb97235e0ba517432ee213a2bbe1dff34931c03",
+      "operator": "Claude Code agent, session S01",
+      "subjects": [
+        "WS-TRACK",
+        "WS-HUB",
+        "WS-ENV"
+      ],
+      "kind": "verification",
+      "summary": "Static analysis and secret scanning clean",
+      "steps": "actionlint (with shellcheck) on .github/workflows/*.yml; shellcheck tools/bootstrap/*.sh; glslangValidator on bathymetry.vert and bathymetry.frag; gitleaks dir (working tree) and gitleaks git (history) with .gitleaks.toml extending the default rules.",
+      "observed": "actionlint: no findings; shellcheck: no findings after fixing SC2015; glslang: both shaders valid GLSL ES 3.00; gitleaks: no leaks in the working tree (generated paths excluded) or in the 2 existing commits.",
+      "result": "pass",
+      "location": ".github/workflows/; .gitleaks.toml"
+    }
+  ]
+}

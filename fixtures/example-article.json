@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "fixtureOnly": true,
+  "publishable": false,
+  "notice": "Fictional workflow demonstration. All people, sources, permissions and reporting require replacement and verification before publication.",
+  "id": "demo-item-001",
+  "ghostPostId": null,
+  "editorialState": "draft",
+  "contentType": "reported_explainer",
+  "title": "The questions to ask before the next seafood shipment",
+  "summary": "Demo brief for an interview-led explanation of how a seafood professional evaluates a shipment.",
+  "bodyMarkdown": "DRAFT WORKFLOW FIXTURE \u2014 NOT FOR PUBLICATION.\n\nInterview an identified practitioner about the questions they ask before accepting a shipment. Verify each practical or regulatory statement against appropriate evidence. Do not invent a quote or present this placeholder as reporting.\n\nPlanned sections: what the buyer wants to know; what the supplier can document; where uncertainty remains; questions for the next interview.",
+  "section": "The Trade",
+  "region": [],
+  "species": [],
+  "assignedEditorId": "demo-editor-001",
+  "authorIds": [],
+  "sourceIds": [],
+  "assetRightsIds": [],
+  "conflictDisclosure": "To be completed by the real author.",
+  "review": {
+    "sourceCheck": "unrun",
+    "rightsCheck": "unrun",
+    "humanApproval": false
+  },
+  "distribution": {
+    "web": "not_authorized",
+    "newsletter": "not_authorized",
+    "social": "draft_only"
+  }
+}

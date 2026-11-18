@@ -1,0 +1,14 @@
+{
+  "why": "Draft content cannot carry a status field (field allowlist); an agent cannot mark content published.",
+  "acceptance": ["AT-04"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0102",
+    "idempotencyKey": "idem-status-attempt",
+    "tool": "drafts.propose",
+    "arguments": {
+      "briefId": "brief-demo-001",
+      "content": { "title": "x", "bodyMarkdown": "x", "sourceIds": [], "status": "published" }
+    }
+  }
+}

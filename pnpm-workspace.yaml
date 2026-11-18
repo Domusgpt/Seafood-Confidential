@@ -1,0 +1,12 @@
+# pnpm settings. pnpm reads this file for a single-package repository too; workspace
+# packages (apps/*, packages/*) are added when the foundation plan adopts a layout.
+#
+# Supply-chain posture (see decisions/ADR-002-repository-foundation.md):
+# - Dependency build scripts are denied unless approved here (strictDepBuilds is on by default).
+# - Newly published versions must be at least one day old before they can be installed.
+# - A release whose publishing trust is weaker than its predecessors' fails installation.
+allowBuilds:
+  # Downloads the pinned Supabase CLI binary for `pnpm exec supabase`.
+  supabase: true
+minimumReleaseAge: 1440
+trustPolicy: no-downgrade

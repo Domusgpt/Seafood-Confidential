@@ -1,0 +1,7 @@
+# Repository owner reviews everything until founder roles are assigned (decision D01).
+*                       @Domusgpt
+
+# Founder packet and kit specifications: changes need the owner's explicit review.
+/packet/                @Domusgpt
+/AGENTS.md              @Domusgpt
+/decisions/             @Domusgpt

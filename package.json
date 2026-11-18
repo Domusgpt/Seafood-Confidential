@@ -1,0 +1,39 @@
+{
+  "name": "seafood-confidential",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Seafood Confidential: launch packet, specifications, delivery tracking and project hub for the publication and its private operations desk.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "check": "pnpm validate && pnpm test && pnpm hub:build && pnpm hub:check && pnpm format:check",
+    "validate": "node tools/validate/cli.mjs",
+    "test": "node --test --test-reporter=spec \"tools/**/*.test.mjs\"",
+    "devtrack": "node tools/devtrack/cli.mjs",
+    "devlog:new": "node tools/devlog/cli.mjs new",
+    "hub:build": "node tools/hub/build.mjs",
+    "hub:check": "node tools/hub/check.mjs",
+    "hub:serve": "node tools/hub/serve.mjs",
+    "hub:shots": "node tools/hub/screenshots.mjs",
+    "lint:actions": "actionlint",
+    "lint:secrets": "gitleaks git --no-banner --redact --config .gitleaks.toml . && gitleaks dir --no-banner --redact --config .gitleaks.toml .",
+    "lint:shell": "shellcheck tools/bootstrap/*.sh",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource-variable/source-sans-3": "5.3.1",
+    "ajv": "8.20.0",
+    "marked": "18.2.1",
+    "playwright": "1.63.0",
+    "prettier": "3.10.1",
+    "supabase": "3.2.0",
+    "yaml": "2.9.1"
+  }
+}

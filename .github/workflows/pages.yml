@@ -1,0 +1,105 @@
+name: Pages previews
+
+# Publishes the project hub for every branch to gh-pages under /branches/<slug>/ and keeps an index of
+# recent previews at the site root (docs/PROJECT_HUB.md). One-time setup: Settings → Pages → Deploy from
+# a branch → gh-pages / (root).
+
+on:
+  push:
+    branches-ignore: [gh-pages]
+  delete:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-previews
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.event_name != 'delete'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HUB_BRANCH: ${{ github.ref_name }}
+      HUB_COMMIT: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build the hub
+        id: build
+        run: |
+          slug="$(node tools/lib/slug.mjs "$HUB_BRANCH")"
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+          pnpm hub:build --out _site --previews-index ../../index.html
+          pnpm hub:check
+      - name: Publish to gh-pages
+        env:
+          SLUG: ${{ steps.build.outputs.slug }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          pages_dir="$(mktemp -d)/pages"
+          if git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+            git fetch --depth 1 origin gh-pages:gh-pages
+            git worktree add "$pages_dir" gh-pages
+          else
+            git worktree add --orphan -b gh-pages "$pages_dir"
+          fi
+          mkdir -p "$pages_dir/branches/$SLUG"
+          rsync -a --delete _site/ "$pages_dir/branches/$SLUG/"
+          node tools/hub/previews-index.mjs --site "$pages_dir" --branch "$HUB_BRANCH" --slug "$SLUG" --commit "$HUB_COMMIT" --repo "$REPO_URL"
+          cd "$pages_dir"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No preview changes to publish."
+            exit 0
+          fi
+          git commit -q -m "preview: $HUB_BRANCH @ ${HUB_COMMIT:0:7}"
+          git push origin HEAD:gh-pages
+          {
+            echo "### Project hub preview"
+            echo "- Branch: \`$HUB_BRANCH\`"
+            echo "- URL (once Pages is enabled): https://domusgpt.github.io/Seafood-Confidential/branches/$SLUG/"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  remove:
+    if: github.event_name == 'delete' && github.event.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - name: Remove the deleted branch's preview
+        env:
+          DELETED_REF: ${{ github.event.ref }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          if ! git ls-remote --exit-code --heads origin gh-pages > /dev/null; then
+            echo "No gh-pages branch yet."
+            exit 0
+          fi
+          slug="$(node tools/lib/slug.mjs "$DELETED_REF")"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          pages_dir="$(mktemp -d)/pages"
+          git fetch --depth 1 origin gh-pages:gh-pages
+          git worktree add "$pages_dir" gh-pages
+          node tools/hub/previews-index.mjs --site "$pages_dir" --slug "$slug" --remove --repo "$REPO_URL"
+          cd "$pages_dir"
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -q -m "preview: remove $DELETED_REF"
+          git push origin HEAD:gh-pages

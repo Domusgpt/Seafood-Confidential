@@ -1,0 +1,39 @@
+name: Kit ticket work
+description: Track work on a backlog ticket (SC-###) from planning/BACKLOG.json.
+title: 'SC-###: '
+labels: ['ticket']
+body:
+  - type: input
+    id: ticket
+    attributes:
+      label: Ticket
+      description: Ticket ID from planning/BACKLOG.json.
+      placeholder: SC-005
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope for this piece of work
+      description: The smallest increment that meets the ticket's acceptance criteria.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria and scenarios
+      description: Criteria from the backlog and the AT-## scenarios this work must evidence.
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and blockers
+      description: Ticket dependencies, founder decisions (D##) or vendor access this needs.
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Rules
+      options:
+        - label: Status changes to done only with an evidence record (devtrack/evidence.json).
+          required: true
+        - label: No secrets, private contacts or confidential sources in the issue or code.
+          required: true

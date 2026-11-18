@@ -1,0 +1,33 @@
+name: Bug or defect
+description: Something in the tooling, hub or (later) the operations desk behaves incorrectly.
+title: 'Bug: '
+labels: ['bug']
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Observed behavior, including commands or pages involved.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+  - type: input
+    id: where
+    attributes:
+      label: Branch, commit or preview URL
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: This report contains no secrets, private contacts or subscriber data.
+          required: true

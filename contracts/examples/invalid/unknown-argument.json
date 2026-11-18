@@ -1,0 +1,10 @@
+{
+  "why": "Arguments are allowlisted per tool; unknown fields such as includeAllGuests are rejected.",
+  "acceptance": ["AT-01"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0109",
+    "tool": "briefs.list",
+    "arguments": { "includeAllGuests": true }
+  }
+}

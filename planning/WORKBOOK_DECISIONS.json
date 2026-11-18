@@ -1,0 +1,122 @@
+{
+  "status": "Proposed",
+  "columns": [
+    "id",
+    "decision",
+    "owner",
+    "choice",
+    "status",
+    "needed_by",
+    "dependency"
+  ],
+  "decisions": [
+    [
+      "D01",
+      "Founders and account owner",
+      "Paul and friend",
+      "Name the legal account owner, managing editor and backup.",
+      "Proposed",
+      "Before purchases",
+      "Ownership and recovery contacts"
+    ],
+    [
+      "D02",
+      "Name domain and handles",
+      "Paul and friend",
+      "Review existing name uses and select available domain and handles.",
+      "Proposed",
+      "Before brand registration",
+      "Name and identity checks"
+    ],
+    [
+      "D03",
+      "Primary reader",
+      "Paul and friend",
+      "Lead with seafood professionals and curious serious food readers.",
+      "Proposed",
+      "Before launch copy",
+      "Audience positioning"
+    ],
+    [
+      "D04",
+      "Launch scope",
+      "Managing editor and developer",
+      "Ghost publication plus a small private operations portal.",
+      "Proposed",
+      "Sprint week 1",
+      "Product and stack boundary"
+    ],
+    [
+      "D05",
+      "Operating budget",
+      "Account owner",
+      "Approve monthly allowances and annual prepaid subscriptions.",
+      "Proposed",
+      "Before purchases",
+      "Costs sheet"
+    ],
+    [
+      "D06",
+      "Publication authority",
+      "Managing editor",
+      "Designate human final approval. Agents create restricted drafts.",
+      "Proposed",
+      "Sprint week 1",
+      "Permissions and account roles"
+    ],
+    [
+      "D07",
+      "Contributor terms",
+      "Paul and friend",
+      "Set attribution, rights, editing, compensation and withdrawal terms.",
+      "Proposed",
+      "Before first invitation",
+      "Contributor policy"
+    ],
+    [
+      "D08",
+      "Sources and corrections",
+      "Managing editor",
+      "Set private-source access, corrections handling and disclosure rules.",
+      "Proposed",
+      "Before pilot publication",
+      "Editorial policy"
+    ],
+    [
+      "D09",
+      "Newsletter identity",
+      "Account owner",
+      "Choose sending domain, working reply address and signup consent wording.",
+      "Proposed",
+      "Sprint week 2",
+      "Domain and email setup"
+    ],
+    [
+      "D10",
+      "Social channels",
+      "Managing editor",
+      "Begin with LinkedIn and Facebook. Assign account access.",
+      "Proposed",
+      "Sprint week 3",
+      "Buffer connections"
+    ],
+    [
+      "D11",
+      "Kickoff and launch",
+      "Paul and friend",
+      "Choose kickoff after staffing and access are known. Launch follows acceptance.",
+      "Proposed",
+      "Before sprint starts",
+      "Developer availability"
+    ],
+    [
+      "D12",
+      "Podcast gate",
+      "Managing editor",
+      "Approve a recurring show after two private pilots meet quality and workload targets.",
+      "Proposed",
+      "After launch rhythm is tested",
+      "Pilot evidence"
+    ]
+  ]
+}

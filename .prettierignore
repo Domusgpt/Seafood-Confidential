@@ -1,0 +1,25 @@
+# The founder packet and the development kit are preserved byte-for-byte as delivered
+# (2026-11-17). Edit them deliberately, never through a formatter.
+packet/
+docs/
+decisions/
+editorial/
+planning/
+contracts/agent-tools.schema.json
+fixtures/example-article.json
+brand/Seafood_Confidential_Brand_Concept.png
+AGENTS.md
+CLAUDE.md
+
+# Narrative records are hand-written.
+devlog/
+CHANGELOG.md
+
+# Generated or vendored
+pnpm-lock.yaml
+_site/
+node_modules/
+
+# Machine-written by the devtrack CLI (JSON.stringify formatting is canonical there).
+devtrack/*.json
+test-results/
