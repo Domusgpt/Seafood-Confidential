@@ -186,24 +186,32 @@ export const PUBLISH_WARNINGS: Record<string, string> = {
     'The text contains what looks like an email address, phone number or private contact.',
   text_embedded_image: 'The text embeds an image; confirm you have the rights.',
   text_raw_html: 'The text contains HTML, which will be shown as plain text.',
+  already_emailed:
+    'Subscribers were already emailed about this story once. Send it again only if that is what you want.',
 };
 
-/** Agent publishing checks, in the order the database evaluates them (ADR-005). */
+/**
+ * Agent publishing checks, in the order the database evaluates them (ADR-005). Short names: the
+ * publishing log shows each failed check as "name: what the database found".
+ */
 export const AGENT_GATES: Record<string, string> = {
-  master_switch: 'Agent publishing is switched on',
-  section_lane: 'The section is open to agents',
-  item_granted: 'The brief is assigned to the agent',
-  own_open_proposal: "The proposal is the agent's own and still open",
-  brief_untouched_by_people: 'No person has written or taken over the story',
-  nothing_in_flight: 'No other publish job is open',
-  reporting_format: 'An explainer or reported feature',
-  enough_sources: 'Enough sources cited',
-  sources_publishable: 'Every cited source is readable and citable',
-  no_direct_quotes: 'No direct quotations',
-  no_contact_details: 'No contact details',
-  no_images: 'No images',
-  no_raw_html: 'No HTML',
-  length: 'Length within limits',
-  daily_limit: 'Under the daily limit',
-  newsletter: 'Email allowed if requested',
+  refusal_limit: 'Refusal limit',
+  master_switch: 'Master switch',
+  section_lane: 'Section lane',
+  item_granted: 'Assignment',
+  own_open_proposal: 'Proposal',
+  brief_untouched_by_people: 'People first',
+  nothing_in_flight: 'One job at a time',
+  reporting_format: 'Format',
+  daily_limit: 'Daily limit',
+  newsletter: 'Newsletter',
+  headline_and_summary: 'Headline and summary',
+  enough_sources: 'Sources cited',
+  sources_publishable: 'Citable sources',
+  links_to_cited_sources: 'Links',
+  no_direct_quotes: 'Quotations',
+  no_contact_details: 'Contact details',
+  no_images: 'Images',
+  no_raw_html: 'HTML',
+  length: 'Length',
 };

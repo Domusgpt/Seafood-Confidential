@@ -77,8 +77,9 @@ export type PublisherActor =
   { kind: 'staff'; claims: StaffClaims } | { kind: 'agent'; principalId: string } | { kind: 'system' };
 
 /**
- * Run fn in the publisher context (ADR-005): only app.claim_publish_job, app.complete_publish_job
- * and app.apply_ghost_webhook are executable there. The actor is bound so audit rows attribute
+ * Run fn in the publisher context (ADR-005): only the publish-job functions (claim, renew the
+ * lease, read the site snapshot, mark the email attempt, complete, next job) are executable there,
+ * and every step after the claim needs the claim token. The actor is bound so audit rows attribute
  * the work to whoever asked for it.
  */
 export function withPublisher<T>(

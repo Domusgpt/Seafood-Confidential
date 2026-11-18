@@ -11,7 +11,6 @@ import { getRequestId } from '@/lib/request';
 import {
   fieldErrors,
   formToObject,
-  ghostLinkSchema,
   itemFieldsSchema,
   itemUpdateSchema,
   proposalReviewSchema,
@@ -47,7 +46,8 @@ function failure(error: unknown, requestId: string, fallback: string): FormState
   return { status: 'error', message: `${fallback} (reference ${requestId}).` };
 }
 
-const RELEASE_STATES = new Set(['ready_for_release', 'published']);
+// Published is not set by hand: publishing moves a story to and from it (ADR-005).
+const RELEASE_STATES = new Set(['ready_for_release']);
 
 export async function createItem(_prev: FormState, formData: FormData): Promise<FormState> {
   const values = formToObject(formData);
@@ -96,6 +96,24 @@ export async function updateItem(_prev: FormState, formData: FormData): Promise<
   const v = parsed.data;
   try {
     return await staffTx(async (tx, session) => {
+      const [current] = await tx<{ status: string }[]>`
+        select status from app.editorial_items where id = ${v.itemId}
+      `;
+      if (
+        current &&
+        current.status !== v.status &&
+        (current.status === 'published' || v.status === 'published')
+      ) {
+        return {
+          status: 'error',
+          message:
+            current.status === 'published'
+              ? 'This story is live. Update it or take it off the site from the Publishing panel; its status follows.'
+              : 'Stories go live from the Publishing panel, so the public site always matches the desk.',
+          errors: { status: 'Set by publishing.' },
+          values,
+        } satisfies FormState;
+      }
       if (RELEASE_STATES.has(v.status)) {
         // Release gate for marking by hand: story text, at least one source, every asset cleared
         // with a credit line. (Publishing itself warns instead of blocking; ADR-005.)
@@ -114,7 +132,7 @@ export async function updateItem(_prev: FormState, formData: FormData): Promise<
         if (!gate || problems.length) {
           return {
             status: 'error',
-            message: `Before marking this ${v.status === 'published' ? 'Published' : 'Ready for release'}, ${problems.join(', ')}.`,
+            message: `Before marking this Ready for release, ${problems.join(', ')}.`,
             errors: { status: 'Release requirements are not met yet.' },
             values,
           } satisfies FormState;
@@ -143,45 +161,6 @@ export async function updateItem(_prev: FormState, formData: FormData): Promise<
     });
   } catch (error) {
     return { ...failure(error, await getRequestId(), 'The story could not be saved'), values };
-  }
-}
-
-export async function linkGhostPost(_prev: FormState, formData: FormData): Promise<FormState> {
-  const values = formToObject(formData);
-  const parsed = ghostLinkSchema.safeParse({ ...values, ghostPost: values.ghostPost ?? '' });
-  if (!parsed.success)
-    return {
-      status: 'error',
-      message: 'Check the Ghost reference.',
-      errors: fieldErrors(parsed.error),
-      values,
-    };
-  try {
-    return await staffTx(async (tx) => {
-      const rows = await tx`
-        update app.editorial_items set ghost_post_id = ${parsed.data.ghostPost}, ghost_updated_at = now()
-        where id = ${parsed.data.itemId} returning content_id
-      `;
-      if (rows.length === 0)
-        return { status: 'error', message: 'That story is not visible to you.' } satisfies FormState;
-      revalidatePath(`/stories/${rows[0].contentId}`);
-      return {
-        status: 'ok',
-        message: parsed.data.ghostPost ? 'Ghost post linked.' : 'Ghost link removed.',
-      } satisfies FormState;
-    });
-  } catch (error) {
-    unstable_rethrow(error);
-    if (pgCode(error) === PG.uniqueViolation) {
-      return {
-        status: 'error',
-        message:
-          'That Ghost post is already linked to another story. Each Ghost post maps to one editorial item.',
-        errors: { ghostPost: 'Already linked to another story.' },
-        values,
-      };
-    }
-    return { ...failure(error, await getRequestId(), 'The Ghost link could not be saved'), values };
   }
 }
 

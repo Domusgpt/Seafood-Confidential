@@ -1,4 +1,4 @@
-# Deploying the desk and the public site (v0.4.0)
+# Deploying the desk and the public site (v0.4.1)
 
 How to take the desk from the local stack to hosted Supabase and Google Cloud Run, with the public site on Firebase Hosting and the newsletter on Kit. This is the Ghost-free path in [ADR-005](../decisions/ADR-005-desk-publishing-without-ghost.md) and [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md). Nothing here has been run against hosted services yet. The steps are verified locally (the container image builds and serves), and their hosted execution belongs to SC-015 with the founders' accounts (SC-001).
 
@@ -42,7 +42,7 @@ Set `DESK_DB_PREPARE=false` with this URL, because the shared pooler does not su
 From the repository root:
 
 ```bash
-docker build -f apps/desk/Dockerfile -t <region>-docker.pkg.dev/<gcp-project>/sc/desk:0.4.0 .
+docker build -f apps/desk/Dockerfile -t <region>-docker.pkg.dev/<gcp-project>/sc/desk:0.4.1 .
 ```
 
 The build needs no secrets. Next.js generates the Server Actions encryption key during the build and embeds it, so every instance of one image agrees. Keep the registry private. Behind a TLS-inspecting proxy, add `--secret id=extra_ca,src=<ca.pem>`; the certificate is used only during the build and never stored in the image.
@@ -58,14 +58,14 @@ The build needs no secrets. Next.js generates the Server Actions encryption key 
 2. Push the image:
 
    ```bash
-   docker push us-east4-docker.pkg.dev/<gcp-project>/sc/desk:0.4.0
+   docker push us-east4-docker.pkg.dev/<gcp-project>/sc/desk:0.4.1
    ```
 
 3. Store the secrets in Secret Manager (`desk-database-url`, `intake-hash-secret`, `kit-api-key` when the newsletter is connected, plus `otel-headers` if you export telemetry).
 4. Deploy. The service is public because the desk has its own sign-in and serves the public pitch form:
 
    ```bash
-   gcloud run deploy sc-desk --image us-east4-docker.pkg.dev/<gcp-project>/sc/desk:0.4.0 --region us-east4 --port 8080 --min-instances 0 --max-instances 3 --allow-unauthenticated --set-env-vars DESK_SITE_URL=https://<service>-<hash>.us-east4.run.app,SUPABASE_URL=https://<project-ref>.supabase.co,SUPABASE_PUBLISHABLE_KEY=<sb_publishable_…>,DESK_DB_PREPARE=false,DESK_TRUSTED_PROXY_HOPS=1,SITE_PUBLIC_URL=https://<your-domain>,SITE_DESTINATION=firebase,FIREBASE_SITE_ID=<firebase-site-id>,KIT_FORM_ID=<kit-form-id>,LOG_LEVEL=info --set-secrets DESK_DATABASE_URL=desk-database-url:latest,INTAKE_HASH_SECRET=intake-hash-secret:latest,KIT_API_KEY=kit-api-key:latest
+   gcloud run deploy sc-desk --image us-east4-docker.pkg.dev/<gcp-project>/sc/desk:0.4.1 --region us-east4 --port 8080 --min-instances 0 --max-instances 3 --allow-unauthenticated --set-env-vars DESK_SITE_URL=https://<service>-<hash>.us-east4.run.app,SUPABASE_URL=https://<project-ref>.supabase.co,SUPABASE_PUBLISHABLE_KEY=<sb_publishable_…>,DESK_DB_PREPARE=false,DESK_TRUSTED_PROXY_HOPS=1,SITE_PUBLIC_URL=https://<your-domain>,SITE_DESTINATION=firebase,FIREBASE_SITE_ID=<firebase-site-id>,KIT_FORM_ID=<kit-form-id>,LOG_LEVEL=info --set-secrets DESK_DATABASE_URL=desk-database-url:latest,INTAKE_HASH_SECRET=intake-hash-secret:latest,KIT_API_KEY=kit-api-key:latest
    ```
 
 5. The desk is staff-only, so its `run.app` address is enough at the start. Cloud Run domain mapping (us-east4 supports it) is still a Preview, and a load balancer costs about $18 a month; add either later if you want `desk.<your-domain>`. Do not put the desk behind Firebase Hosting rewrites: they forward only the `__session` cookie and would break sign-in.

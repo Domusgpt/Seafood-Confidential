@@ -4,6 +4,28 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-11-18 · Session S01, turn 4 (security hardening) · `claude/intelligent-cannon-d1nqq6`
+
+An independent review of agent publishing found eight problems (one High, four Medium, three Low). All eight are fixed with regression tests. Fixing them turned up eight more, which are also fixed and tested: retries, the Markdown and invisible-character bypasses, international phone numbers, a possible second newsletter, failure details shown to agents, accented addresses, and claim outcomes reported to agents as "queued".
+
+### Security
+- **The live site is built only from what was published.** Every rebuild used each story's current text, so an editor's unreviewed save went live the next time any story was published. It also trusted a status anyone could set by hand. Now each story records the revision it was published at (`published_revision`), rebuilds use that revision, and no API role can move a story to or from Published by hand (a database trigger).
+- **Agent jobs are re-checked in full when they run.** A token revoked, a proposal rejected, agent email withdrawn or the switch turned off after the request now cancels the job, with the reason recorded. A retry keeps the revision the job froze, so text a person saved since is never published under an agent's job.
+- **Claim tokens fence every step after the claim.** A worker whose lease expired can no longer read the snapshot, email or record an outcome. Leases are renewed during deploys and confirmed right before the release. The newsletter attempt is a compare-and-set in the database: at most one email per job, even with two workers.
+- **Refused agent requests are recorded.** The gateway's refusal used to roll back the refused job and its audit row, so the new budget of 10 refusals a day could not count them. Refusals are now committed, and `jobs.read` returns them.
+- **Content checks match what readers see.** HTML character references, block quotes inside list items, links to anything but a cited source, Markdown escapes or emphasis that split an email address, invisible characters and international phone numbers are all refused. The content checks run only after the switch, lane and grant checks pass, so they cannot be probed. The desk also checks the rendered text of agent stories before deploying.
+- **The queue cannot wedge.** Headlines and summaries that would not fit, titles without Latin letters and long titles all get valid public addresses (accented letters are transliterated, e.g. São → sao). A job that cannot be prepared fails instead of blocking the queue.
+- **Local site server:** malformed URL escapes return 400 instead of crashing the process, and directory redirects are built from the file system, never from the request.
+- **Agents see agent-facing outcomes.** Failure details written for editors (hosting and database errors) are no longer returned to agents.
+
+### Changed
+- A live story is updated, not published again (which could email subscribers twice). Publishing again with email after an unpublish warns that subscribers were already emailed.
+- On a live story, the status picker offers only Published and explains that publishing sets it. The unused Ghost link action is removed.
+- The publishing log names each failed check briefly ("Master switch: Agent publishing is switched off in Settings").
+
+### Verified
+- pgTAP 229/229 (fresh and populated databases), Vitest 101/101, Playwright 30/30, agent lab self-test 18/18, `pnpm check`. See EV-0038 to EV-0044.
+
 ## [0.4.0] - 2026-11-18 · Session S01, turn 4 · `claude/intelligent-cannon-d1nqq6`
 
 Ghost-free publishing from the desk, with agents that may publish under the owner's switches and automated checks (ADR-005), and a cost plan that starts at about $1 a month.

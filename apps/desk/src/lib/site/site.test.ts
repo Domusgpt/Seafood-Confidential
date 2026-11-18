@@ -181,6 +181,30 @@ describe('LocalDirectoryDestination', () => {
     expect((await readdir(base)).sort()).toEqual(['site']);
   });
 
+  it('leaves the live site untouched when the claim cannot be confirmed before the swap', async () => {
+    const base = await mkdtemp(path.join(os.tmpdir(), 'sc-site-'));
+    dirs.push(base);
+    const target = path.join(base, 'site');
+    const dest = new LocalDirectoryDestination(target);
+    await dest.deploy([{ path: '/index.html', body: Buffer.from('live'), contentType: 'text/html' }]);
+    const next = [{ path: '/index.html', body: Buffer.from('newer'), contentType: 'text/html' }];
+    await expect(
+      dest.deploy(next, {
+        beforeRelease: async () => {
+          throw new Error('claim lost');
+        },
+      }),
+    ).rejects.toMatchObject({ outcomeUnknown: false, message: 'Release stopped: claim lost' });
+    const stopped = new AbortController();
+    stopped.abort(new Error('Another run took over.'));
+    await expect(dest.deploy(next, { signal: stopped.signal })).rejects.toMatchObject({
+      outcomeUnknown: false,
+      message: 'Another run took over.',
+    });
+    expect(await readFile(path.join(target, 'index.html'), 'utf8')).toBe('live');
+    expect((await readdir(base)).sort()).toEqual(['site']);
+  });
+
   it('refuses paths that escape the site directory', async () => {
     const base = await mkdtemp(path.join(os.tmpdir(), 'sc-site-'));
     dirs.push(base);
@@ -267,6 +291,57 @@ describe('FirebaseHostingDestination', () => {
       fetch: fake({ step: 'populate', status: 403 }).impl,
     });
     await expect(populate.deploy(files)).rejects.toMatchObject({ outcomeUnknown: false });
+  });
+
+  it('confirms the claim right before releasing, and never releases without it', async () => {
+    const { calls, impl } = fake();
+    const order: string[] = [];
+    const dest = new FirebaseHostingDestination({
+      siteId: 'sc-news',
+      getAccessToken: async () => 't',
+      fetch: impl,
+    });
+    await dest.deploy(files, {
+      beforeRelease: async () => {
+        order.push(`confirm after ${calls.length} calls`);
+      },
+    });
+    expect(order).toEqual(['confirm after 4 calls']);
+
+    const lost = fake();
+    const refused = new FirebaseHostingDestination({
+      siteId: 'sc-news',
+      getAccessToken: async () => 't',
+      fetch: lost.impl,
+    });
+    await expect(
+      refused.deploy(files, {
+        beforeRelease: async () => {
+          throw new Error('claim lost');
+        },
+      }),
+    ).rejects.toMatchObject({ outcomeUnknown: false });
+    expect(lost.calls.some((c) => c.url.includes('/releases'))).toBe(false);
+  });
+
+  it('stops before the release when the claim is lost mid-upload', async () => {
+    const stop = new AbortController();
+    const inner = fake();
+    const impl = (async (url: string, init: RequestInit) => {
+      const res = await inner.impl(url, init);
+      if (url.includes('/upload/')) stop.abort(new Error('Another run took over.'));
+      return res;
+    }) as unknown as typeof fetch;
+    const dest = new FirebaseHostingDestination({
+      siteId: 'sc-news',
+      getAccessToken: async () => 't',
+      fetch: impl,
+    });
+    await expect(dest.deploy(files, { signal: stop.signal })).rejects.toMatchObject({
+      outcomeUnknown: false,
+      message: 'Another run took over.',
+    });
+    expect(inner.calls.some((c) => c.url.includes('/releases'))).toBe(false);
   });
 });
 

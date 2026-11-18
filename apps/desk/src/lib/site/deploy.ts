@@ -23,9 +23,41 @@ export interface DeployResult {
   version: string;
 }
 
+export interface DeployOptions {
+  /** Stops the deploy before it changes the live site (for example when the job lost its claim). */
+  signal?: AbortSignal;
+  /**
+   * Runs immediately before the one step that changes the live site; throwing stops the deploy
+   * with nothing released. The publisher uses it to confirm it still holds the job.
+   */
+  beforeRelease?: () => Promise<void>;
+}
+
 export interface Destination {
   readonly name: 'local' | 'firebase';
-  deploy(files: SiteFile[]): Promise<DeployResult>;
+  deploy(files: SiteFile[], opts?: DeployOptions): Promise<DeployResult>;
+}
+
+/** Everything before the release is reversible; failures there leave the live site untouched. */
+async function confirmRelease(opts: DeployOptions): Promise<void> {
+  const stopIfAborted = () => {
+    const stopped = abortMessage(opts.signal);
+    if (stopped) throw new DeployError(stopped, false);
+  };
+  stopIfAborted();
+  try {
+    await opts.beforeRelease?.();
+  } catch (error) {
+    if (error instanceof DeployError) throw error;
+    throw new DeployError(`Release stopped: ${(error as Error).message}`, false);
+  }
+  stopIfAborted();
+}
+
+function abortMessage(signal: AbortSignal | undefined): string | null {
+  if (!signal?.aborted) return null;
+  const reason: unknown = signal.reason;
+  return reason instanceof Error ? reason.message : 'The deploy was stopped.';
 }
 
 /** Response headers the static host sends with every file (the local server mirrors them). */
@@ -55,7 +87,7 @@ export class LocalDirectoryDestination implements Destination {
   readonly name = 'local' as const;
   constructor(private readonly dir: string) {}
 
-  async deploy(files: SiteFile[]): Promise<DeployResult> {
+  async deploy(files: SiteFile[], opts: DeployOptions = {}): Promise<DeployResult> {
     const target = path.resolve(this.dir);
     const staging = `${target}.next-${randomBytes(4).toString('hex')}`;
     const retired = `${target}.old-${randomBytes(4).toString('hex')}`;
@@ -66,6 +98,7 @@ export class LocalDirectoryDestination implements Destination {
         await writeFile(out, f.body);
       }
       await writeFile(path.join(staging, '.site-version'), manifestHash(files));
+      await confirmRelease(opts);
       await rename(target, retired).catch((e: NodeJS.ErrnoException) => {
         if (e.code !== 'ENOENT') throw e;
       });
@@ -73,7 +106,9 @@ export class LocalDirectoryDestination implements Destination {
       await rm(retired, { recursive: true, force: true });
     } catch (error) {
       await rm(staging, { recursive: true, force: true });
-      throw new DeployError(`Writing the site failed: ${(error as Error).message}`, false);
+      if (error instanceof DeployError) throw error;
+      const stopped = abortMessage(opts.signal);
+      throw new DeployError(stopped ?? `Writing the site failed: ${(error as Error).message}`, false);
     }
     return { version: `local-${manifestHash(files)}` };
   }
@@ -101,19 +136,29 @@ export class FirebaseHostingDestination implements Destination {
     this.timeoutMs = opts.timeoutMs ?? 20_000;
   }
 
-  private async call<T>(url: string, init: RequestInit, step: string, releasing = false): Promise<T> {
+  private async call<T>(
+    url: string,
+    init: RequestInit,
+    step: string,
+    releasing = false,
+    stop?: AbortSignal,
+  ): Promise<T> {
+    if (stop?.aborted) throw new DeployError(abortMessage(stop)!, false);
     const token = await this.opts.getAccessToken();
     let res: Response;
     try {
+      const timeout = AbortSignal.timeout(this.timeoutMs);
       res = await this.fetchImpl(url, {
         ...init,
         headers: { Authorization: `Bearer ${token}`, ...(init.headers ?? {}) },
-        signal: AbortSignal.timeout(this.timeoutMs),
+        // The stop signal never interrupts the release itself: once sent, its outcome is awaited.
+        signal: stop && !releasing ? AbortSignal.any([timeout, stop]) : timeout,
         redirect: 'error',
       });
     } catch (error) {
+      const stopped = releasing ? null : abortMessage(stop);
       throw new DeployError(
-        `Firebase Hosting did not answer (${step}): ${(error as Error).message}`,
+        stopped ?? `Firebase Hosting did not answer (${step}): ${(error as Error).message}`,
         releasing,
       );
     }
@@ -133,8 +178,9 @@ export class FirebaseHostingDestination implements Destination {
     return (body ? JSON.parse(body) : {}) as T;
   }
 
-  async deploy(files: SiteFile[]): Promise<DeployResult> {
+  async deploy(files: SiteFile[], opts: DeployOptions = {}): Promise<DeployResult> {
     const site = this.opts.siteId;
+    const stop = opts.signal;
     const gz = files.map((f) => {
       const zipped = gzipSync(f.body, { level: 9 });
       return { path: f.path, zipped, hash: createHash('sha256').update(zipped).digest('hex') };
@@ -154,6 +200,8 @@ export class FirebaseHostingDestination implements Destination {
         }),
       },
       'creating a version',
+      false,
+      stop,
     );
     const versionId = version.name.split('/').pop()!;
     const required = new Set<string>();
@@ -168,9 +216,11 @@ export class FirebaseHostingDestination implements Destination {
           body: JSON.stringify({ files: Object.fromEntries(chunk.map((f) => [f.path, f.hash])) }),
         },
         'listing the files',
+        false,
+        stop,
       );
       for (const h of out.uploadRequiredHashes ?? []) required.add(h);
-      uploadUrl = out.uploadUrl ?? uploadUrl ?? `${UPLOAD}/sites/${site}/versions/${versionId}/files`;
+      if (out.uploadUrl) uploadUrl = out.uploadUrl;
     }
     if (!uploadUrl) uploadUrl = `${UPLOAD}/sites/${site}/versions/${versionId}/files`;
     for (const f of gz.filter((x) => required.has(x.hash))) {
@@ -183,6 +233,8 @@ export class FirebaseHostingDestination implements Destination {
           body: new Uint8Array(f.zipped),
         },
         `uploading ${f.path}`,
+        false,
+        stop,
       );
     }
     await this.call(
@@ -193,7 +245,10 @@ export class FirebaseHostingDestination implements Destination {
         body: JSON.stringify({ status: 'FINALIZED' }),
       },
       'finalizing the version',
+      false,
+      stop,
     );
+    await confirmRelease(opts);
     await this.call(
       `${HOSTING}/sites/${site}/releases?versionName=${encodeURIComponent(version.name)}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' },

@@ -709,6 +709,155 @@
       "observed": "See docs/planning/HOSTING_AND_COSTS.md. Key facts: Kit free to 10,000 subscribers with API; Supabase Free pauses after a week of low activity and has no backups; Supabase's built-in mailer is not usable for real sign-ins (custom SMTP such as Resend free 3,000/month); Cloud Run domain mapping is a preview; GitHub repository is public, so Actions and Pages are free and everything in it is public.",
       "result": "pass",
       "location": "docs/planning/HOSTING_AND_COSTS.md"
+    },
+    {
+      "id": "EV-0038",
+      "recordedAt": "2026-11-18T16:47:56-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@ee55329ab715e29babd09c7c299dff6d46d9f2b3",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-011",
+        "SC-017",
+        "SC-018",
+        "AT-14",
+        "AT-27",
+        "AT-28",
+        "AT-31",
+        "AT-32"
+      ],
+      "kind": "review",
+      "summary": "Independent security review of agent publishing (v0.4.0): 1 High, 4 Medium and 3 Low findings, all fixed in v0.4.1 with regression tests, plus 8 more found while fixing",
+      "steps": "A separate agent reviewed the publishing migration, executor, deploy, gateway, actions and local site server adversarially. Each finding was reproduced, fixed and covered by pgTAP, unit or end-to-end assertions, and every suite was re-run on the final build",
+      "observed": "High: rebuilds used current or edited text and a hand-settable status (fixed: published_revision plus a status guard trigger). Medium: incomplete re-checks at claim; no lease fencing (possible double email or overlapping deploys); unclaimable jobs could wedge the queue; refused requests rolled back by the gateway savepoint. Low: private-contact oracle outside an open lane; entity, list-quote and link bypasses; serve-site open redirect and crash on bad escapes. Found while fixing: retries could publish a person's later edit; retries of live agent jobs were cancelled; Markdown-escape, emphasis and invisible-character bypasses of the contact check; international phone numbers; a second publish could email twice; editor-facing failure details shown to agents; accented titles made poor addresses; cancelled claims reported to agents as queued",
+      "result": "pass",
+      "location": "CHANGELOG.md [0.4.1]; supabase/migrations/20261118200000_publishing.sql"
+    },
+    {
+      "id": "EV-0039",
+      "recordedAt": "2026-11-18T16:47:56-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@ee55329ab715e29babd09c7c299dff6d46d9f2b3",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "AT-03",
+        "AT-04",
+        "AT-12",
+        "AT-13",
+        "AT-14",
+        "AT-25",
+        "AT-27",
+        "AT-28",
+        "AT-29",
+        "AT-30",
+        "AT-31",
+        "AT-32",
+        "SC-011",
+        "SC-017",
+        "SC-018"
+      ],
+      "kind": "test",
+      "summary": "pgTAP 229/229 on a fresh database and on one the end-to-end suite had used, including 121 publishing assertions",
+      "steps": "pnpm db:reset; pnpm db:test; pnpm desk:e2e; pnpm db:test",
+      "observed": "Files=5, Tests=229, Result: PASS both times. New publishing assertions: token-fenced snapshot, mark and complete; a re-claim after lease expiry gets a new token and locks the old worker out; second email mark refused; snapshot uses published_revision after a later edit; hand status changes to and from Published refused (42501); claim cancels jobs after revocation, rejection or withdrawn email permission, with the reason; already-live retry keeps the agent's revision; publish on a live story refused; already_emailed warning; 10-refusal budget; entity, list-quote, uncited-link, escaped and emphasis-split email, international phone and emphasis-split private-contact refusals; content checks not run with the switch off; slug fallback and transliteration",
+      "result": "pass",
+      "location": "supabase/tests/05_publishing.test.sql"
+    },
+    {
+      "id": "EV-0040",
+      "recordedAt": "2026-11-18T16:47:56-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@ee55329ab715e29babd09c7c299dff6d46d9f2b3",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-003",
+        "SC-011",
+        "AT-28",
+        "AT-32"
+      ],
+      "kind": "test",
+      "summary": "Vitest 101/101 plus typecheck and lint clean, including deploy fencing and the rendered-text contact check",
+      "steps": "pnpm --filter @sc/desk test; pnpm --filter @sc/desk typecheck; pnpm --filter @sc/desk lint",
+      "observed": "10 files, 101 tests passed. New: the local destination leaves the live site untouched when the claim cannot be confirmed or the run is stopped; Firebase confirms the claim after finalize and never calls the release without it; a claim lost mid-upload stops before the release; the reader-text check catches plain, escaped, emphasis-split, invisible-character and link-target emails, North American and international phones, and passes trade copy full of figures",
+      "result": "pass",
+      "location": "apps/desk/src/lib/site"
+    },
+    {
+      "id": "EV-0041",
+      "recordedAt": "2026-11-18T16:47:56-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@ee55329ab715e29babd09c7c299dff6d46d9f2b3",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "AT-08",
+        "AT-27",
+        "AT-28",
+        "AT-29",
+        "AT-30",
+        "SC-003",
+        "SC-011",
+        "SC-017"
+      ],
+      "kind": "test",
+      "summary": "Playwright 30/30 on the final v0.4.1 build, including a refused agent request that now persists and reads back as refused",
+      "steps": "pnpm desk:build (bundle scan clean); pnpm desk:e2e",
+      "observed": "30 passed (42.9s). AT-29 now also calls jobs.read on the refused job ID and gets state refused with the failed check; before the fix the gateway's savepoint rolled the refusal back. Bundle scan: 45 shipped files, 11 rules, no findings",
+      "result": "pass",
+      "location": "apps/desk/e2e/publishing.spec.ts"
+    },
+    {
+      "id": "EV-0042",
+      "recordedAt": "2026-11-18T16:47:56-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@ee55329ab715e29babd09c7c299dff6d46d9f2b3",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-009",
+        "SC-017"
+      ],
+      "kind": "test",
+      "summary": "Agent lab self-test 18/18 (13 system checks) against the v0.4.1 desk and local site",
+      "steps": "pnpm --filter @sc/desk start; pnpm --filter @sc/desk site:serve; pnpm --filter @sc/agent-lab lab --self-test",
+      "observed": "draft 5/5, injection 5/5, revocation 3/3, publish 5/5; system checks PASS (13/13). Scripted driver, no model call: not an agent result",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0043",
+      "recordedAt": "2026-11-18T16:47:56-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@ee55329ab715e29babd09c7c299dff6d46d9f2b3",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-003"
+      ],
+      "kind": "verification",
+      "summary": "Local site server: malformed escapes return 400 and the server stays up; directory redirects stay on the same host",
+      "steps": "serve-site on a scratch directory; curl --path-as-is /stories/abc, //stories/abc, /%E0%A4%A, /%00, /../etc/passwd, /nope",
+      "observed": "/stories/abc 301 to /stories/abc/; //stories/abc 301 to /stories/abc/ (previously Location //stories/abc/, a protocol-relative URL); /%E0%A4%A 400; /%00 400; traversal 404; health 200 afterwards",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0044",
+      "recordedAt": "2026-11-18T16:47:56-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@ee55329ab715e29babd09c7c299dff6d46d9f2b3",
+      "operator": "Claude Code (cloud session)",
+      "subjects": [
+        "SC-015",
+        "AT-23"
+      ],
+      "kind": "verification",
+      "summary": "Container image 0.4.1 builds (387 MB) and serves health, the pitch form with a nonce CSP and the gateway's 401, as node",
+      "steps": "docker build --secret id=extra_ca,src=<proxy CA> -f apps/desk/Dockerfile -t sc-desk:0.4.1 .; docker run with the CI placeholder settings; curl health, /pitch and POST /api/agent/v1",
+      "observed": "health {status: ok, service: sc-desk, version: 0.4.1}; /pitch 200 with a nonce CSP; gateway without a token 401; whoami node; no error lines in the container log",
+      "result": "pass"
     }
   ]
 }

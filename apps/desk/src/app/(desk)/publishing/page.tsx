@@ -120,7 +120,7 @@ export default async function PublishingPage() {
                           <ul className="compact-list">
                             {failed.map((g) => (
                               <li key={g.gate}>
-                                {AGENT_GATES[g.gate] ?? g.gate}: {g.detail}
+                                <strong>{AGENT_GATES[g.gate] ?? g.gate}:</strong> {g.detail}
                               </li>
                             ))}
                           </ul>

@@ -17,7 +17,10 @@
 -- * People are never blocked: staff checks come back as warnings they can acknowledge.
 -- * Human work wins: once a person has written or edited a story's text, agents cannot publish it.
 -- * The site build and upload run in the desk server under desk_publisher, a role that can only
---   claim jobs, read the publishable snapshot and record outcomes.
+--   claim jobs, read the publishable snapshot and record outcomes. A claim token fences every step
+--   after the claim, and the lease is renewed during long deploys.
+-- * The live site is built from the revision each story was published at (published_revision),
+--   never from text edited since, and no API role can move a story to or from Published by hand.
 
 -- ------------------------------------------------------------------------------------------------
 -- Role
@@ -239,8 +242,12 @@ begin
   if coalesce(current_revision, 0) <> coalesce(p_expected_revision, 0) then
     raise exception 'the article changed since you opened it' using errcode = 'SC409';
   end if;
+  -- Proposals allow shorter headlines and longer summaries than articles; adopt within article limits.
   saved := private.write_article(
-    prop.item_id, prop.title, prop.summary, prop.body_markdown, null,
+    prop.item_id,
+    case when char_length(btrim(prop.title)) >= 3 then left(btrim(prop.title), 180)
+         else (select e.title from app.editorial_items e where e.id = prop.item_id) end,
+    left(prop.summary, 300), prop.body_markdown, null,
     array(select distinct unnest(prop.source_ids)), true, prop.id, actor, true
   );
   update app.draft_proposals set status = 'accepted' where id = prop.id and status = 'proposed';
@@ -302,6 +309,9 @@ create table app.publish_jobs (
   attempts integer not null default 0 check (attempts between 0 and 20),
   gate_results jsonb not null default '[]'::jsonb check (jsonb_typeof(gate_results) = 'array'),
   acknowledged_warnings text[] not null default '{}' check (cardinality(acknowledged_warnings) <= 20),
+  agent_credential_id uuid references private.agent_credentials (id),
+  claim_token uuid,
+  email_attempted_at timestamptz,
   article_revision integer,
   site_version text check (char_length(site_version) <= 200),
   public_url text check (char_length(public_url) <= 2000),
@@ -421,26 +431,67 @@ stable
 security definer
 set search_path = ''
 as $$
-  with t as (
+  with raw as (
     select concat_ws(E'\n', p_title, p_summary, p_body) as all_text, coalesce(p_body, '') as body
+  ), t as (
+    -- "flat" is the text as a reader sees it once Markdown escapes, emphasis markers and invisible
+    -- characters are removed, so jane\@example.com or jane@exa*mple*.com cannot slip through.
+    select raw.*, regexp_replace(raw.all_text, '[\\*_`~\u00AD\u200B-\u200F\u2060\uFEFF]+', '', 'g') as flat
+    from raw
   )
   select array_remove(array[
-    -- A quotation of about eight words or more, or a Markdown block quote: quotes need a person
-    -- to confirm the wording against the source.
-    case when t.all_text ~ '["“][^"“”]{40,}["”]' or t.body ~ '(^|\n)[ \t]*>' then 'direct_quote' end,
-    case when t.all_text ~ '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
-           or t.all_text ~ '(\+?1[-. ]?)?\(?[0-9]{3}\)?[-. ][0-9]{3}[-. ][0-9]{4}'
+    -- A quotation of about eight words or more, or a Markdown block quote (also inside list items):
+    -- quotes need a person to confirm the wording against the source.
+    case when t.all_text ~ '["“][^"“”]{40,}["”]'
+           or t.body ~ '(^|\n)[ \t]*(([-*+]|[0-9]{1,9}[.)])[ \t]+)*>'
+         then 'direct_quote' end,
+    -- Email addresses, North American and international phone numbers (a + and at least nine
+    -- digits), and any recorded private contact, in the raw or the reader's text.
+    case when t.all_text ~ '[A-Za-z0-9._%+-]+[@＠][A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+           or t.flat ~ '[A-Za-z0-9._%+-]+[@＠][A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+           or t.flat ~ '(\+?1[-. ]?)?\(?[0-9]{3}\)?[-. ][0-9]{3}[-. ][0-9]{4}'
+           or t.flat ~ '\+(?=([^0-9\n]{0,2}[0-9]){9})[0-9]{1,3}([ .-]?\(?[0-9]{1,4}\)?){2,6}'
            or exists (
              select 1 from app.sources s
              where s.item_id = p_item_id
                and char_length(btrim(coalesce(s.private_contact, ''))) >= 6
-               and position(lower(btrim(s.private_contact)) in lower(t.all_text)) > 0
+               and (position(lower(btrim(s.private_contact)) in lower(t.all_text)) > 0
+                    or position(lower(btrim(s.private_contact)) in lower(t.flat)) > 0)
            )
          then 'contact_details' end,
     case when t.body ~ '!\[' or t.all_text ~* '<img' then 'embedded_image' end,
-    case when t.all_text ~ '<[A-Za-z!/]' then 'raw_html' end
+    -- HTML, and HTML character references (which Markdown decodes, so they could spell out an
+    -- email address, a phone number or quotation marks that the patterns above would not see).
+    case when t.all_text ~ '<[A-Za-z!/]'
+           or t.all_text ~ '&(#[0-9]{1,7}|#[xX][0-9A-Fa-f]{1,6}|[A-Za-z][A-Za-z0-9]{1,31});'
+         then 'raw_html' end
   ], null)
   from t
+$$;
+
+-- Links in agent text may point only at the URLs of the sources the text cites (inline links,
+-- reference definitions and autolinks are all counted).
+create function private.uncited_links(p_item_id uuid, p_body text, p_cited text[])
+returns integer
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  with urls as (
+    select m[1] as url from regexp_matches(coalesce(p_body, ''), '\]\(\s*<?([^)\s>]+)', 'g') as m
+    union all
+    select m[1] from regexp_matches(coalesce(p_body, ''), '(?:^|\n)[ \t]{0,3}\[[^]\n]+\]:[ \t]*<?([^\s>]+)', 'g') as m
+    union all
+    select m[1] from regexp_matches(coalesce(p_body, ''), '<((?:https?|mailto):[^\s>]+)>', 'g') as m
+  )
+  select count(*)::int
+  from urls u
+  where not exists (
+    select 1 from app.sources s
+    where s.item_id = p_item_id and s.source_code = any (p_cited) and s.url is not null
+      and rtrim(s.url, '/') = rtrim(u.url, '/')
+  )
 $$;
 
 -- Sources are cited on the public site only when staff mark them citable: a confidential
@@ -452,13 +503,16 @@ create policy staff_update_sources on app.sources for update to authenticated
   with check (app.current_staff_principal() is not null);
 grant update (public_citation) on app.sources to authenticated;
 
--- The automated release gate for agents. Every check is returned with its result, so a refusal
--- tells the agent and the editors exactly what to fix.
+-- The automated release gate for agents. Publishing conditions (switch, lane, grant, people-first,
+-- in-flight, format, daily limit, email permission) are checked first; the content checks run only
+-- when all of them pass, so content checks never answer questions for agents outside an open lane.
+-- p_job excludes a job's own row when the gate is re-run as the job is claimed.
 create function private.agent_publish_gates(
   p_agent uuid,
   p_proposal app.draft_proposals,
   p_item app.editorial_items,
-  p_send_email boolean
+  p_send_email boolean,
+  p_job uuid default null
 )
 returns jsonb
 language plpgsql
@@ -474,30 +528,27 @@ declare
   recent integer;
   in_flight boolean;
   people_wrote boolean;
-  findings text[] := private.content_findings(
-    p_item.id, p_proposal.title, p_proposal.summary, p_proposal.body_markdown
-  );
+  findings text[];
+  conditions jsonb;
 begin
   select * into pol from app.publishing_policy where singleton;
   select l.agents_may_publish into lane_open from app.publishing_lanes l where l.section = p_item.section;
-  select count(*) into publishable
-  from app.sources s
-  where s.item_id = p_item.id and s.agent_processing = 'yes' and s.public_citation
-    and s.source_code = any (cited);
   select count(*) into recent
   from app.publish_jobs j
   where j.requested_via = 'agent'
     and j.status in ('queued', 'running', 'succeeded', 'needs_attention')
-    and j.created_at > now() - interval '24 hours';
+    and j.created_at > now() - interval '24 hours'
+    and j.id is distinct from p_job;
   select exists (
     select 1 from app.publish_jobs j
     where j.item_id = p_item.id and j.status in ('queued', 'running', 'needs_attention')
+      and j.id is distinct from p_job
   ) into in_flight;
   select exists (
     select 1 from app.articles a where a.item_id = p_item.id and a.human_edited_at is not null
   ) into people_wrote;
 
-  return jsonb_build_array(
+  conditions := jsonb_build_array(
     jsonb_build_object('gate', 'master_switch', 'pass', pol.agents_may_publish,
       'detail', case when pol.agents_may_publish then 'Agent publishing is on.'
                      else 'Agent publishing is switched off in Settings.' end),
@@ -524,26 +575,43 @@ begin
     jsonb_build_object('gate', 'reporting_format',
       'pass', p_item.label = 'reporting' and p_item.format in ('explainer', 'reported_feature'),
       'detail', 'Agents publish explainers and reported features only; opinion, first-person, interviews and sponsored stories need a person.'),
-    jsonb_build_object('gate', 'enough_sources', 'pass', cardinality(cited) >= pol.min_sources,
-      'detail', format('Cites %s source(s); at least %s required.', cardinality(cited), pol.min_sources)),
-    jsonb_build_object('gate', 'sources_publishable', 'pass', publishable = cardinality(cited) and cardinality(cited) > 0,
-      'detail', 'Every cited source must be readable by the agent and marked citable by staff.'),
-    jsonb_build_object('gate', 'no_direct_quotes', 'pass', not ('direct_quote' = any (findings)),
-      'detail', 'Paraphrase and cite instead of quoting; quotes need a person to check them.'),
-    jsonb_build_object('gate', 'no_contact_details', 'pass', not ('contact_details' = any (findings)),
-      'detail', 'No email addresses, phone numbers or private contacts.'),
-    jsonb_build_object('gate', 'no_images', 'pass', not ('embedded_image' = any (findings)),
-      'detail', 'Agents cannot confirm image rights, so agent stories carry no images.'),
-    jsonb_build_object('gate', 'no_raw_html', 'pass', not ('raw_html' = any (findings)),
-      'detail', 'Markdown only; no HTML.'),
-    jsonb_build_object('gate', 'length', 'pass', char_length(p_proposal.body_markdown) between 400 and 30000,
-      'detail', format('Body is %s characters; 400 to 30,000 allowed.', char_length(p_proposal.body_markdown))),
     jsonb_build_object('gate', 'daily_limit', 'pass', recent < pol.agent_daily_limit,
       'detail', format('%s of %s agent publications used in the last 24 hours.', recent, pol.agent_daily_limit)),
     jsonb_build_object('gate', 'newsletter', 'pass', not p_send_email or pol.agents_may_email,
       'detail', case when not p_send_email then 'No newsletter email requested.'
                      when pol.agents_may_email then 'Agents may email subscribers.'
                      else 'Agents may not email subscribers; publish without email.' end)
+  );
+  if exists (select 1 from jsonb_array_elements(conditions) g where not (g ->> 'pass')::boolean) then
+    return conditions;
+  end if;
+
+  select count(*) into publishable
+  from app.sources s
+  where s.item_id = p_item.id and s.agent_processing = 'yes' and s.public_citation
+    and s.source_code = any (cited);
+  findings := private.content_findings(p_item.id, p_proposal.title, p_proposal.summary, p_proposal.body_markdown);
+  return conditions || jsonb_build_array(
+    jsonb_build_object('gate', 'headline_and_summary',
+      'pass', char_length(btrim(p_proposal.title)) between 3 and 180 and coalesce(char_length(p_proposal.summary), 0) <= 300,
+      'detail', 'A headline of 3 to 180 characters and a summary of at most 300.'),
+    jsonb_build_object('gate', 'enough_sources', 'pass', cardinality(cited) >= pol.min_sources,
+      'detail', format('Cites %s source(s); at least %s required.', cardinality(cited), pol.min_sources)),
+    jsonb_build_object('gate', 'sources_publishable', 'pass', publishable = cardinality(cited) and cardinality(cited) > 0,
+      'detail', 'Every cited source must be readable by the agent and marked citable by staff.'),
+    jsonb_build_object('gate', 'links_to_cited_sources',
+      'pass', private.uncited_links(p_item.id, p_proposal.body_markdown, cited) = 0,
+      'detail', 'Links may point only at the cited sources.'),
+    jsonb_build_object('gate', 'no_direct_quotes', 'pass', not ('direct_quote' = any (findings)),
+      'detail', 'Paraphrase and cite instead of quoting; quotes need a person to check them.'),
+    jsonb_build_object('gate', 'no_contact_details', 'pass', not ('contact_details' = any (findings)),
+      'detail', 'No email addresses, phone numbers or private contact details.'),
+    jsonb_build_object('gate', 'no_images', 'pass', not ('embedded_image' = any (findings)),
+      'detail', 'Agents cannot confirm image rights, so agent stories carry no images.'),
+    jsonb_build_object('gate', 'no_raw_html', 'pass', not ('raw_html' = any (findings)),
+      'detail', 'Markdown only; no HTML or HTML character references.'),
+    jsonb_build_object('gate', 'length', 'pass', char_length(p_proposal.body_markdown) between 400 and 30000,
+      'detail', format('Body is %s characters; 400 to 30,000 allowed.', char_length(p_proposal.body_markdown)))
   );
 end
 $$;
@@ -566,11 +634,13 @@ set search_path = ''
 as $$
 declare
   agent uuid := app.current_agent_principal();
+  credential uuid := nullif(current_setting('app.agent_credential_id', true), '')::uuid;
   existing app.publish_jobs;
   prop app.draft_proposals;
   it app.editorial_items;
   gates jsonb;
   passed boolean;
+  refusals integer;
   new_id uuid;
 begin
   if agent is null or not private.current_agent_has_scope('drafts.publish') then
@@ -592,14 +662,23 @@ begin
     raise exception 'proposal not found' using errcode = 'P0002';
   end if;
   select * into it from app.editorial_items e where e.id = prop.item_id for update;
-  gates := private.agent_publish_gates(agent, prop, it, coalesce(p_send_email, false));
+  -- Refusals are budgeted, so the checks cannot be used to probe for long.
+  select count(*) into refusals
+  from app.publish_jobs j
+  where j.requested_by = agent and j.status = 'refused' and j.created_at > now() - interval '24 hours';
+  if refusals >= 10 then
+    gates := jsonb_build_array(jsonb_build_object('gate', 'refusal_limit', 'pass', false,
+      'detail', 'Too many refused publishing requests in the last 24 hours; an editor needs to look before this agent tries again.'));
+  else
+    gates := private.agent_publish_gates(agent, prop, it, coalesce(p_send_email, false));
+  end if;
   passed := not exists (select 1 from jsonb_array_elements(gates) g where not (g ->> 'pass')::boolean);
   insert into app.publish_jobs (
-    item_id, proposal_id, action, send_email, requested_by, requested_via, idempotency_key, payload_hash,
-    request_id, status, gate_results, finished_at, outcome_message
+    item_id, proposal_id, action, send_email, requested_by, requested_via, agent_credential_id, idempotency_key,
+    payload_hash, request_id, status, gate_results, finished_at, outcome_message
   ) values (
-    it.id, prop.id, 'publish', coalesce(p_send_email, false), agent, 'agent', p_idempotency_key, p_payload_hash,
-    p_request_id, case when passed then 'queued' else 'refused' end, gates,
+    it.id, prop.id, 'publish', coalesce(p_send_email, false), agent, 'agent', credential, p_idempotency_key,
+    p_payload_hash, p_request_id, case when passed then 'queued' else 'refused' end, gates,
     case when passed then null else now() end,
     case when passed then null else 'Refused by the automated publishing checks; nothing was published.' end
   )
@@ -672,6 +751,9 @@ begin
   if p_action = 'republish' and it.status <> 'published' then
     raise exception 'only a published story can be updated' using errcode = '22023';
   end if;
+  if p_action = 'publish' and it.status = 'published' then
+    raise exception 'this story is already live; update it instead' using errcode = '22023';
+  end if;
   if p_action = 'unpublish' and it.status <> 'published' then
     raise exception 'nothing to unpublish' using errcode = '22023';
   end if;
@@ -696,6 +778,11 @@ begin
       select 'text_' || f from unnest(private.content_findings(it.id, art.title, art.dek, art.body_markdown)) f
       where f <> 'direct_quote' or art.ai_generated
     );
+  end if;
+  if coalesce(p_send_email, false) and exists (
+    select 1 from app.publish_jobs j where j.item_id = it.id and j.email_attempted_at is not null
+  ) then
+    warn := array_append(warn, 'already_emailed');
   end if;
   if exists (select 1 from unnest(warn) w where not (w = any (coalesce(p_acknowledged, '{}')))) then
     return query select null::uuid, 'needs_confirmation'::text, false, warn;
@@ -734,11 +821,12 @@ begin
     raise exception 'not authorized' using errcode = '42501';
   end if;
   update app.publish_jobs
-  set status = 'queued', outcome_message = null, lease_until = null, finished_at = null
+  set status = 'queued', outcome_message = null, lease_until = null, finished_at = null, claim_token = null
   where id = p_job_id
     and (status in ('failed', 'needs_attention') or (status = 'running' and lease_until < now()));
   if not found then
-    return false;
+    -- A queued job needs no change; the caller runs it.
+    return exists (select 1 from app.publish_jobs where id = p_job_id and status = 'queued');
   end if;
   perform private.write_audit('publish.retry', 'publish_job', p_job_id::text, 'allowed', null, '{}'::jsonb);
   return true;
@@ -757,7 +845,7 @@ begin
     raise exception 'not authorized' using errcode = '42501';
   end if;
   update app.publish_jobs
-  set status = 'cancelled', finished_at = now(), lease_until = null,
+  set status = 'cancelled', finished_at = now(), lease_until = null, claim_token = null,
       outcome_message = coalesce(outcome_message, 'Cancelled by an editor.')
   where id = p_job_id
     and (status in ('queued', 'failed', 'needs_attention') or (status = 'running' and lease_until < now()));
@@ -896,13 +984,24 @@ language sql
 immutable
 set search_path = ''
 as $$
-  select left(trim(both '-' from regexp_replace(lower(coalesce(p_title, '')), '[^a-z0-9]+', '-', 'g')), 72)
-         || '-' || lower(replace(p_content_id, 'SC-', ''))
+  -- Letters with diacritics become their base letter (São → sao, Pêche → peche); then truncate
+  -- before trimming hyphens, so the result never has a doubled or leading hyphen. Titles with no
+  -- Latin letters or digits fall back to "story".
+  select coalesce(nullif(base, ''), 'story') || '-' || lower(replace(p_content_id, 'SC-', ''))
+  from (
+    select trim(both '-' from left(regexp_replace(lower(translate(
+             replace(replace(replace(replace(replace(replace(replace(replace(coalesce(p_title, ''),
+               'ß', 'ss'), 'Æ', 'ae'), 'æ', 'ae'), 'Œ', 'oe'), 'œ', 'oe'), 'Þ', 'th'), 'þ', 'th'), '&', ' and '),
+             'ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïðñòóôõöøùúûüýÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĴĵĶķĹĺĻļĽľĿŀŁłŃńŅņŇňŉŌōŎŏŐőŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƚƠơƯưǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǞǟǠǡǦǧǨǩǪǫǬǭǰǴǵǸǹǺǻȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȞȟȦȧȨȩȪȫȬȭȮȯȰȱȲȳ',
+             'aaaaaaceeeeiiiidnoooooouuuuyaaaaaaceeeeiiiidnoooooouuuuyyaaaaaaccccccccddddeeeeeeeeeegggggggghhhhiiiiiiiiiijjkkllllllllllnnnnnnnoooooorrrrrrssssssssttttttuuuuuuuuuuuuwwyyyzzzzzzsbloouuaaiioouuuuuuuuuuaaaaggkkoooojggnnaaaaaaeeeeiiiioooorrrruuuusstthhaaeeooooooooyy')), '[^a-z0-9]+', '-', 'g'), 72)) as base
+  ) s
 $$;
 
--- Returns the job to run, or null when it is not claimable (done, leased by another worker, or an
--- agent job whose permission was withdrawn meanwhile). For an agent job, the proposal becomes the
--- story's article here, unless a person has written the story in the meantime.
+-- Claims a job to run. Returns the claim (with a token that fences every later step: a worker whose
+-- lease expired cannot snapshot, email or complete), or {"busy": true} when another site build
+-- holds the lease, {"cancelled": true, "message"} when an agent job's conditions no longer hold,
+-- {"failed": true, "message"} when the job could not be prepared, or null when there is nothing to
+-- run (finished, or running under a live lease).
 create function app.claim_publish_job(p_job_id uuid)
 returns jsonb
 language plpgsql
@@ -915,9 +1014,11 @@ declare
   it app.editorial_items;
   prop app.draft_proposals;
   art app.articles;
-  pol app.publishing_policy;
-  lane_open boolean;
+  gates jsonb;
   reason text;
+  token uuid := gen_random_uuid();
+  publish_title text;
+  already_live boolean;
 begin
   -- One site build at a time: every deploy is a full snapshot, so two concurrent builds could
   -- drop each other's story. A busy answer leaves the job queued for the next run.
@@ -932,57 +1033,110 @@ begin
     return jsonb_build_object('busy', true);
   end if;
   select * into it from app.editorial_items where id = j.item_id for update;
-  select * into pol from app.publishing_policy where singleton;
-  select * into art from app.articles where item_id = it.id;
-  if j.requested_via = 'agent' then
-    select l.agents_may_publish into lane_open from app.publishing_lanes l where l.section = it.section;
-    reason := case
-      when not pol.agents_may_publish or not coalesce(lane_open, false)
-        then 'Agent publishing was switched off before this job ran.'
-      when art.human_edited_at is not null
-        then 'A person started writing this story before the job ran, so the agent stopped.'
-      when not exists (select 1 from app.principals p where p.id = j.requested_by and p.status = 'active')
-        then 'The agent was disabled before this job ran.'
-    end;
+
+  -- A retry of a job whose revision is already the live one only finishes the job (the email is
+  -- never resent), so it publishes nothing new and is not re-checked.
+  already_live := j.article_revision is not null and it.status = 'published'
+                  and it.published_revision is not distinct from j.article_revision;
+
+  if j.requested_via = 'agent' and not already_live then
+    -- Everything that allowed the request must still hold when the job runs.
+    select * into prop from app.draft_proposals where id = j.proposal_id;
+    if not exists (
+         select 1 from private.agent_credentials c
+         where c.id = j.agent_credential_id and c.principal_id = j.requested_by and c.revoked_at is null
+           and (c.expires_at is null or c.expires_at > now()) and 'drafts.publish' = any (c.scopes)
+       )
+       or not exists (select 1 from app.principals p where p.id = j.requested_by and p.status = 'active') then
+      reason := 'The agent''s token or account was revoked before this job ran.';
+    else
+      gates := private.agent_publish_gates(j.requested_by, prop, it, j.send_email, j.id);
+      select string_agg(g ->> 'gate', ', ') into reason
+      from jsonb_array_elements(gates) g where not (g ->> 'pass')::boolean;
+      if reason is not null then
+        reason := 'Conditions changed before this job ran; now failing: ' || reason || '.';
+      end if;
+    end if;
     if reason is not null then
       update app.publish_jobs
-      set status = 'cancelled', finished_at = now(), lease_until = null, outcome_message = reason
+      set status = 'cancelled', finished_at = now(), lease_until = null, claim_token = null,
+          outcome_message = left(reason, 1000)
       where id = j.id;
       perform private.write_audit('publish.cancelled', 'publish_job', j.id::text, 'denied', j.request_id,
-        jsonb_build_object('reason', reason, 'item_id', it.id));
-      return null;
+        jsonb_build_object('reason', left(reason, 300), 'item_id', it.id));
+      return jsonb_build_object('cancelled', true, 'message', left(reason, 1000));
     end if;
-    select * into prop from app.draft_proposals where id = j.proposal_id;
-    if art.item_id is null or art.origin_proposal_id is distinct from prop.id then
-      perform private.write_article(
-        it.id, prop.title, prop.summary, prop.body_markdown, null,
-        array(select distinct unnest(prop.source_ids)), true, prop.id, j.requested_by, false
-      );
+  end if;
+
+  -- Prepare the text and the address. A job that cannot be prepared fails instead of staying
+  -- queued, so it never blocks the jobs behind it.
+  begin
+    -- An agent job writes its proposal as the article on its first run and freezes that revision;
+    -- a retry keeps it, so text a person saved since is never published under the agent's job.
+    if j.requested_via = 'agent' and j.article_revision is null then
       select * into art from app.articles where item_id = it.id;
+      if art.item_id is null or art.origin_proposal_id is distinct from prop.id then
+        perform private.write_article(
+          it.id, prop.title, prop.summary, prop.body_markdown, null,
+          array(select distinct unnest(prop.source_ids)), true, prop.id, j.requested_by, false
+        );
+        select * into art from app.articles where item_id = it.id;
+      end if;
+      j.article_revision := art.revision;
     end if;
-  end if;
-  if it.slug is null and j.action <> 'unpublish' then
-    update app.editorial_items set slug = private.slug_for(art.title, it.content_id) where id = it.id
-    returning * into it;
-  end if;
+    if j.action <> 'unpublish' then
+      select r.title into publish_title
+      from app.article_revisions r where r.item_id = it.id and r.revision = j.article_revision;
+      if publish_title is null then
+        raise exception 'the revision to publish (%) does not exist', j.article_revision;
+      end if;
+      if it.slug is null then
+        update app.editorial_items set slug = private.slug_for(publish_title, it.content_id) where id = it.id;
+      end if;
+    end if;
+  exception when others then
+    update app.publish_jobs
+    set status = 'failed', finished_at = now(), lease_until = null, claim_token = null,
+        outcome_message = left('This job could not be prepared: ' || sqlerrm, 1000)
+    where id = j.id;
+    perform private.write_audit('publish.failed', 'publish_job', j.id::text, 'error', j.request_id,
+      jsonb_build_object('stage', 'claim', 'error', left(sqlerrm, 300)));
+    -- The database's message stays in the job record for editors.
+    return jsonb_build_object('failed', true, 'message', 'This job could not be prepared; an editor can see why on the Publishing page.');
+  end;
+
   update app.publish_jobs
-  set status = 'running', attempts = attempts + 1, lease_until = now() + interval '3 minutes',
-      started_at = coalesce(started_at, now()), article_revision = coalesce(art.revision, article_revision)
+  set status = 'running', attempts = attempts + 1, lease_until = now() + interval '5 minutes',
+      started_at = coalesce(started_at, now()), claim_token = token, article_revision = j.article_revision
   where id = j.id
   returning * into j;
+  select * into it from app.editorial_items where id = j.item_id;
   return jsonb_build_object(
     'jobId', j.id,
+    'claimToken', token,
     'action', j.action,
     'sendEmail', j.send_email,
     'requestedVia', j.requested_via,
     'requestId', j.request_id,
     'attempt', j.attempts,
-    'emailAttempted', j.newsletter_id is not null or exists (
-      select 1 from private.audit_events e
-      where e.subject_type = 'publish_job' and e.subject_id = j.id::text and e.action = 'publish.email_attempt'
-    ),
+    'emailAttempted', j.email_attempted_at is not null,
     'item', jsonb_build_object('id', it.id, 'contentId', it.content_id, 'slug', it.slug, 'section', it.section)
   );
+end
+$$;
+
+-- Keeps a running job's lease alive during a long deploy; false means the claim was lost.
+create function app.renew_publish_lease(p_job_id uuid, p_claim_token uuid)
+returns boolean
+language plpgsql
+volatile
+security definer
+set search_path = ''
+as $$
+begin
+  update app.publish_jobs set lease_until = now() + interval '5 minutes'
+  where id = p_job_id and status = 'running' and claim_token = p_claim_token;
+  return found;
 end
 $$;
 
@@ -1000,9 +1154,10 @@ as $$
   limit 1
 $$;
 
--- Everything the public site shows, as of this job: every published story, plus the job's story
--- when it is being published or updated, minus it when it is being unpublished.
-create function app.site_snapshot(p_job_id uuid)
+-- What the public site shows, as of this job. Every other story is rebuilt from the revision that
+-- was published (never from text edited since), and only stories the publishing functions marked
+-- live are included; the job's own story uses the revision the job froze.
+create function app.site_snapshot(p_job_id uuid, p_claim_token uuid)
 returns jsonb
 language plpgsql
 stable
@@ -1013,9 +1168,10 @@ declare
   j app.publish_jobs;
   pol app.publishing_policy;
 begin
-  select * into j from app.publish_jobs where id = p_job_id and status = 'running';
+  select * into j from app.publish_jobs
+  where id = p_job_id and status = 'running' and claim_token = p_claim_token;
   if not found then
-    raise exception 'job is not running' using errcode = '55000';
+    raise exception 'job is not running under this claim' using errcode = '55000';
   end if;
   select * into pol from app.publishing_policy where singleton;
   return jsonb_build_object(
@@ -1024,56 +1180,67 @@ begin
       select jsonb_agg(jsonb_build_object(
         'contentId', i.content_id,
         'slug', i.slug,
-        'title', a.title,
-        'dek', a.dek,
-        'bodyMarkdown', a.body_markdown,
-        'byline', a.byline,
+        'title', r.title,
+        'dek', r.dek,
+        'bodyMarkdown', r.body_markdown,
+        'byline', r.byline,
         'section', i.section,
         'label', i.label,
         'format', i.format,
-        'aiGenerated', a.ai_generated,
-        'revision', a.revision,
+        'aiGenerated', r.ai_generated,
+        'revision', r.revision,
         'publishedAt', coalesce(i.published_at, now()),
-        'updatedAt', case when i.id = j.item_id then now() else coalesce(i.updated_at, i.published_at) end,
+        'updatedAt', case
+          when i.id = j.item_id and j.action = 'republish' then now()
+          when i.id = j.item_id then coalesce(i.published_at, now())
+          else greatest(coalesce(i.published_at, r.saved_at), r.saved_at) end,
         'sources', coalesce((
           select jsonb_agg(jsonb_build_object(
             'sourceCode', s.source_code, 'title', s.title, 'publisher', s.publisher, 'url', s.url,
             'publishedOn', s.published_on
           ) order by s.source_code)
           from app.sources s
-          where s.item_id = i.id and s.public_citation and s.source_code = any (a.source_codes)
+          where s.item_id = i.id and s.public_citation and s.source_code = any (r.source_codes)
         ), '[]'::jsonb)
       ) order by coalesce(i.published_at, now()) desc, i.content_id)
       from app.editorial_items i
-      join app.articles a on a.item_id = i.id
+      join app.article_revisions r
+        on r.item_id = i.id
+       and r.revision = case when i.id = j.item_id then j.article_revision else i.published_revision end
       where i.slug is not null
         and (
           (i.id = j.item_id and j.action in ('publish', 'republish'))
-          or (i.id <> j.item_id and i.status = 'published')
+          or (i.id <> j.item_id and i.published_revision is not null)
         )
     ), '[]'::jsonb)
   );
 end
 $$;
 
--- Called just before the newsletter request, so a retry after an uncertain outcome never sends twice.
-create function app.mark_email_attempt(p_job_id uuid)
-returns void
+-- Records the newsletter attempt before the request is made, at most once per job: true means
+-- this worker may send; false means an attempt already happened (or the claim was lost).
+create function app.mark_email_attempt(p_job_id uuid, p_claim_token uuid)
+returns boolean
 language plpgsql
 volatile
 security definer
 set search_path = ''
 as $$
 begin
-  if not exists (select 1 from app.publish_jobs where id = p_job_id and status = 'running' and send_email) then
-    raise exception 'job is not sending email' using errcode = '55000';
+  update app.publish_jobs set email_attempted_at = now()
+  where id = p_job_id and status = 'running' and claim_token = p_claim_token and send_email
+    and email_attempted_at is null;
+  if not found then
+    return false;
   end if;
   perform private.write_audit('publish.email_attempt', 'publish_job', p_job_id::text, 'allowed', null, '{}'::jsonb);
+  return true;
 end
 $$;
 
 create function app.complete_publish_job(
   p_job_id uuid,
+  p_claim_token uuid,
   p_status text,
   p_site_deployed boolean,
   p_public_url text,
@@ -1089,14 +1256,13 @@ set search_path = ''
 as $$
 declare
   j app.publish_jobs;
-  art app.articles;
 begin
   if p_status not in ('succeeded', 'failed', 'needs_attention') then
     raise exception 'unknown outcome' using errcode = '22023';
   end if;
   select * into j from app.publish_jobs where id = p_job_id for update;
-  if not found or j.status <> 'running' then
-    raise exception 'job is not running' using errcode = '55000';
+  if not found or j.status <> 'running' or j.claim_token is distinct from p_claim_token then
+    raise exception 'job is not running under this claim' using errcode = '55000';
   end if;
   update app.publish_jobs
   set status = p_status,
@@ -1105,19 +1271,19 @@ begin
       newsletter_id = coalesce(p_newsletter_id, newsletter_id),
       outcome_message = left(p_message, 1000),
       lease_until = null,
+      claim_token = null,
       finished_at = case when p_status = 'needs_attention' then null else now() end
   where id = j.id;
 
   -- The site reflects the job as soon as it was deployed, even if a later step (the email) failed.
   if p_site_deployed then
-    select * into art from app.articles where item_id = j.item_id;
     if j.action in ('publish', 'republish') then
       update app.editorial_items
       set status = 'published',
           published_at = coalesce(published_at, now()),
           published_by = coalesce(published_by, j.requested_by),
           published_via = coalesce(published_via, j.requested_via),
-          published_revision = art.revision,
+          published_revision = j.article_revision,
           public_url = coalesce(p_public_url, public_url)
       where id = j.item_id;
       if j.proposal_id is not null then
@@ -1137,12 +1303,37 @@ begin
     case when p_status = 'succeeded' then 'allowed' else 'error' end, j.request_id,
     jsonb_build_object(
       'via', j.requested_via, 'action', j.action, 'item_id', j.item_id, 'site_deployed', p_site_deployed,
-      'site_version', p_site_version, 'send_email', j.send_email, 'newsletter_id', p_newsletter_id,
-      'attempt', j.attempts, 'message', left(p_message, 300)
+      'revision', j.article_revision, 'site_version', p_site_version, 'send_email', j.send_email,
+      'newsletter_id', p_newsletter_id, 'attempt', j.attempts, 'message', left(p_message, 300)
     )
   );
 end
 $$;
+
+-- Publication state belongs to the publishing workflow: no API role can move a story to or from
+-- Published by hand (the live site is decided by published_revision, which only the publishing
+-- functions write).
+create function private.guard_publication_state()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if current_user in ('anon', 'authenticated', 'desk_agent', 'desk_publisher', 'desk_app')
+     and (
+       (tg_op = 'INSERT' and new.status = 'published')
+       or (tg_op = 'UPDATE' and new.status is distinct from old.status
+           and (new.status = 'published' or old.status = 'published'))
+     ) then
+    raise exception 'publish and unpublish from the Publishing panel' using errcode = '42501';
+  end if;
+  return new;
+end
+$$;
+
+create trigger editorial_items_guard_publication
+  before insert or update of status on app.editorial_items
+  for each row execute function private.guard_publication_state();
 
 -- ------------------------------------------------------------------------------------------------
 -- Row Level Security and grants
@@ -1189,12 +1380,13 @@ begin
     join pg_namespace n on n.oid = p.pronamespace
     where (n.nspname = 'private' and p.proname in (
              'forbid_revision_changes', 'write_article', 'current_agent_has_scope', 'content_findings',
-             'agent_publish_gates', 'cancel_queued_agent_jobs', 'slug_for'))
+             'agent_publish_gates', 'cancel_queued_agent_jobs', 'slug_for', 'uncited_links',
+             'guard_publication_state'))
        or (n.nspname = 'app' and p.proname in (
              'save_article', 'adopt_proposal', 'agent_request_publish', 'staff_request_publish',
              'retry_publish_job', 'cancel_publish_job', 'set_publishing_policy', 'stop_agent_publishing',
              'set_publishing_lane', 'claim_publish_job', 'site_snapshot', 'mark_email_attempt',
-             'complete_publish_job', 'next_publish_job'))
+             'complete_publish_job', 'next_publish_job', 'renew_publish_lease'))
   loop
     execute format(
       'revoke all on function %s from public, anon, authenticated, service_role, desk_agent, desk_publisher', f
@@ -1213,7 +1405,8 @@ grant execute on function app.set_publishing_policy(boolean, boolean, integer, i
 grant execute on function app.stop_agent_publishing() to authenticated;
 grant execute on function app.set_publishing_lane(text, boolean) to authenticated;
 grant execute on function app.claim_publish_job(uuid) to desk_publisher;
-grant execute on function app.site_snapshot(uuid) to desk_publisher;
+grant execute on function app.site_snapshot(uuid, uuid) to desk_publisher;
+grant execute on function app.renew_publish_lease(uuid, uuid) to desk_publisher;
 grant execute on function app.next_publish_job() to desk_publisher;
-grant execute on function app.mark_email_attempt(uuid) to desk_publisher;
-grant execute on function app.complete_publish_job(uuid, text, boolean, text, text, text, text) to desk_publisher;
+grant execute on function app.mark_email_attempt(uuid, uuid) to desk_publisher;
+grant execute on function app.complete_publish_job(uuid, uuid, text, boolean, text, text, text, text) to desk_publisher;

@@ -72,6 +72,8 @@ Reusable for any private tool in this brand. Live reference: `apps/desk/src/app/
 - **Calendar dates** (Postgres `date`) are formatted as dates in UTC, never as instants in the newsroom zone; otherwise they show a day early.
 - **Masthead rule** sits under the wordmark only (`justify-self: start` on grid layouts), not across the bar.
 - **Fonts:** `@fontsource-variable` registers `Fraunces Variable` and `Source Sans 3 Variable`; put those names before the token families when compiling tokens for an app.
+- **State a workflow owns** (v0.4.1). When a value is set by a process, such as Published, which only publishing sets, the form shows that value as the only choice. The hint names the control that changes it ("Update it or take it off the site from the Publishing panel; the status follows"). The server refuses a hand change with the same sentence, so a crafted request gets the same explanation as the page.
+- **Failed checks** (v0.4.1). List one item per failed check: a short check name in bold, then what was found ("**Master switch:** Agent publishing is switched off in Settings."). Never pair a requirement phrased as a statement with a finding that contradicts it.
 
 ## Public site patterns (from the desk-built static site, v0.4.0)
 

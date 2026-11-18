@@ -753,9 +753,17 @@ export default async function StoryPage({ params }: PageProps<'/stories/[content
               <SelectField
                 name="status"
                 label="Operations status"
-                options={Object.fromEntries(Object.entries(ITEM_STATUSES).map(([k, v]) => [k, v.label]))}
+                options={Object.fromEntries(
+                  Object.entries(ITEM_STATUSES)
+                    .filter(([k]) => (item.status === 'published' ? k === 'published' : k !== 'published'))
+                    .map(([k, v]) => [k, v.label]),
+                )}
                 defaultValue={item.status}
-                hint="Publishing sets this automatically. Change it by hand to track the workflow."
+                hint={
+                  item.status === 'published'
+                    ? 'This story is live. Update it or take it off the site from the Publishing panel; the status follows.'
+                    : 'Publishing sets Published. Change the others by hand to track the workflow.'
+                }
               />
               <ItemFields
                 staff={staffOptions}

@@ -1,4 +1,4 @@
-# Operations desk (v0.4.0)
+# Operations desk (v0.4.1)
 
 The operations desk for Seafood Confidential:
 - staff sign-in;
@@ -29,6 +29,21 @@ Hosting and costs: [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md
   Refusals list the failed checks. Agent stories carry an "AI agent" label and the owner's disclosure.
 - **Stopping agents.** Anyone on staff can press **Stop agent publishing** (Publishing page or Settings). It cancels queued agent jobs immediately.
 - **Publishing log.** `/publishing` lists every publication by people and agents, with refused checks, acknowledged warnings and anything that needs attention.
+
+### Publishing safeguards (v0.4.1)
+
+- **What is live is what was published.** Each story records the revision it was published at. Every rebuild of the site uses those revisions, never text saved since, so an editor can keep working on a live story without it going out. Status moves to and from Published only through publishing; no API role can set it by hand (a database trigger).
+- **One build at a time, fenced.** A job is claimed with a token and a 5-minute lease. The desk renews the lease during the deploy and confirms it right before the release. A worker that lost its lease cannot read the snapshot, send email or record an outcome.
+- **The newsletter goes out at most once per job.** The attempt is recorded in the database before Kit is called, and a second attempt is refused. A live story is updated, not published again. Publishing again with email after an unpublish warns that subscribers were already emailed.
+- **Agent jobs are re-checked when they run.** A revoked token, a rejected proposal, withdrawn email permission or the switch turned off cancels the job, and the reason is recorded. A retry publishes the revision the agent's job froze, never a person's later edit.
+- **Agents cannot probe the checks.** Content checks run only once the switch, lane and grant checks pass, and an agent gets 10 refused requests a day. Refusals are recorded, and the agent reads them with `jobs.read`.
+- **Agent text is checked as readers see it.** The database refuses:
+  - HTML and HTML character references;
+  - quotations, including block quotes in lists;
+  - links other than to cited sources;
+  - email addresses and phone numbers, including ones hidden by Markdown escapes, emphasis or invisible characters.
+
+  The desk checks the rendered page once more before deploying.
 
 ## Scope delivered in this version
 
@@ -104,10 +119,12 @@ Open <http://127.0.0.1:3000>, request a sign-in link and open it from Mailpit at
 | Roles | Owner: principals, agents, tokens. Owner and managing editor: agent grants, source deletion, audit trail. Editors: editorial work. Staff can update only the columns the workflow changes (column-level grants): submissions, agent proposals, content IDs, provenance and source records cannot be rewritten after insert. Who reviewed or decided is stamped by the database, never taken from the request | pgTAP `01`, `02`; E2E |
 | Agents | Named principals; tokens `sca_<prefix>_<secret>` stored as SHA-256; scopes per token; items only when granted; no access to pitches or rights; sources only through `app.agent_item_sources`, which redacts in SQL; cannot update items, approve proposals or insert anything that looks reviewed (column-level insert grants); can record only `agent.*` audit events. Revoking an agent is final and revokes every token it holds | pgTAP `03_agent_access`; E2E gateway suite |
 | Public intake | `anon` can execute exactly one function, `app.submit_pitch`: consent-gated, bounded fields, receipt only, honeypot, no uploads; 5 per client per hour and 200 per hour overall, serialized with an advisory lock so bursts cannot exceed either limit. The client is a keyed daily hash of the address that the nearest of `DESK_TRUSTED_PROXY_HOPS` proxies appended (required in production; with 0, all clients share one bucket) | pgTAP `04_…`; E2E; units |
-| Audit | Append-only `private.audit_events` (update, delete and truncate refused), actor derived from the bound identity, request ID on every row including trigger-written rows. Recorded: every gateway request that carries a well-formed token, intake submissions and throttling, pitch decisions, item status, owner and Ghost-link changes, sources, rights, proposals, grants, staff and agent principals, tokens, and refused desk actions. Transport rejections and requests without a token shape are logged, not audited, so anonymous traffic cannot grow the trail | pgTAP `04_…`; E2E |
+| Audit | Append-only `private.audit_events` (update, delete and truncate refused), actor derived from the bound identity, request ID on every row including trigger-written rows. Recorded: every gateway request that carries a well-formed token, intake submissions and throttling, pitch decisions, item status and owner changes, sources, rights, proposals, grants, staff and agent principals, tokens, publish requests, refusals, cancellations, email attempts and outcomes, publishing settings, and refused desk actions. Transport rejections and requests without a token shape are logged, not audited, so anonymous traffic cannot grow the trail | pgTAP `04_…`; E2E |
 | Browser | Nonce CSP with `strict-dynamic`, `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'none'`; HSTS, nosniff, `Referrer-Policy: same-origin`, COOP/CORP, Permissions-Policy; no `x-powered-by` | E2E headers test; unit tests |
 | Secrets | No `NEXT_PUBLIC_` variables; the app refuses to start with a Supabase secret key in its environment; the client bundle is scanned for secret shapes and the literal local secret values | `pnpm desk:build` (bundle scan) |
 | Server Actions | Next.js origin check (CSRF), 1 MB body limit, stable `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY`; every action re-checks the session and runs under RLS | Code review; E2E |
+| Publishing | Jobs are created only by `app.staff_request_publish` (owners and managing editors) and `app.agent_request_publish` (agents with `drafts.publish`, all gates in SQL); the site is built under `desk_publisher`, which can only claim, renew, snapshot, mark the email and complete, each fenced by the claim token; rebuilds use `published_revision`; a trigger stops API roles from setting Published by hand | pgTAP `05_publishing` (121 assertions); E2E publishing suite; units |
+| Public site | Static files only, strict CSP (`script-src 'self'`, `form-action` Kit only), Markdown rendered with HTML off and a link allowlist; agent stories carry the AI label and disclosure | Units (`site.test.ts`, `contact.test.ts`); E2E with axe |
 
 **Trust boundary to know about.** The desk server binds identities with `set_config`. Anyone who can run arbitrary SQL on the `desk_app` connection could bind any identity, exactly as with PostgREST's trusted claims. The mitigations are a server-only connection string, parameterized SQL only (lint-enforced) and principal status checks that make revocation effective even for a forged binding.
 
@@ -159,9 +176,9 @@ For local work and first-owner bootstrap only (it uses the database owner URL an
 
 | Layer | Command | What it proves |
 | --- | --- | --- |
-| Database policies | `pnpm db:test` | 108 pgTAP assertions: grants, RLS, column privileges, functions, integrity triggers, workflow, audit (AT-25, AT-03, AT-04, AT-06, AT-07, AT-12, AT-13 at the database layer). Mutation-tested: each of 11 deliberate breaks fails a named assertion. Correct on fresh and used databases |
-| Units | `pnpm --filter @sc/desk test` | 67 tests: next actions, CSP, redirects, client addresses, tokens, redaction, hashing, cursors, rate guards, validation, every contract example |
-| End to end | `pnpm desk:e2e` | 24 tests: real sign-in through Mailpit, the pitch-to-release journey, access control, hostile input, the gateway over HTTP, phone layouts; axe WCAG 2.2 AA on every page visited |
+| Database policies | `pnpm db:test` | 229 pgTAP assertions: grants, RLS, column privileges, functions, integrity triggers, workflow, audit, and publishing (gates and their bypasses, claim fencing, leases, at-most-once email, re-checks, retries, refusal budget, addresses). Covers AT-03, AT-04, AT-06, AT-07, AT-12 to AT-14, AT-25 and AT-27 to AT-30 at the database layer. Correct on fresh and used databases |
+| Units | `pnpm --filter @sc/desk test` | 101 tests: next actions, CSP, redirects, client addresses, tokens, redaction, hashing, cursors, rate guards, validation, every contract example, the site build, deploy fencing (local and Firebase), Kit, and the rendered-text contact check |
+| End to end | `pnpm desk:e2e` | 30 tests: real sign-in through Mailpit, the pitch-to-release journey, access control, hostile input, the gateway over HTTP, agent and staff publishing against the local site server, phone layouts; axe WCAG 2.2 AA on every page visited |
 | Bundle | `pnpm desk:build` | No secret shapes or local secret values in anything shipped to browsers |
 
 CI runs all of it in the `desk` job of [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) against a local Supabase stack, and the `container` job builds the production image and smoke-tests it. The [agent lab](../apps/agent-lab/README.md) drives a real Claude agent through the gateway (`pnpm lab`; `pnpm lab --self-test` checks the harness without the model).

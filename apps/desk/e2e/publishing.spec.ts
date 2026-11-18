@@ -200,6 +200,16 @@ test('AT-29: once a person has written a story, the agent cannot publish it', as
   expect(body.error.details.failedChecks.map((c: { check: string }) => c.check)).toContain(
     'brief_untouched_by_people',
   );
+  // The refusal is recorded (it counts against the agent's daily refusal budget) and reads back.
+  const read = await call(request, {
+    requestId: rid('read-refused'),
+    tool: 'jobs.read',
+    arguments: { jobId: body.error.details.jobId },
+  });
+  expect(read.status()).toBe(200);
+  const job = (await read.json()).result;
+  expect(job.state).toBe('refused');
+  expect(job.failedChecks.map((c: { check: string }) => c.check)).toContain('brief_untouched_by_people');
 });
 
 test('AT-08: a save from an old revision is refused and the newer text is kept', async ({

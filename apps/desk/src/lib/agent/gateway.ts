@@ -367,6 +367,12 @@ export async function handleAgentRequest(request: Request): Promise<Response> {
   return json(result.status, result.body, requestId, result.headers ?? {});
 }
 
+const AGENT_READABLE_OUTCOMES = new Set<keyof typeof PUBLISH_JOB_STATES>([
+  'succeeded',
+  'cancelled',
+  'refused',
+]);
+
 function ok(requestId: string, tool: string, data: Record<string, unknown>) {
   return { schemaVersion: SCHEMA_VERSION, requestId, ok: true, tool, result: data };
 }
@@ -587,12 +593,20 @@ async function runTool(tx: Tx, agent: AgentBinding, req: AgentRequest): Promise<
       }
       const job = row!;
       if (job.jobStatus === 'refused') {
-        throw new GatewayError(
-          422,
-          'publish_refused',
-          'The publishing checks refused this proposal. Nothing was sent. Fix the failed checks and submit a new proposal.',
-          { jobId: job.jobId, failedChecks: failedChecks(job.gateResults) },
-        );
+        // Returned, not thrown: the refused job and its audit row must commit (they count against
+        // the agent's daily refusal budget, and jobs.read can show them).
+        return {
+          status: 422,
+          outcome: 'denied',
+          code: 'publish_refused',
+          subject: job.jobId,
+          body: errorBody(
+            req.requestId,
+            'publish_refused',
+            'The publishing checks refused this proposal. Nothing was sent. Fix the failed checks and submit a new proposal.',
+            { jobId: job.jobId, failedChecks: failedChecks(job.gateResults), replayed: job.replayed },
+          ),
+        };
       }
       const accepted = {
         status: job.replayed ? 200 : 202,
@@ -614,18 +628,32 @@ async function runTool(tx: Tx, agent: AgentBinding, req: AgentRequest): Promise<
             { kind: 'agent', principalId: agent.principalId },
             req.requestId,
           );
+          // Agents see the outcome in their own terms; editors see the operational detail on the
+          // Publishing page. Anything not final yet is followed with jobs.read.
+          const pending = {
+            busy: 'queued',
+            error: 'queued',
+            not_claimed: 'running',
+            lost: 'running',
+          } as const;
           const state =
-            run.status === 'not_claimed' || run.status === 'busy'
-              ? 'queued'
-              : PUBLISH_JOB_STATES[run.status].state;
+            run.status in pending
+              ? pending[run.status as keyof typeof pending]
+              : PUBLISH_JOB_STATES[run.status as keyof typeof PUBLISH_JOB_STATES].state;
+          const message =
+            run.status === 'succeeded' || run.status === 'cancelled'
+              ? run.message
+              : run.status in pending
+                ? 'Accepted; follow the job with jobs.read.'
+                : PUBLISH_JOB_STATES[run.status as keyof typeof PUBLISH_JOB_STATES].message;
           return {
             status: run.status === 'succeeded' ? 201 : 202,
             body: ok(req.requestId, req.tool, {
               jobId: job.jobId,
               state,
-              message: run.message,
-              publicUrl: run.publicUrl,
-              replayed: false,
+              message,
+              publicUrl: run.status === 'succeeded' ? run.publicUrl : null,
+              replayed: job.replayed,
             }),
           };
         },
@@ -662,7 +690,11 @@ async function runTool(tx: Tx, agent: AgentBinding, req: AgentRequest): Promise<
             jobId: publication.id,
             kind: 'publication',
             state: state.state,
-            message: publication.outcomeMessage ?? state.message,
+            // Failure details are written for editors (hosting and database errors); agents get
+            // the plain state message for those, and the recorded message otherwise.
+            message:
+              (AGENT_READABLE_OUTCOMES.has(publication.status) && publication.outcomeMessage) ||
+              state.message,
             publicUrl: publication.publicUrl,
             failedChecks: failedChecks(publication.gateResults),
             updatedAt: (
