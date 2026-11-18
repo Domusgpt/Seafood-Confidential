@@ -434,6 +434,9 @@ code,
 
 /* ---------------------------------------------------------------- Tables */
 .table-scroll {
+  /* Positioned so absolutely positioned descendants (visually hidden labels) are clipped here
+     instead of stretching the page on narrow screens. */
+  position: relative;
   overflow-x: auto;
   margin: 0 -4px;
   padding: 0 4px;
