@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Preview launch: the desk and the public site are live for the founders · Seafood Confidential project hub</title>
+<meta name="description" content="Dev log DL-20261118-06.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.5.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/c88ad2f25da59d0f80d2631af106cdd2f73ca8b3">Commit <code>c88ad2f</code></a>
+      <span>Built Nov 18, 2026, 6:20 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html">Docs</a></li><li><a href="../devlog/index.html" aria-current="page">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<article class="prose" style="max-width:none">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Entry details" style="max-width:78ch"><table><tbody><tr><th scope="row">Entry</th><td>DL-20261118-06</td></tr><tr><th scope="row">Session</th><td>S01, turn 5</td></tr><tr><th scope="row">Version</th><td>0.5.0</td></tr><tr><th scope="row">Branch</th><td>claude/intelligent-cannon-d1nqq6</td></tr><tr><th scope="row">Base commit</th><td>cbecf059f6f5</td></tr><tr><th scope="row">Started</th><td>Nov 18, 2026, 5:00 PM EST</td></tr><tr><th scope="row">Recorded</th><td>Nov 18, 2026, 6:18 PM EST</td></tr><tr><th scope="row">Tickets</th><td>SC-003, SC-005, SC-009, SC-011, SC-015</td></tr><tr><th scope="row">Workstreams</th><td>WS-ENV</td></tr><tr><th scope="row">Status</th><td>complete</td></tr></tbody></table></div>
+  <div style="max-width:78ch"><h1 id="preview-launch-the-desk-and-the-public-site-are-live-for-the-founders">Preview launch: the desk and the public site are live for the founders</h1>
+<h2 id="summary">Summary</h2>
+<p>Paul asked to &quot;get this launched so Dave can check it out&quot;. Two pieces are now live as a preview:</p>
+<ul>
+<li><strong>The desk:</strong> <a href="https://sc-desk-629322111689.us-west1.run.app">https://sc-desk-629322111689.us-west1.run.app</a></li>
+<li><strong>The public site:</strong> <a href="https://seafood-confidential-preview.web.app">https://seafood-confidential-preview.web.app</a></li>
+</ul>
+<p>They run on Paul&#39;s existing Supabase project and Google Cloud project (with Firebase). Paul has an owner account. Every public page carries a &quot;Preview&quot; banner, and search engines are asked to keep out of both. At preview traffic it costs about $0 a month.</p>
+<p>What has not run live yet:</p>
+<ul>
+<li>a real-email sign-in;</li>
+<li>a publication from the desk (Paul&#39;s first ones);</li>
+<li>the newsletter (Kit not connected).</li>
+</ul>
+<h2 id="what-changed">What changed</h2>
+<p><strong>Code</strong> (v0.5.0, all tested):</p>
+<ul>
+<li><strong>Preview mode for the public site.</strong> <code>SITE_PREVIEW_NOTICE</code> adds a banner, <code>noindex</code> and <code>Disallow: /</code>. The banner uses new <code>notice</code> token roles, 8.01:1 in both themes, checked by the contrast gate.</li>
+<li><strong>The desk is never indexed.</strong> It sends <code>X-Robots-Tag: noindex, nofollow</code>.</li>
+<li><strong>Supabase&#39;s default sign-in links work.</strong> On the free plan the email template can&#39;t be customized, so the confirm route now also exchanges the PKCE code that Supabase&#39;s default links return.</li>
+<li><strong>Coming-soon wording.</strong> The page offers a subscription only when a newsletter form exists.</li>
+<li><strong>Reproducible builds.</strong> <code>apps/desk/cloudbuild.yaml</code> builds images from an exact <code>git archive</code>.</li>
+</ul>
+<p><strong>Infrastructure:</strong></p>
+<ul>
+<li><strong>Supabase</strong> (Free, us-west-2):<ul>
+<li>both migrations applied through the Management API, each in one transaction, and recorded in the CLI&#39;s history;</li>
+<li>the desk&#39;s login password set by sending only its SCRAM-SHA-256 hash;</li>
+<li>sign-in hardened: sign-ups off, 15-minute links, 12-character minimum, refresh-token rotation;</li>
+<li>Paul&#39;s owner account created.</li>
+</ul>
+</li>
+<li><strong>Google Cloud</strong> (us-west1, beside the database):<ul>
+<li>image registry <code>sc-desk</code>, built by Cloud Build;</li>
+<li>runtime account <code>sc-desk-runtime</code> with Firebase Hosting Admin, and Secret Manager access to its two secrets only;</li>
+<li>Cloud Run <code>sc-desk</code>, 0 to 2 instances, revision <code>sc-desk-00002-fbg</code>;</li>
+<li>Firebase Hosting site <code>seafood-confidential-preview</code>, released twice by the desk&#39;s own deploy code.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Docs:</strong></p>
+<ul>
+<li><code>docs/LAUNCH_PREVIEW.md</code>: addresses, sign-in, adding Dave, what runs where, what was and wasn&#39;t verified live, costs, redeploying, teardown, security follow-ups, moving to the publication&#39;s own accounts.</li>
+<li>CHANGELOG [0.5.0], and DEPLOYMENT.md updated.</li>
+</ul>
+<h2 id="decisions">Decisions</h2>
+<ul>
+<li><strong>Use Paul&#39;s existing Supabase project.</strong> It&#39;s in us-west-2, so the desk runs in Google&#39;s us-west1, not us-east4; same-region database calls keep pages fast.</li>
+<li><strong>Apply the schema through Supabase&#39;s Management API.</strong> This sandbox can&#39;t open database connections, so each migration ran in one transaction, with the CLI&#39;s history table kept so <code>supabase db push</code> keeps working.</li>
+<li><strong>Send only a hash of the desk&#39;s database password.</strong> Supabase received the SCRAM-SHA-256 verifier; the plain password went straight to Secret Manager and was never printed.</li>
+<li><strong>Accept both sign-in link shapes</strong> rather than paying for a plan just to change the email template. Custom SMTP on our own domain is the real fix and is first on the next-steps list.</li>
+<li><strong>No live publication test.</strong> Creating a temporary account with an admin-generated sign-in link was refused by the session&#39;s safety policy, rightly, so publishing waits for Paul&#39;s first story. The deploy code itself was proven by releasing the empty site.</li>
+</ul>
+<h2 id="problems-and-resolutions">Problems and resolutions</h2>
+<p><strong>The Supabase token took four attempts.</strong> The secure form first held a project secret key (<code>sb_secret_…</code>), which Supabase reports as &quot;JWT could not be decoded&quot;. Probes against Supabase&#39;s two API addresses showed the proxy was injecting a value Supabase couldn&#39;t read. Asking what the value started with found the cause. Paul then saved the right account token (<code>sbp_…</code>).</p>
+<p><strong>That project secret key was also pasted into the chat.</strong> Deleting it from here was refused as Paul&#39;s decision, so it is listed as a follow-up for him, along with rotating the Google Cloud key, whose file was displayed in the chat.</p>
+<p><strong>Smaller fixes:</strong></p>
+<ul>
+<li><strong>Email template:</strong> the free plan refuses template changes, so the auth settings were applied without the template.</li>
+<li><strong>Region:</strong> I created the image registry in us-east4 before I knew the database&#39;s region; it was still empty, so I replaced it with one in us-west1.</li>
+<li><strong>Session restarts:</strong> these changed the proxy port and stopped Docker. The gcloud wrapper now reads the port from <code>HTTPS_PROXY</code>, and Docker was restarted for the local checks.</li>
+<li><strong>The first database probe</strong> never reached the database, because the token shape was rejected first. It was redone with a correctly shaped token, and its audit row confirmed the path.</li>
+<li><strong>The local default-template sign-in test</strong> hit Supabase&#39;s once-a-minute limit per address. It was rerun after the limit cleared.</li>
+</ul>
+<h2 id="evidence">Evidence</h2>
+<p>EV-0045 to EV-0049 pass, and EV-0050 records what has not been exercised live:</p>
+<ul>
+<li><strong>EV-0045:</strong> the hosted database security model.</li>
+<li><strong>EV-0046:</strong> the live desk&#39;s health, security headers and database path (audited).</li>
+<li><strong>EV-0047:</strong> the public site, released by our own deploy code, with 0 axe violations on six live views.</li>
+<li><strong>EV-0048:</strong> both sign-in link shapes with the default template.</li>
+<li><strong>EV-0049:</strong> Vitest 102/102, Playwright 30/30, pgTAP 229/229.</li>
+</ul>
+<p><img src="../devlog/assets/2026-11-18-s01-t5/live-site-home-desktop.jpg" alt="The public preview site on desktop" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t5/live-site-home-dark.jpg" alt="The public preview site in dark mode: the banner keeps its colors" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t5/live-site-home-mobile.jpg" alt="The public preview site on an iPhone 13" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t5/live-desk-sign-in-desktop.jpg" alt="The live desk sign-in page" loading="lazy" decoding="async"></p>
+<h2 id="risks-and-open-questions">Risks and open questions</h2>
+<ul>
+<li><strong>The first sign-in and publication are untested live.</strong> If publishing fails, <code>/publishing</code> shows why and the job can be retried; nothing breaks.</li>
+<li><strong>The built-in mailer is limited.</strong> It emails only Supabase team members, about two an hour for the whole project, so Dave must be invited to the Supabase organization first.</li>
+<li><strong>Free plan.</strong> No backups, and the project pauses after a week unused. Put no real sources or contacts in it.</li>
+<li><strong>Paul&#39;s GCP project.</strong> The preview lives in a project used for other work. The runtime account&#39;s Firebase Hosting Admin role covers every hosting site in that project. The desk only deploys to its own site ID, but moving to the publication&#39;s own project (D01) removes the overlap.</li>
+</ul>
+<h2 id="next-actions">Next actions</h2>
+<ol>
+<li><strong>Paul:</strong><ul>
+<li>delete the exposed Supabase secret key <code>seafood_confidential_launch</code>;</li>
+<li>rotate the Google Cloud key (ID starting <code>3b4c8ef7</code>);</li>
+<li>revoke the Supabase access token when done.</li>
+</ul>
+</li>
+<li><strong>Paul signs in, publishes a first test story, and invites Dave:</strong><ul>
+<li>add him to the Supabase organization;</li>
+<li>send his email so his desk account can be added.</li>
+</ul>
+</li>
+<li><strong>Custom SMTP on our own domain.</strong> This removes the mail limits and enables our own sign-in template.</li>
+<li><strong>An &quot;Add a staff member&quot; screen</strong> for owners.</li>
+<li><strong>CI deploys with Workload Identity Federation</strong>, so no deploy key lives anywhere.</li>
+<li><strong>The production launch on the publication&#39;s own accounts</strong>, once Dave confirms D01.</li>
+</ol>
+</div>
+  <h2>Evidence referenced</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">ID</th><th scope="col">Result</th><th scope="col">Summary</th><th scope="col">Observed</th></tr></thead><tbody><tr><td class="id"><a href="evidence.html#EV-0045">EV-0045</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Hosted database matches the tested security model after both migrations were applied atomically through the Management API</td><td>17 tables, all with RLS; desk_agent, desk_app (login), desk_publisher, all noinherit; anon executes only app.submit_pitch; desk_publisher only the 6 publish functions; 0 PUBLIC execute; 0 anon table grants; agent publishing off, 0 of 6 lanes open; Data API exposes public, graphql_public only; migrations recorded in supabase_migrations.schema_migrations</td></tr><tr><td class="id"><a href="evidence.html#EV-0046">EV-0046</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live desk serves health, sign-in and pitch with full security headers, and reaches the database through the pooler as desk_app</td><td>health ok, version 0.5.0; /sign-in and /pitch 200, / 307 to /sign-in; HSTS, X-Frame-Options DENY, nonce CSP, X-Robots-Tag noindex, nofollow; probe 401 and audited as agent.authenticate denied under req-launch-check-03 (and req-launch-check-02 on the first revision)</td></tr><tr><td class="id"><a href="evidence.html#EV-0047">EV-0047</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Public preview site released by the desk&#39;s own Firebase Hosting deploy code; banner, noindex, headers and 404 correct; 0 axe violations on six live views</td><td>21 files released twice (versions 1e41e121…, 21a78299…); / 200 with the Preview banner and meta robots noindex; robots.txt Disallow: /; unknown story 404 with our page; CSP, nosniff, Referrer-Policy, Permissions-Policy, Cache-Control set; axe 0 violations and no horizontal overflow on site home (desktop, dark, mobile), section page, desk sign-in (desktop, mobile)</td></tr><tr><td class="id"><a href="evidence.html#EV-0048">EV-0048</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Supabase default-template sign-in links (free plan) work in the requesting browser and fail safely in another</td><td>Default-template link is /auth/v1/verify; another browser lands on /sign-in?error=link with &#39;open it in this same browser&#39; (auth_error pkce_code_verifier_not_found); the requesting browser is signed in (log: sign-in code exchanged). Template restored afterwards</td></tr><tr><td class="id"><a href="evidence.html#EV-0049">EV-0049</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Final v0.5.0 code: Vitest 102/102, Playwright 30/30, pgTAP 229/229, validators 9/9, bundle scan clean</td><td>All passed after the preview-mode, sign-in and coming-soon changes; e2e ran with our own email template restored</td></tr><tr><td class="id"><a href="evidence.html#EV-0050">EV-0050</a></td><td><span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.2" y="7" width="1.6" height="4.5" fill="currentColor"/><circle cx="8" cy="4.9" r="1" fill="currentColor"/></svg>info</span></td><td>Not yet exercised on the live preview: a real-email sign-in, a publication from Cloud Run, and the newsletter</td><td>Paul&#39;s first sign-in and first publication are the first live runs. The runtime account has Firebase Hosting Admin and the deploy code itself released the site twice from this session. A failed publication is recorded on /publishing with the reason and can be retried</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/c88ad2f25da59d0f80d2631af106cdd2f73ca8b3">c88ad2f</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
