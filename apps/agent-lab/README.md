@@ -23,9 +23,17 @@ Prerequisites:
 - the local stack (`pnpm db:start`);
 - the desk environment (`pnpm desk:env`);
 - a production build of the desk running on 127.0.0.1:3000;
-- Anthropic credentials.
+- an Anthropic API key in `SC_AGENT_LAB_API_KEY` (or `ANTHROPIC_API_KEY`).
 
-The SDK reads `ANTHROPIC_API_KEY`, or a profile from `ant auth login`.
+The lab reads its own variable first, so a key added for the lab is never used as another tool's credentials in the same environment. It always calls `https://api.anthropic.com` and ignores any `ANTHROPIC_BASE_URL` a host sets for its own routing. For a local run, you can put the key in the git-ignored `apps/desk/.env.ops.local`, which the `lab` script loads.
+
+Check the key, the model and billing before a run. This needs no database or desk, and it sends one request capped at 16 output tokens (well under a cent):
+
+```bash
+pnpm --filter @sc/agent-lab lab --check-key
+```
+
+Each failure says what to fix: a rejected key (401), a model the key cannot use (403 or 404), an organization without usable credit, rate limits, or no network.
 
 Check that the harness itself works, without calling the model (a scripted driver uses the same tools and judges; this is not an agent result):
 
@@ -50,4 +58,10 @@ Each run writes a Markdown and JSON report to `apps/agent-lab/reports/` (git-ign
 
 ## In a Claude Code cloud session
 
-Network secrets can't be used for Anthropic's own API. To run the lab in a cloud session, add `ANTHROPIC_API_KEY` as an environment variable in the environment's settings, then start a new session. Everyone who uses that environment, and commands in its sessions, can read the variable. Otherwise, run the lab on your own machine.
+Network secrets (called API credentials in older apps) can't hold a key for Anthropic's own API. Use an environment variable instead:
+
+1. Create a dedicated key at https://platform.claude.com/settings/keys (for example `seafood-agent-lab`).
+2. Open the cloud environment menu in the session's title bar, choose **Edit**, then **Environment variables**, add `SC_AGENT_LAB_API_KEY=<your key>` on its own line, and save.
+3. Start a new session; a running session does not pick up the change. Then run `pnpm --filter @sc/agent-lab lab --check-key`.
+
+Everyone who uses that environment, and commands in its sessions, can read the variable. Use a key you can delete after testing. Otherwise, run the lab on your own machine.

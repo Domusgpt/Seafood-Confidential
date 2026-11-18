@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { buildTools, runAgent, type AgentRun } from './agent.ts';
+import { checkKey, createLabClient, explainApiError } from './credentials.ts';
 import {
   adminSql,
   createScenario,
@@ -20,9 +21,10 @@ import { costUsd, emptyUsage, PRICES, type Usage } from './pricing.ts';
 // database and the gateway recorded, not by what the model says it did.
 //
 //   pnpm --filter @sc/agent-lab lab [--model claude-opus-5-5] [--effort high] [--scenarios draft,injection,revocation]
+//   pnpm --filter @sc/agent-lab lab --check-key     (key, model and billing only; no database or desk)
 //
 // Needs the local stack and a running desk (127.0.0.1:3000), SUPABASE_ADMIN_DB_URL from
-// apps/desk/.env.ops.local, and Anthropic credentials (ANTHROPIC_API_KEY or an `ant auth login` profile).
+// apps/desk/.env.ops.local, and an Anthropic key in SC_AGENT_LAB_API_KEY (or ANTHROPIC_API_KEY).
 
 const { values } = parseArgs({
   options: {
@@ -32,6 +34,7 @@ const { values } = parseArgs({
     desk: { type: 'string', default: process.env.DESK_SITE_URL ?? 'http://127.0.0.1:3000' },
     out: { type: 'string', default: 'reports' },
     'self-test': { type: 'boolean', default: false },
+    'check-key': { type: 'boolean', default: false },
   },
 });
 // --self-test drives the same tools with a fixed script instead of Claude, to prove the fixtures,
@@ -40,6 +43,14 @@ const selfTest = values['self-test'] === true;
 const model = values.model!;
 const effort = values.effort as 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 const scenarios = values.scenarios!.split(',').map((s) => s.trim());
+
+// --check-key: prove the key, the model and billing work, then stop. Costs well under a cent.
+if (values['check-key']) {
+  const result = await checkKey({ model, billingProbe: true });
+  for (const line of result.lines) console.log(line);
+  console.log(result.ok ? 'Key check: PASS' : 'Key check: FAIL');
+  process.exit(result.ok ? 0 : 1);
+}
 
 interface Check {
   id: string;
@@ -69,8 +80,17 @@ if (!health?.ok)
     `The desk is not reachable at ${values.desk}; start it with \`pnpm desk:build\` then \`next start\`.`,
   );
 
+// A real run checks the key and model (free) before any fixture is written.
+let client: Anthropic | null = null;
+if (!selfTest) {
+  const preflight = await checkKey({ model, billingProbe: false });
+  if (!preflight.ok) {
+    for (const line of preflight.lines) console.error(line);
+    process.exit(1);
+  }
+  client = createLabClient();
+}
 const sql = adminSql(adminUrl);
-const client = selfTest ? null : new Anthropic();
 
 /** Scripted stand-in for the model: list, read, propose (citing what read_brief returned), check. */
 async function scriptedRun(gateway: Gateway, contentId: string, notes: string): Promise<AgentRun> {
@@ -153,8 +173,7 @@ async function scenario(
             : 'Self-test notes.',
         );
   } catch (e) {
-    if (e instanceof Anthropic.APIError) error = `Anthropic API ${e.status ?? ''}: ${e.message}`;
-    else error = (e as Error).message;
+    error = explainApiError(e, model);
   }
   const checks = run ? await judge(fixture, run, gateway) : [];
   results.push({
