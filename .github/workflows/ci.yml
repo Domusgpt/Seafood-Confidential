@@ -77,3 +77,43 @@ jobs:
           name: hub-screenshots-${{ github.sha }}
           path: test-results/hub-shots
           retention-days: 14
+
+  desk:
+    name: Desk (database policies, build, end-to-end)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Static checks (tokens, lint, types, unit tests)
+        run: pnpm desk:check
+      - name: Start local Supabase (Postgres, Auth, Mailpit)
+        run: pnpm db:start
+      - name: Database policy tests (pgTAP)
+        run: pnpm db:test
+      - name: Local environment for the desk (generated, never committed)
+        run: pnpm desk:env
+      - name: Production build and client bundle secret scan
+        run: pnpm desk:build
+      - name: Install Chromium for Playwright
+        run: pnpm --filter @sc/desk exec playwright install --with-deps chromium
+      - name: End-to-end tests (Playwright, axe WCAG 2.2 AA)
+        run: pnpm desk:e2e
+        env:
+          DESK_SHOTS_DIR: ${{ github.workspace }}/apps/desk/test-results/shots
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: desk-e2e-${{ github.sha }}
+          path: |
+            apps/desk/test-results
+            apps/desk/playwright-report
+          retention-days: 14
+      - name: Stop Supabase
+        if: always()
+        run: pnpm db:stop

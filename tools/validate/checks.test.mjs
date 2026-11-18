@@ -77,14 +77,23 @@ test('backlog: CSV drift from JSON is caught', async () => {
 });
 
 test('evidence rule: a ticket cannot be done without passing evidence', async () => {
+  // SC-016 (operator rehearsal) is the last ticket on the critical path and has no evidence yet.
   const repo = await fresh('evidence');
   await editJson(repo, 'planning/BACKLOG.json', (b) => {
-    b.tickets.find((t) => t.id === 'SC-005').status = 'done';
+    b.tickets.find((t) => t.id === 'SC-016').status = 'done';
   });
   assert.match(
     (await C.checkTracking(repo)).errors.join('\n'),
-    /SC-005: marked done without a passing evidence record/,
+    /SC-016: marked done without a passing evidence record/,
   );
+});
+
+test('evidence rule: a ticket with passing evidence may be marked done', async () => {
+  const repo = await fresh('evidence-ok');
+  await editJson(repo, 'planning/BACKLOG.json', (b) => {
+    b.tickets.find((t) => t.id === 'SC-005').status = 'done';
+  });
+  assert.doesNotMatch((await C.checkTracking(repo)).errors.join('\n'), /SC-005: marked done/);
 });
 
 test('acceptance: PASS without a test record is rejected', async () => {

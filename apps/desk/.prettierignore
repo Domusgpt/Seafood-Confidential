@@ -1,0 +1,6 @@
+# Prettier reads the ignore file from the working directory; keep this in step with the root file.
+.next/
+next-env.d.ts
+src/app/tokens.css
+playwright-report/
+test-results/

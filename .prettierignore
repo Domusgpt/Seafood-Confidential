@@ -23,3 +23,12 @@ node_modules/
 # Machine-written by the devtrack CLI (JSON.stringify formatting is canonical there).
 devtrack/*.json
 test-results/
+
+# Desk build output and generated files
+apps/desk/.next/
+apps/desk/next-env.d.ts
+apps/desk/src/app/tokens.css
+apps/desk/playwright-report/
+apps/desk/test-results/
+supabase/.temp/
+supabase/.branches/

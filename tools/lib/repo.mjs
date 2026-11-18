@@ -27,7 +27,20 @@ export function createRepo(root = REPO_ROOT) {
     /** List files (relative paths) under a directory, recursively, skipping heavy/ignored folders. */
     async list(relDir = '.', { exts } = {}) {
       const out = [];
-      const skip = new Set(['node_modules', '.git', '_site', '.cache', 'test-results', 'playwright-report']);
+      const skip = new Set([
+        'node_modules',
+        '.git',
+        '_site',
+        '.cache',
+        'test-results',
+        'playwright-report',
+        '.next',
+        'out',
+        '.turbo',
+        'coverage',
+        '.temp',
+        '.branches',
+      ]);
       async function walk(dir) {
         let entries;
         try {

@@ -6,4 +6,12 @@ useDefault = true
 
 [[allowlists]]
 description = "Generated output and installed dependencies (never committed)"
-paths = ['''(^|/)node_modules/''', '''(^|/)_site/''', '''(^|/)test-results/''']
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)_site/''',
+  '''(^|/)test-results/''',
+  '''(^|/)playwright-report/''',
+  '''(^|/)\.next/''',
+  # Local-only, git-ignored env files written by apps/desk/scripts/write-local-env.mjs.
+  '''^apps/desk/\.env(\.ops)?\.local$''',
+]

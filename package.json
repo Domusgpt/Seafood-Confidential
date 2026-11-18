@@ -1,8 +1,8 @@
 {
   "name": "seafood-confidential",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Seafood Confidential: launch packet, specifications, delivery tracking and project hub for the publication and its private operations desk.",
+  "description": "Seafood Confidential: launch packet, specifications, delivery tracking, project hub and the private operations desk.",
   "license": "UNLICENSED",
   "type": "module",
   "packageManager": "pnpm@12.21.0",
@@ -10,11 +10,20 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "check": "pnpm validate && pnpm test && pnpm hub:build && pnpm hub:check && pnpm format:check",
-    "validate": "node tools/validate/cli.mjs",
-    "test": "node --test --test-reporter=spec \"tools/**/*.test.mjs\"",
-    "devtrack": "node tools/devtrack/cli.mjs",
+    "check": "pnpm validate && pnpm test && pnpm desk:check && pnpm hub:build && pnpm hub:check && pnpm format:check",
+    "db:reset": "supabase db reset",
+    "db:start": "supabase start -x studio,imgproxy,vector,logflare,realtime,storage-api,edge-runtime,supavisor,postgres-meta",
+    "db:stop": "supabase stop",
+    "db:test": "supabase test db",
+    "desk:build": "pnpm --filter @sc/desk build && pnpm --filter @sc/desk scan:bundle",
+    "desk:check": "pnpm --filter @sc/desk tokens:check && pnpm --filter @sc/desk lint && pnpm --filter @sc/desk typecheck && pnpm --filter @sc/desk test",
+    "desk:dev": "pnpm --filter @sc/desk dev",
+    "desk:e2e": "pnpm --filter @sc/desk e2e --trace off",
+    "desk:env": "pnpm --filter @sc/desk env:local",
     "devlog:new": "node tools/devlog/cli.mjs new",
+    "devtrack": "node tools/devtrack/cli.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "hub:build": "node tools/hub/build.mjs",
     "hub:check": "node tools/hub/check.mjs",
     "hub:serve": "node tools/hub/serve.mjs",
@@ -22,8 +31,8 @@
     "lint:actions": "actionlint",
     "lint:secrets": "gitleaks git --no-banner --redact --config .gitleaks.toml . && gitleaks dir --no-banner --redact --config .gitleaks.toml .",
     "lint:shell": "shellcheck tools/bootstrap/*.sh",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "test": "node --test --test-reporter=spec \"tools/**/*.test.mjs\"",
+    "validate": "node tools/validate/cli.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
