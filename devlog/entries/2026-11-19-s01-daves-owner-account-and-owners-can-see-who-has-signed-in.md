@@ -67,6 +67,11 @@ Paul asked to continue development and to get Dave signed up for his owner slot.
 - **The Docker daemon stopped while the session was paused, twice.** The first restart was tied to the shell that started it. It now runs detached in its own session, and the local Supabase containers came back on their own.
 - **The new column showed times "in the future".** It did not: the session had been paused for several hours, and the clock was right. The release and account dates in the docs were corrected from 18 to 19 November.
 - **A first query used a wrong table name** (`publishing_settings`) and failed harmlessly inside a rolled-back check.
+- **CI failed three times on GitHub's side, not the code's.**
+  - On `58ab7c8` the runner could not start the local database: port 54322 was already in use.
+  - On `d365e19` both end-to-end jobs and one visual check failed while installing the test browser, because Ubuntu's package mirrors timed out.
+  - In every case the steps that ran passed, including the new database tests and the build.
+  - CI now retries those setup steps: apt retries each download, the browser install gets three attempts with backoff, and the Supabase start gets one stop-and-retry. Each retry leaves a warning in the log.
 
 ## Evidence
 

@@ -67,7 +67,17 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      # The Ubuntu package mirrors behind --with-deps time out at times: apt retries each download,
+      # and the whole install is tried three times before the job fails.
+      - name: Install Chromium for Playwright (retried)
+        run: |
+          echo 'Acquire::Retries "5";' | sudo tee /etc/apt/apt.conf.d/80-retries > /dev/null
+          for attempt in 1 2 3; do
+            pnpm exec playwright install --with-deps chromium && exit 0
+            echo "::warning::Browser install attempt $attempt failed; retrying"
+            sleep $((attempt * 20))
+          done
+          exit 1
       - run: pnpm hub:build
       - name: Screenshots and axe scan (desktop, mobile, dark, reduced motion)
         run: pnpm hub:shots --out test-results/hub-shots
@@ -92,16 +102,29 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Static checks (tokens, lint, types, unit tests)
         run: pnpm desk:check
-      - name: Start local Supabase (Postgres, Auth, Mailpit)
-        run: pnpm db:start
+      # A runner can report a port as busy on the first start; stop and try once more.
+      - name: Start local Supabase (Postgres, Auth, Mailpit; retried once)
+        run: |
+          pnpm db:start && exit 0
+          echo "::warning::Supabase did not start; stopping and retrying once"
+          pnpm db:stop || true
+          sleep 15
+          pnpm db:start
       - name: Database policy tests (pgTAP)
         run: pnpm db:test
       - name: Local environment for the desk (generated, never committed)
         run: pnpm desk:env
       - name: Production build and client bundle secret scan
         run: pnpm desk:build
-      - name: Install Chromium for Playwright
-        run: pnpm --filter @sc/desk exec playwright install --with-deps chromium
+      - name: Install Chromium for Playwright (retried)
+        run: |
+          echo 'Acquire::Retries "5";' | sudo tee /etc/apt/apt.conf.d/80-retries > /dev/null
+          for attempt in 1 2 3; do
+            pnpm --filter @sc/desk exec playwright install --with-deps chromium && exit 0
+            echo "::warning::Browser install attempt $attempt failed; retrying"
+            sleep $((attempt * 20))
+          done
+          exit 1
       - name: End-to-end tests (Playwright, axe WCAG 2.2 AA)
         run: pnpm desk:e2e
         env:
