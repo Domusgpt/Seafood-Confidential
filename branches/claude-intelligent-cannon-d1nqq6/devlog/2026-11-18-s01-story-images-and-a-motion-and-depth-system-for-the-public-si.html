@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Story images, a motion and depth system for the public site, and an upload fix found by red-teaming the live configuration · Seafood Confidential project hub</title>
+<meta name="description" content="Dev log DL-20261118-08.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.7.1</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/c7ff56f081f0575dea2bcb4456d4f9296394b3dc">Commit <code>c7ff56f</code></a>
+      <span>Built Nov 18, 2026, 10:19 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html">Docs</a></li><li><a href="../devlog/index.html" aria-current="page">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<article class="prose" style="max-width:none">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Entry details" style="max-width:78ch"><table><tbody><tr><th scope="row">Entry</th><td>DL-20261118-08</td></tr><tr><th scope="row">Session</th><td>S01, turn 7</td></tr><tr><th scope="row">Version</th><td>0.7.1</td></tr><tr><th scope="row">Branch</th><td>claude/intelligent-cannon-d1nqq6</td></tr><tr><th scope="row">Base commit</th><td>96682ff4c141</td></tr><tr><th scope="row">Started</th><td>Nov 18, 2026, 7:58 PM EST</td></tr><tr><th scope="row">Recorded</th><td>Nov 18, 2026, 10:30 PM EST</td></tr><tr><th scope="row">Tickets</th><td>SC-003, SC-005, SC-009, SC-015</td></tr><tr><th scope="row">Workstreams</th><td>WS-ENV</td></tr><tr><th scope="row">Status</th><td>complete</td></tr></tbody></table></div>
+  <div style="max-width:78ch"><h1 id="story-images-a-motion-and-depth-system-for-the-public-site-and-an-upload-fix-found-by-red-teaming-the-live-configuration">Story images, a motion and depth system for the public site, and an upload fix found by red-teaming the live configuration</h1>
+<h2 id="summary">Summary</h2>
+<p>Paul asked for photographs, GSAP scroll dynamics, style improvements and &quot;massive tightening&quot;, neo-skeuomorphic depth, more parallax layers, and text and image motion that is cohesive and can be retuned. (GSAP is the GreenSock animation library; ScrollTrigger is its scroll-driven part.) Live now at <a href="https://seafood-confidential-preview.web.app">https://seafood-confidential-preview.web.app</a>:</p>
+<ul>
+<li><strong>Photographs.</strong> Six sample stories carry public-domain photographs, each credited under its picture.</li>
+<li><strong>Motion.</strong> Layered parallax. Titles and images animate in, and reverse when the reader scrolls back.</li>
+<li><strong>Depth.</strong> Raised and recessed surfaces, lit from one direction.</li>
+<li><strong>Tuning.</strong> Everything is set from the design tokens, with three presets, and readers have a switch to turn animation off.</li>
+<li><strong>Lead images in the desk.</strong> Any story can have a lead image, tied to a cleared rights record. Agents still never publish images.</li>
+</ul>
+<p><strong>Red team.</strong> Testing the desk&#39;s own container with Cloud Run&#39;s limits found that a large photograph would have crashed the live desk, and that uploads over 10 MB failed. Version 0.7.1 fixes both, names HEIC files, and closes a font caching gap. The live desk now runs with 1 GiB (revision <code>sc-desk-00005-dw7</code>).</p>
+<p><strong>Not yet run live:</strong></p>
+<ul>
+<li>an upload through the live desk;</li>
+<li>a publication by the live desk itself (the samples were published by an operator run of the same code).</li>
+</ul>
+<h2 id="what-changed">What changed</h2>
+<p><strong>Public site (v0.7.0; <code>apps/desk/site-src/</code>, <code>src/lib/site/build.ts</code>):</strong></p>
+<ul>
+<li><strong>Photographs:</strong><ul>
+<li><code>&lt;picture&gt;</code> with AVIF first and WebP as the fallback, at 480 to 2400 px, cropped around a focal point set by CSS classes (the strict CSP allows no inline styles);</li>
+<li>a wide hero with caption and credit, and image cards;</li>
+<li>a drawn plate of the section for stories without an image;</li>
+<li><code>og:image</code> for previews on social media.</li>
+</ul>
+</li>
+<li><strong>Motion</strong> (GSAP 3.15.1 with ScrollTrigger, self-hosted; <code>site-src/motion.js</code>):<ul>
+<li>parallax masthead layers: bathymetry, contour linework, light and type;</li>
+<li>titles rising word by word, with their exact text kept for screen readers;</li>
+<li>images opening from the edges and developing into colour;</li>
+<li>reveals that reverse on scroll-back, section rules that draw, a reading-progress bar, and a lead panel that leans toward the pointer.</li>
+</ul>
+</li>
+<li><strong>Retuning and turning it off:</strong><ul>
+<li><code>SITE_MOTION</code> picks <code>calm</code>, <code>standard</code>, <code>expressive</code> or <code>off</code>, from the motion tokens.</li>
+<li>The footer switch is remembered, and <code>prefers-reduced-motion</code> turns motion off.</li>
+<li>Every page is complete without JavaScript, with a 2.5-second failsafe if the script never arrives.</li>
+<li>Turning motion off restores the server&#39;s HTML exactly.</li>
+</ul>
+</li>
+<li><strong>Depth and tightening:</strong><ul>
+<li>Design tokens v0.2 add <code>space</code>, <code>radius</code>, <code>elevation</code> (per theme, one light from above) and <code>motion</code> (durations, easings, distances, parallax depths, presets).</li>
+<li>The stylesheet was rewritten on them: a tighter type scale, a breakout grid, raised cards and lead panel, recessed sources, bevelled chips, a sticky frosted section bar that marks the current section, faded edges on the phone navigation, an ink footer, and print styles.</li>
+<li>The contour linework is generated by a seeded script (<code>scripts/build-contours.mjs</code>).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Desk (v0.7.0):</strong></p>
+<ul>
+<li><strong>Lead image card.</strong> It sits on the story page, with a preview, rights status, alternative text, caption, credit and focal point.</li>
+<li><strong>Uploads</strong> go through a route handler (<code>/stories/&lt;id&gt;/image</code>) that checks the session, origin and size before reading the body.</li>
+<li><strong>Processing.</strong> sharp, a wrapper for the libvips image library, makes the AVIF and WebP renditions. It applies EXIF orientation and removes all metadata, location included.</li>
+<li><strong>Operator CLI:</strong> <code>pnpm --filter @sc/desk images</code>.</li>
+</ul>
+<p><strong>Database</strong> (migration <code>20261119120000_story_images.sql</code>, 34 new pgTAP tests):</p>
+<ul>
+<li><strong>Storage.</strong> <code>app.story_images</code> holds each image, tied to a rights record of the same story. Renditions and originals sit in private tables reached only through checked functions.</li>
+<li><strong>Publishing.</strong> Publishing pins the image, and <code>app.site_media</code> hands the publisher the files under the job&#39;s claim token.</li>
+<li><strong>Agents.</strong> The agent gate <code>no_images</code> keeps them away from stories with images.</li>
+<li><strong>Security fix.</strong> API roles can no longer insert a story with publication fields set.</li>
+</ul>
+<p><strong>v0.7.1, from the red team below:</strong></p>
+<ul>
+<li><strong>Memory-bounded image processing:</strong><ul>
+<li>one upright master the size of the largest rendition (JPEG and WebP shrink while decoding);</li>
+<li>the largest rendition capped at 2400 px and about 4.3 megapixels;</li>
+<li>one image at a time per server, with libvips&#39; cache off;</li>
+<li><code>MALLOC_ARENA_MAX=2</code> in the image.</li>
+</ul>
+</li>
+<li><strong>Upload size.</strong> <code>proxyClientMaxBodySize</code> is 16 MB, so the advertised 15 MB limit is real.</li>
+<li><strong>HEIC.</strong> HEIC photographs get a message saying what they are and how to export them.</li>
+<li><strong>Asset caching.</strong> The asset build versions every file the stylesheet loads by content, and the font preload uses the same address.</li>
+<li><strong>Memory.</strong> The live service runs with 1 GiB.</li>
+</ul>
+<p><strong>Live</strong> (Paul&#39;s Supabase and Google Cloud projects):</p>
+<ul>
+<li><strong>Database.</strong> The migration was applied through the Management API in one transaction, with its history record, and grants were checked.</li>
+<li><strong>Desk.</strong> v0.7.0 went live as revision <code>sc-desk-00004-79x</code> (Cloud Build from <code>git archive</code> of c0f06c7), then v0.7.1 as <code>sc-desk-00005-dw7</code> (b99e04c, <code>--memory 1Gi</code>).</li>
+<li><strong>Photographs.</strong> Six were attached on the hosted database (10 renditions each, hashes re-checked inside the database). Six republish jobs pinned them; the last release has 95 files, 60 of them image renditions.</li>
+</ul>
+<p><strong>Docs:</strong></p>
+<ul>
+<li>ADR-006 (Proposed);</li>
+<li>CHANGELOG 0.7.0 and 0.7.1;</li>
+<li><code>docs/DESK.md</code>, <code>docs/DEPLOYMENT.md</code> and <code>docs/LAUNCH_PREVIEW.md</code>, including memory and upload limits;</li>
+<li><code>THIRD_PARTY_NOTICES.md</code>: GSAP&#39;s licence, each photograph&#39;s source and licence, sharp and libvips;</li>
+<li>the sc-visual-codex skill&#39;s new &quot;Motion and depth&quot; section, reusable for later projects.</li>
+</ul>
+<h2 id="decisions">Decisions</h2>
+<ul>
+<li><strong>Images live in the desk database for now (ADR-006, Proposed).</strong><ul>
+<li>A publication reads text and images in one claim-fenced transaction.</li>
+<li>The desk needs no storage credential, and no public bucket exposes unpublished images.</li>
+<li>Backups stay one system.</li>
+<li>The ADR names when to move renditions to Cloud Storage: a 2 GB database, or builds loading more than about 200 MB of images.</li>
+</ul>
+</li>
+<li><strong>One lead image per story, tied to a rights record, pinned at publish.</strong> What is live is what was published, for images too, and agents never publish a story with an image. This follows ADR-005 and the playbook&#39;s image rules.</li>
+<li><strong>GSAP, self-hosted, under Webflow&#39;s no-charge Standard licence.</strong><ul>
+<li>It is not open source. Its terms allow this commercial use, require the notices to stay intact, and can change.</li>
+<li>Nothing on the site depends on it to be read, so CSS scroll-driven animation is a fallback if the terms change.</li>
+</ul>
+</li>
+<li><strong>Sample photographs are U.S. government works and a Library of Congress dedication.</strong><ul>
+<li>Every licence was checked on its Commons file page, not inferred.</li>
+<li>Each picture&#39;s credit names the agency or photographer.</li>
+<li>The AI-written sample has no photograph.</li>
+</ul>
+</li>
+<li><strong>The live desk gets 1 GiB.</strong> The fixed code passed with 512 MiB, but the server&#39;s high-water mark reached 509 MiB, and Cloud Run also holds site build files in memory. At preview traffic 1 GiB stays inside Cloud Run&#39;s free tier.</li>
+<li><strong>The fixes ship as 0.7.1, not a rebuilt 0.7.0.</strong> A 0.7.0 build was already live, and each version should name one build.</li>
+</ul>
+<h2 id="problems-and-resolutions">Problems and resolutions</h2>
+<p><strong>Found by red-teaming the live configuration (v0.7.1):</strong></p>
+<ul>
+<li><strong>A 24-megapixel photograph would have crashed the live desk.</strong><ul>
+<li>The desk&#39;s own container ran with Cloud Run&#39;s limits (512 MiB, one CPU), and photographs were uploaded through the real route.</li>
+<li>v0.7.0 peaked at 483 MiB on a 12-megapixel phone photograph and was killed for running out of memory on a 24-megapixel one (EV-0064). Every rendition was decoded from a full-size copy.</li>
+<li>With the rewrite, 12 to 59 megapixels attach, one at a time and two at once (EV-0065).</li>
+<li>This is now the standard check for anything memory-heavy in the desk.</li>
+</ul>
+</li>
+<li><strong>Uploads over 10 MB were refused as &quot;unreadable&quot;.</strong> Next.js&#39;s proxy layer buffers request bodies and silently cuts them at 10 MB; its log said so. The limit is now 16 MB.</li>
+<li><strong>HEIC photographs were called damaged.</strong> sharp&#39;s bundled library has no HEIC decoder. The header check now names the format.</li>
+<li><strong>Fonts and the contour art could stay stale for a year after a change.</strong> They are served <code>immutable</code> under unversioned names. Now each file the stylesheet loads carries a content version. A browser check confirmed one font request and no unused-preload warning.</li>
+</ul>
+<p><strong>Found by the test suites (v0.7.0):</strong></p>
+<ul>
+<li><strong>Postgres and the database tests:</strong><ul>
+<li>postgres.js double-encoded the renditions&#39; JSON (<code>cannot get array length of a scalar</code>); it now uses <code>tx.json()</code>. The refusal mapping was narrowed so a fault on our side is not shown as a rights problem.</li>
+<li>Attaching an image was refused while any publish job was queued; it now waits only for a job that is running.</li>
+<li>The private image tables lacked Row Level Security; it is on, and pgTAP checks it.</li>
+</ul>
+</li>
+<li><strong>The public site:</strong><ul>
+<li>Split headlines duplicated their text for assistive technology; the words are now split with no hidden copy.</li>
+<li>Axe saw low contrast in the middle of an animation; the accessibility helper waits until GSAP is idle, which is how a reader sees the page.</li>
+<li>Turning motion off left a <code>scale(1.16)</code> on pictures; the switch now removes every style it added.</li>
+</ul>
+</li>
+<li><strong>Playwright tests:</strong><ul>
+<li>The AI label assertion matched related-story cards; it is scoped to the article.</li>
+<li>A publish confirmation raced the result.</li>
+</ul>
+</li>
+<li><strong>Tooling:</strong><ul>
+<li>The operator CLI could not run under Node&#39;s type stripping (a constructor parameter property).</li>
+<li>The Management API refuses SQL bodies over about 3 MB, so the CLI writes base64 and leaves out a master that would not fit.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Sourcing the photographs:</strong></p>
+<ul>
+<li>Wikimedia&#39;s rate limit (HTTP 429) on originals was avoided by using its standard thumbnail widths.</li>
+<li>Three candidates were too small, and the thumbnailer would have upscaled them; they were replaced.</li>
+<li>Links missing the <code>File:</code> prefix were corrected in the manifest, the notices and the database.</li>
+</ul>
+<h2 id="evidence">Evidence</h2>
+<ul>
+<li><strong>EV-0058:</strong> v0.7.0 locally: pgTAP 272/272, Vitest 126/126, Playwright 32/32, <code>pnpm check</code>, bundle scan. CI green on c0f06c7.</li>
+<li><strong>EV-0059:</strong> local site audit: 11 views, 0 axe violations, no overflow. Reduced motion, no-JS and the switch all work.</li>
+<li><strong>EV-0060:</strong> migration applied to hosted Supabase. Desk v0.7.0 live; image route 401 without a session, 403 cross-origin.</li>
+<li><strong>EV-0061:</strong> six photographs attached on hosted Supabase, and the site rebuilt with them (95 files, 60 renditions).</li>
+<li><strong>EV-0062:</strong> live audit: 11 views, 0 axe violations. <code>/media</code> served immutable with the site&#39;s CSP.</li>
+<li><strong>EV-0063</strong> (observation): an upload and a publication by the live desk had not run yet.</li>
+<li><strong>EV-0064</strong> (fail, defect IMG-0001): the v0.7.0 container was killed by a 24-megapixel upload, and uploads over 10 MB were cut off.</li>
+<li><strong>EV-0065</strong> (pass, IMG-0001 fixed): the v0.7.1 container attaches 12 to 59 megapixels, and two uploads at once, under 512 MiB.</li>
+<li><strong>EV-0066:</strong> v0.7.1 tree: pgTAP 272/272, Vitest 131/131, Playwright 32/32, <code>pnpm check</code>, bundle scan, and a single font request.</li>
+<li><strong>EV-0067:</strong> live page weight on a cold cache:<ul>
+<li>383 to 532 KB per page, and 755 KB for the iPhone home page;</li>
+<li>LCP (largest contentful paint) 0.38 to 1.2 s;</li>
+<li>CLS (layout shift) at most 0.022.</li>
+</ul>
+</li>
+<li><strong>EV-0068:</strong> desk v0.7.1 live with 1 GiB, with probes.</li>
+</ul>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-home-top.jpg" alt="The live home page: the parallax masthead with contour linework, and the lead story with its photograph and raised panel" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-scroll.webp" alt="A scroll down the home page and back up: reveals play on the way down and reverse on the way up (animated WebP)" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/scroll-sheet.jpg" alt="Frames from that scroll, left to right: the masthead scrolls away in layers, cards rise in, and the lead story returns to its place on the way back" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-home-scrolled.jpg" alt="More stories: photographs in raised cards, and a drawn plate for the AI-written explainer" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-home-dark.jpg" alt="The home page in dark mode: the same depth, with the light from above kept" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-story-top.jpg" alt="A story: the section marked in the bar, the headline, and the hero photograph running wider than the text" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-story-hero.jpg" alt="The hero photograph with its caption and credit, the sample note and the drop cap; the reading-progress bar sits under the section bar" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-story-body.jpg" alt="The story body: a rule drawn above each heading as it comes into view" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-section.jpg" alt="A section page: a contoured header, and cards with a photograph or the drawn plate" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-home-iphone13.jpg" alt="The home page on an iPhone 13" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/live-story-iphone13.jpg" alt="A story on an iPhone 13, below the photograph: credit, sample note and drop cap" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/local-desk-lead-image-card.jpg" alt="The desk&#39;s Lead image card (local): preview, rights status, alternative text, caption and credit" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-18-s01-t7/local-story-no-js.jpg" alt="A story with JavaScript turned off (local): complete, with nothing waiting to be revealed" loading="lazy" decoding="async"></p>
+<h2 id="risks-and-open-questions">Risks and open questions</h2>
+<ul>
+<li><strong>Upload and publication by the live desk are still untested.</strong><ul>
+<li>Each was tested end to end locally.</li>
+<li>The upload was tested in the desk&#39;s own container with Cloud Run&#39;s limits.</li>
+<li>The publishing code has released the live site with an operator token.</li>
+<li>Paul&#39;s first update or upload is the first live run, and a failure shows on the story or Publishing page with its reason.</li>
+</ul>
+</li>
+<li><strong>GSAP&#39;s licence can change.</strong> It is proprietary and free of charge under Webflow&#39;s terms; the site does not depend on it to be read.</li>
+<li><strong>Images make the database grow.</strong> ADR-006 names the review points. Today every build reads every published image; Firebase uploads only new ones.</li>
+<li><strong>Processing takes 20 to 60 seconds on one CPU.</strong> The form says so. A lower AVIF effort is the first lever.</li>
+<li><strong>Portrait photographs top out at about 1,700 px wide</strong> to bound memory. On a large high-density screen a portrait hero, cropped to landscape, is a little soft.</li>
+<li><strong>Fonts are the largest item on a first visit (296 KB).</strong> The Fraunces files carry four variation axes, two of which (<code>SOFT</code>, <code>WONK</code>) the site pins at zero. Its optical-size-and-weight files would cut the two faces from 271 KB to 149 KB.</li>
+<li><strong>The live site picks up the versioned font and contour addresses at its next publication.</strong> Until then it behaves as before.</li>
+<li><strong>ADR-006 is Proposed.</strong> The founders should confirm images in the database and the GSAP licence.</li>
+</ul>
+<h2 id="next-actions">Next actions</h2>
+<ol>
+<li><strong>Paul, security</strong> (carried from turn 5):<ul>
+<li>delete the exposed Supabase secret key <code>seafood_confidential_launch</code>;</li>
+<li>rotate the Google Cloud key whose ID starts <code>3b4c8ef7</code>;</li>
+<li>revoke the Supabase access token when done.</li>
+</ul>
+</li>
+<li><strong>Paul, first live run:</strong><ul>
+<li>sign in, in the same browser;</li>
+<li>open any sample and press &quot;Update the published story&quot;. That also carries the versioned assets to the live site;</li>
+<li>then try a photograph: add a rights record first, then use &quot;Lead image&quot;.</li>
+</ul>
+</li>
+<li><strong>Founders:</strong> confirm ADR-006, approve or rewrite the About and How we work drafts, and invite Dave.</li>
+<li><strong>Optional:</strong> turn on the publishing sweep (one command in <code>docs/LAUNCH_PREVIEW.md</code>).</li>
+<li><strong>Before real stories go out:</strong> remove the samples and their photographs (two passes of the removal script).</li>
+<li><strong>Later:</strong><ul>
+<li>the smaller Fraunces files (271 KB to 149 KB on a first visit);</li>
+<li>moving image processing to a job if uploads become frequent;</li>
+<li>carried over: custom SMTP, an &quot;Add a staff member&quot; screen, and CI deploys with Workload Identity Federation.</li>
+</ul>
+</li>
+</ol>
+</div>
+  <h2>Evidence referenced</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">ID</th><th scope="col">Result</th><th scope="col">Summary</th><th scope="col">Observed</th></tr></thead><tbody><tr><td class="id"><a href="evidence.html#EV-0058">EV-0058</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>v0.7.0 locally: pgTAP 272/272 (34 new image tests), Vitest 126/126, Playwright 32/32, pnpm check clean, bundle scan clean; CI green on c0f06c7</td><td>All exit 0. New end-to-end test: an owner adds a cleared rights record, uploads a JPEG carrying GPS EXIF, sees the preview, publishes; the public page has &lt;picture&gt; with AVIF first, the alt text, the credit and the focal class; both renditions are served with the right type and no EXIF. The suite also caught and fixed two bugs: the attach call double-encoded its JSON (postgres.js), and split headlines duplicated their text</td></tr><tr><td class="id"><a href="evidence.html#EV-0059">EV-0059</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Local site audit before deploy: 11 views with 0 axe violations and no overflow; reduced motion, no-JS and the animation switch verified</td><td>Home desktop/dark/iPhone 13, story desktop/iPhone 13, AI story (plate), black-and-white story, section, About, home and story with reduced motion: HTTP 200, axe 0, no overflow, every image loaded, no reveal left hidden. With JavaScript off the page is complete. The toggle turns motion off, is remembered after reload, and (after a fix found here) leaves no motion styles behind</td></tr><tr><td class="id"><a href="evidence.html#EV-0060">EV-0060</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live: story images migration applied to hosted Supabase and the desk v0.7.0 deployed (revision sc-desk-00004-79x)</td><td>3 tables, 3 triggers, RLS on the private files; the publisher may run site_media and site_snapshot; staff may attach but not read files; agents may not attach; 4 migrations recorded. Health {version: 0.7.0}; GET /stories/&lt;id&gt;/image without a session 401; a cross-origin upload 403</td></tr><tr><td class="id"><a href="evidence.html#EV-0061">EV-0061</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live: six public-domain sample photographs attached on hosted Supabase and the site rebuilt through the publishing functions</td><td>6 images, 10 renditions each, every rendition&#39;s hash re-checked inside the database. Six jobs succeeded, each pinning its image; the last release has 95 files with 60 image renditions. The AI-written sample has no image, by design</td></tr><tr><td class="id"><a href="evidence.html#EV-0062">EV-0062</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live audit of the v0.7.0 public site: 11 views with 0 axe violations and no overflow; images, motion, reduced motion, no-JS and the switch work in production</td><td>All views HTTP 200, axe 0, no overflow, every image loaded, no reveal left hidden; motion standard with reduced motion off; the toggle reverts with no styles left and is remembered. /media/*.avif is image/avif with Cache-Control public, max-age=31536000, immutable and the site CSP; GSAP, ScrollTrigger, motion scripts and contours.svg 200; robots Disallow and 7 Sample chips unchanged</td></tr><tr><td class="id"><a href="evidence.html#EV-0063">EV-0063</a></td><td><span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.2" y="7" width="1.6" height="4.5" fill="currentColor"/><circle cx="8" cy="4.9" r="1" fill="currentColor"/></svg>info</span></td><td>Not yet exercised live: an image upload through the desk on Cloud Run, and Cloud Run publishing itself</td><td>The desk image contains sharp and libvips (checked in the standalone build). Processing a 2400 px photograph takes about 20 to 35 seconds on one CPU, mostly AVIF. Paul&#39;s first upload or update is the first live run; a failure shows on the story page with a reason</td></tr><tr><td class="id"><a href="evidence.html#EV-0064">EV-0064</a></td><td><span class="badge tone-critical"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round"/></svg>fail</span></td><td>Red team: the v0.7.0 desk, in its own container with Cloud Run&#39;s limits, is killed by a 24-megapixel upload, and refuses uploads over 10 MB as unreadable</td><td>12 MP (2.6 MB): attached in 30.9 s, server resident peak 483 MiB of 512. 24 MP (5.1 MB): the container was OOM-killed after 15 s (exit 137, OOMKilled=true), the request hung up and the desk was down. Separately, a 12.6 MB upload returned &#39;unreadable&#39; in 0.1 s; the log said &#39;Request body exceeded 10MB ... Only the first 10MB will be available&#39; (the Next.js proxy&#39;s default body limit). Standalone, sharp alone peaked at 385 MiB (12 MP) to 939 MiB (59 MP): every rendition was decoded from a full-size PNG intermediate</td></tr><tr><td class="id"><a href="evidence.html#EV-0065">EV-0065</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>v0.7.1 desk container under 512 MiB and one CPU: 12 to 59 megapixel uploads up to 14.4 MiB attach, one at a time and two at once, with no memory-limit hits</td><td>Charged container memory peaks (server VmHWM in brackets): 12 MP 300 MiB (360) in 28.0 s; 24 MP portrait 342 (403) in 41.4 s; 45 MP 376 (436) in 19.3 s; 59 MP 12.6 MB 446 (507) in 23.4 s; 59 MP 14.4 MiB 456 (509) in 22.6 s; 24 MP and 59 MP together 391 (452), 41.6 s and 65.7 s. All HTTP 303 ?image=attached, failcnt 0, OOMKilled false, health 200, no body-limit warnings. Because the high-water mark nears 512 MiB, the service moves to 1 GiB</td></tr><tr><td class="id"><a href="evidence.html#EV-0066">EV-0066</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>v0.7.1 tree: pgTAP 272/272, Vitest 131/131, Playwright 32/32, pnpm check, bundle scan; font preload fetched once at its versioned address</td><td>All exit 0. New tests: HEIC detection, the rendition area cap, one-at-a-time processing, the rotated rendition sizes, the 3000 px master path, and the versioned font preload. The stylesheet now loads contours.svg and each font with ?v=&lt;content hash&gt;; the masthead font is requested once, matching its preload, with no unused-preload warning</td></tr><tr><td class="id"><a href="evidence.html#EV-0067">EV-0067</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live site page weight and Core Web Vitals, cold cache: 383 to 532 KB per page on desktop and iPhone 13 except the iPhone home (755 KB); LCP 0.38 to 1.2 s; CLS at most 0.022</td><td>Fonts are the largest item on a first visit (296 KB; cached for a year after). Images: 25 to 172 KB per page, 391 KB on the iPhone home (six photographs at three times the density). Scripts 50 to 54 KB (GSAP, ScrollTrigger, motion). Every asset URL carries a content version; /assets and /media are served immutable for a year</td></tr><tr><td class="id"><a href="evidence.html#EV-0068">EV-0068</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live: desk v0.7.1 on Cloud Run revision sc-desk-00005-dw7 with 1 GiB; image route guards hold, and a 12.6 MB request no longer hits the 10 MB body cut-off</td><td>Revision sc-desk-00005-dw7 serves 100% of traffic with cpu=1, memory=1Gi. /api/health {version: 0.7.1}. GET /stories/&lt;id&gt;/image without a session 401; cross-origin POST 403; same-origin POST without a session 303 to /sign-in; a same-origin 12.6 MB multipart POST 303 in 1.7 s. The revision&#39;s log has no &#39;Request body exceeded&#39; warning; its only warnings are the request logs of the 401 and 403 probes. /sign-in and /pitch 200 with the nonce CSP, HSTS and X-Robots-Tag noindex</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/c7ff56f081f0575dea2bcb4456d4f9296394b3dc">c7ff56f</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
