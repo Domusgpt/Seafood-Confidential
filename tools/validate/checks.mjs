@@ -252,7 +252,11 @@ export async function checkPacket(repo) {
 /** Every relative Markdown link in the repository resolves. */
 export async function checkLinks(repo) {
   const r = result('Markdown relative links');
-  const files = await repo.list('.', { exts: ['.md'] });
+  // Public-site pages link to addresses on the published site (/how-we-work/, {{pitch_url}}), not to
+  // files in this repository, so they are not checked here (the site builder tests cover them).
+  const files = (await repo.list('.', { exts: ['.md'] })).filter(
+    (f) => !f.startsWith('apps/desk/site-src/pages/'),
+  );
   let count = 0;
   for (const f of files) {
     const text = await repo.readText(f);

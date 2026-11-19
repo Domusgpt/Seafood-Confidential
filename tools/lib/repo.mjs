@@ -40,6 +40,7 @@ export function createRepo(root = REPO_ROOT) {
         'coverage',
         '.temp',
         '.branches',
+        'site-static', // generated public-site assets and pages (apps/desk)
       ]);
       async function walk(dir) {
         let entries;
