@@ -1418,6 +1418,55 @@
       "observed": "5 migrations recorded. EXECUTE: authenticated yes; anon, desk_agent, desk_publisher no; returns (principal_id, last_sign_in_at) only. As an owner: Dave Simpson null (shown as 'Not yet'), Paul Phillips 2026-11-19 02:51 UTC, so Paul's first real-email sign-in has happened. A non-staff identity gets 0 rows. Health {version: 0.7.3}; /settings without a session redirects to /sign-in. All publish jobs since are operator runs, so a publication by the desk on Cloud Run is still not exercised",
       "result": "pass",
       "location": "devlog/assets/2026-11-19-s01-t9"
+    },
+    {
+      "id": "EV-0077",
+      "recordedAt": "2026-11-19T11:51:35-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@71dfdce835cba7a998719719b49b06e0838b7991",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005"
+      ],
+      "kind": "observation",
+      "summary": "Dave accepted the Supabase invitation as an Owner; he has not signed in to the desk yet; neither owner's Supabase account has two-factor authentication",
+      "steps": "Management API: organization members (role, MFA flag); SQL: Dave's last sign-in; auth configuration (mailer, template); Supabase's MFA documentation",
+      "observed": "Organization members: 2, both Owner, both mfa_enabled false. Dave: no sign-in yet. Built-in mailer: the template uses the default confirmation link, which opens only in the requesting browser, and it cannot be changed without custom SMTP. Supabase: each user turns MFA on in account settings; requiring it for an organization needs Pro, Team or Enterprise",
+      "result": "info"
+    },
+    {
+      "id": "EV-0078",
+      "recordedAt": "2026-11-19T11:51:35-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@71dfdce835cba7a998719719b49b06e0838b7991",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005"
+      ],
+      "kind": "test",
+      "summary": "v0.7.4 tree: pnpm check (Vitest 132/132), desk build and bundle scan, Playwright 33/33 including the sign-in guidance",
+      "steps": "pnpm devtrack status --write; pnpm check; pnpm desk:build; pnpm desk:e2e. The Docker daemon had stopped while the session was paused and was restarted before the end-to-end run",
+      "observed": "All exit 0. The sign-in test checks the 'Getting the link to work' region (same device and browser; spam), the message 'Open it in this browser', and still finds 0 axe violations",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0079",
+      "recordedAt": "2026-11-19T11:51:35-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@71dfdce835cba7a998719719b49b06e0838b7991",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005"
+      ],
+      "kind": "verification",
+      "summary": "Live: desk v0.7.4 on revision sc-desk-00008-gw2; the sign-in page shows the guidance, with 0 axe violations and no overflow on desktop and an iPhone 13",
+      "steps": "Cloud Build from git archive of 71dfdce (159c16ca, SUCCESS); gcloud run deploy with the new image only; health; the live sign-in HTML; Playwright with axe (WCAG 2.2 AA) and full-page screenshots at 1280x900 and as an iPhone 13",
+      "observed": "Health {version: 0.7.4}. The page carries 'Getting the link to work', the same-device-and-browser line and the hourly-limit line (DESK_AUTH_EMAIL defaults to builtin). Desktop and iPhone: 0 axe violations, no horizontal overflow",
+      "result": "pass",
+      "location": "devlog/assets/2026-11-19-s01-t10"
     }
   ]
 }
