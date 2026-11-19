@@ -84,7 +84,7 @@ export function page({ title, description, rel = '', current, body, build }) {
 ${body}
 </main>
 <footer class="site-footer"><div>
-  <p>Planning hub generated from <a href="${esc(build.treeUrl)}">${esc(build.branch)}</a> at <a href="${esc(build.commitUrl)}">${esc(build.shortCommit)}</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>Planning hub generated from <a href="${esc(build.treeUrl)}">${esc(build.branch)}</a> at <a href="${esc(build.commitUrl)}">${esc(build.shortCommit)}</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
   <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
 </div></footer>
 </body>

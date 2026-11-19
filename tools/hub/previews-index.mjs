@@ -123,7 +123,7 @@ ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}.preview{background:
 <h2>Previews (${previews.length})</h2>
 <p>Each pushed branch publishes its own hub. Work continues from the latest open pull request, so the newest preview is usually the current one. <a href="latest/">Open the latest</a>.</p>
 <ol>${rows || '<li class="preview">No previews yet.</li>'}</ol>
-<footer><p>Updated ${esc(fmt(now.toISOString()))}. Planning hub only; the publication and operations desk are not deployed. © 2026 the Seafood Confidential founders.</p></footer>
+<footer><p>Updated ${esc(fmt(now.toISOString()))}. Planning hubs only; the publication and the operations desk run as a preview, not launched. © 2026 the Seafood Confidential founders.</p></footer>
 </main>
 </body>
 </html>

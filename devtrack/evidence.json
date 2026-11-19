@@ -1091,6 +1091,198 @@
       "steps": "Local stack in preview mode: reset; owner added; preview-content.sql; owner signs in and runs the 7 queued jobs; opens SC-2026-007 and presses 'Update the published story'; checks the job, the site and the story's status",
       "observed": "No warnings were shown. The desk said 'Updated the published story.' The job is republish:succeeded, requested by the owner (a human principal). The site home still shows 7 Sample chips, the story still answers 200, and the story stays published at revision 1",
       "result": "pass"
+    },
+    {
+      "id": "EV-0058",
+      "recordedAt": "2026-11-18T21:30:12-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@c0f06c73faf5bd96844dcada54d5296e7402b2c8",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005",
+        "SC-009"
+      ],
+      "kind": "test",
+      "summary": "v0.7.0 locally: pgTAP 272/272 (34 new image tests), Vitest 126/126, Playwright 32/32, pnpm check clean, bundle scan clean; CI green on c0f06c7",
+      "steps": "supabase db reset; pnpm db:test; pnpm check; pnpm desk:build (scan:bundle); pnpm desk:e2e (fresh database)",
+      "observed": "All exit 0. New end-to-end test: an owner adds a cleared rights record, uploads a JPEG carrying GPS EXIF, sees the preview, publishes; the public page has <picture> with AVIF first, the alt text, the credit and the focal class; both renditions are served with the right type and no EXIF. The suite also caught and fixed two bugs: the attach call double-encoded its JSON (postgres.js), and split headlines duplicated their text",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0059",
+      "recordedAt": "2026-11-18T21:30:12-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@c0f06c73faf5bd96844dcada54d5296e7402b2c8",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-015"
+      ],
+      "kind": "test",
+      "summary": "Local site audit before deploy: 11 views with 0 axe violations and no overflow; reduced motion, no-JS and the animation switch verified",
+      "steps": "Local stack in preview mode: samples loaded, photographs attached with the operator CLI, the owner ran the queued jobs through the desk; Playwright scrolled each page so every reveal played, then axe (WCAG 2.2 AA); then reduced motion, JavaScript disabled, and the footer toggle",
+      "observed": "Home desktop/dark/iPhone 13, story desktop/iPhone 13, AI story (plate), black-and-white story, section, About, home and story with reduced motion: HTTP 200, axe 0, no overflow, every image loaded, no reveal left hidden. With JavaScript off the page is complete. The toggle turns motion off, is remembered after reload, and (after a fix found here) leaves no motion styles behind",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0060",
+      "recordedAt": "2026-11-18T21:30:12-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@c0f06c73faf5bd96844dcada54d5296e7402b2c8",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005"
+      ],
+      "kind": "verification",
+      "summary": "Live: story images migration applied to hosted Supabase and the desk v0.7.0 deployed (revision sc-desk-00004-79x)",
+      "steps": "Applied 20261119120000_story_images.sql through the Management API in one transaction with its schema_migrations record; checked tables, triggers and grants; Cloud Build from git archive of c0f06c7; Cloud Run deploy; probed health and the image route",
+      "observed": "3 tables, 3 triggers, RLS on the private files; the publisher may run site_media and site_snapshot; staff may attach but not read files; agents may not attach; 4 migrations recorded. Health {version: 0.7.0}; GET /stories/<id>/image without a session 401; a cross-origin upload 403",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0061",
+      "recordedAt": "2026-11-18T21:30:12-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@c0f06c73faf5bd96844dcada54d5296e7402b2c8",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003"
+      ],
+      "kind": "verification",
+      "summary": "Live: six public-domain sample photographs attached on hosted Supabase and the site rebuilt through the publishing functions",
+      "steps": "pnpm --filter @sc/desk images samples --emit-sql (base64; files under the Management API's ~3 MB limit, so one master is kept only in the repository); applied each; then six republish jobs, each claimed, read with site_snapshot and site_media, built with the desk's builder, deployed to Firebase Hosting with the desk's deploy code, and completed",
+      "observed": "6 images, 10 renditions each, every rendition's hash re-checked inside the database. Six jobs succeeded, each pinning its image; the last release has 95 files with 60 image renditions. The AI-written sample has no image, by design",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0062",
+      "recordedAt": "2026-11-18T21:30:12-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@c0f06c73faf5bd96844dcada54d5296e7402b2c8",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-015"
+      ],
+      "kind": "verification",
+      "summary": "Live audit of the v0.7.0 public site: 11 views with 0 axe violations and no overflow; images, motion, reduced motion, no-JS and the switch work in production",
+      "steps": "Playwright against https://seafood-confidential-preview.web.app: the same 11 views, scrolling every page, axe WCAG 2.2 AA; JavaScript disabled; the footer toggle; curl for headers of /media files and the motion assets",
+      "observed": "All views HTTP 200, axe 0, no overflow, every image loaded, no reveal left hidden; motion standard with reduced motion off; the toggle reverts with no styles left and is remembered. /media/*.avif is image/avif with Cache-Control public, max-age=31536000, immutable and the site CSP; GSAP, ScrollTrigger, motion scripts and contours.svg 200; robots Disallow and 7 Sample chips unchanged",
+      "result": "pass",
+      "location": "devlog/assets/2026-11-18-s01-t7"
+    },
+    {
+      "id": "EV-0063",
+      "recordedAt": "2026-11-18T21:30:12-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@c0f06c73faf5bd96844dcada54d5296e7402b2c8",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005"
+      ],
+      "kind": "observation",
+      "summary": "Not yet exercised live: an image upload through the desk on Cloud Run, and Cloud Run publishing itself",
+      "steps": "The sample photographs were loaded by operator SQL and published by an operator run of the desk's code; the upload route is tested end to end locally and probed live (401, 403) only",
+      "observed": "The desk image contains sharp and libvips (checked in the standalone build). Processing a 2400 px photograph takes about 20 to 35 seconds on one CPU, mostly AVIF. Paul's first upload or update is the first live run; a failure shows on the story page with a reason",
+      "result": "info"
+    },
+    {
+      "id": "EV-0064",
+      "recordedAt": "2026-11-18T22:13:52-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@b99e04c629086721e7b55a73bb6d78c32939c90e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005"
+      ],
+      "kind": "test",
+      "summary": "Red team: the v0.7.0 desk, in its own container with Cloud Run's limits, is killed by a 24-megapixel upload, and refuses uploads over 10 MB as unreadable",
+      "steps": "docker build of c0f06c7 (git archive); docker run --memory 512m --memory-swap 512m --cpus 1 against the local stack; signed in as a local owner through Mailpit; POSTed synthetic camera-like JPEGs (12, 24, 45, 59 megapixels) to /stories/<id>/image with a cleared rights record; read the container's memory cgroup (max_usage_in_bytes, failcnt) and the server's VmHWM after each upload",
+      "observed": "12 MP (2.6 MB): attached in 30.9 s, server resident peak 483 MiB of 512. 24 MP (5.1 MB): the container was OOM-killed after 15 s (exit 137, OOMKilled=true), the request hung up and the desk was down. Separately, a 12.6 MB upload returned 'unreadable' in 0.1 s; the log said 'Request body exceeded 10MB ... Only the first 10MB will be available' (the Next.js proxy's default body limit). Standalone, sharp alone peaked at 385 MiB (12 MP) to 939 MiB (59 MP): every rendition was decoded from a full-size PNG intermediate",
+      "result": "fail",
+      "defect": "IMG-0001 (fixed in 0.7.1)"
+    },
+    {
+      "id": "EV-0065",
+      "recordedAt": "2026-11-18T22:13:52-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@b99e04c629086721e7b55a73bb6d78c32939c90e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005"
+      ],
+      "kind": "test",
+      "summary": "v0.7.1 desk container under 512 MiB and one CPU: 12 to 59 megapixel uploads up to 14.4 MiB attach, one at a time and two at once, with no memory-limit hits",
+      "steps": "Same harness as the failing run, image built from the fixed tree (master decode with shrink-on-load, 4.3-megapixel cap, one image at a time, libvips cache off, MALLOC_ARENA_MAX=2, proxyClientMaxBodySize 16mb)",
+      "observed": "Charged container memory peaks (server VmHWM in brackets): 12 MP 300 MiB (360) in 28.0 s; 24 MP portrait 342 (403) in 41.4 s; 45 MP 376 (436) in 19.3 s; 59 MP 12.6 MB 446 (507) in 23.4 s; 59 MP 14.4 MiB 456 (509) in 22.6 s; 24 MP and 59 MP together 391 (452), 41.6 s and 65.7 s. All HTTP 303 ?image=attached, failcnt 0, OOMKilled false, health 200, no body-limit warnings. Because the high-water mark nears 512 MiB, the service moves to 1 GiB",
+      "result": "pass",
+      "defect": "IMG-0001 (fixed in 0.7.1)"
+    },
+    {
+      "id": "EV-0066",
+      "recordedAt": "2026-11-18T22:13:52-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@b99e04c629086721e7b55a73bb6d78c32939c90e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005",
+        "SC-009",
+        "SC-015"
+      ],
+      "kind": "test",
+      "summary": "v0.7.1 tree: pgTAP 272/272, Vitest 131/131, Playwright 32/32, pnpm check, bundle scan; font preload fetched once at its versioned address",
+      "steps": "pnpm db:reset; pnpm db:test; pnpm check; pnpm desk:build (scan:bundle); pnpm desk:e2e; then the built site served locally and loaded in Chromium, recording font requests and console messages",
+      "observed": "All exit 0. New tests: HEIC detection, the rendition area cap, one-at-a-time processing, the rotated rendition sizes, the 3000 px master path, and the versioned font preload. The stylesheet now loads contours.svg and each font with ?v=<content hash>; the masthead font is requested once, matching its preload, with no unused-preload warning",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0067",
+      "recordedAt": "2026-11-18T22:13:52-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@b99e04c629086721e7b55a73bb6d78c32939c90e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-015"
+      ],
+      "kind": "verification",
+      "summary": "Live site page weight and Core Web Vitals, cold cache: 383 to 532 KB per page on desktop and iPhone 13 except the iPhone home (755 KB); LCP 0.38 to 1.2 s; CLS at most 0.022",
+      "steps": "Playwright with the Chrome DevTools Protocol, cache disabled, against https://seafood-confidential-preview.web.app: home, a section, a story with a photograph and the AI story with a drawn plate, at 1440x900 and as an iPhone 13; summed encoded bytes by type before and after scrolling to the end; LCP and CLS from PerformanceObserver",
+      "observed": "Fonts are the largest item on a first visit (296 KB; cached for a year after). Images: 25 to 172 KB per page, 391 KB on the iPhone home (six photographs at three times the density). Scripts 50 to 54 KB (GSAP, ScrollTrigger, motion). Every asset URL carries a content version; /assets and /media are served immutable for a year",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0068",
+      "recordedAt": "2026-11-18T22:16:56-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@b99e04c629086721e7b55a73bb6d78c32939c90e",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005"
+      ],
+      "kind": "verification",
+      "summary": "Live: desk v0.7.1 on Cloud Run revision sc-desk-00005-dw7 with 1 GiB; image route guards hold, and a 12.6 MB request no longer hits the 10 MB body cut-off",
+      "steps": "Cloud Build from git archive of b99e04c (build 9a4b752d, SUCCESS); gcloud run deploy sc-desk --image .../desk:b99e04c --memory 1Gi (settings and secrets kept); probes with curl; Cloud Logging read for the new revision",
+      "observed": "Revision sc-desk-00005-dw7 serves 100% of traffic with cpu=1, memory=1Gi. /api/health {version: 0.7.1}. GET /stories/<id>/image without a session 401; cross-origin POST 403; same-origin POST without a session 303 to /sign-in; a same-origin 12.6 MB multipart POST 303 in 1.7 s. The revision's log has no 'Request body exceeded' warning; its only warnings are the request logs of the 401 and 403 probes. /sign-in and /pitch 200 with the nonce CSP, HSTS and X-Robots-Tag noindex",
+      "result": "pass"
     }
   ]
 }

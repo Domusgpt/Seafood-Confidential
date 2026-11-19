@@ -122,7 +122,18 @@ The desk and the database are in the same region: the Supabase project was creat
   - The preview banner, `noindex`, `Disallow: /` and the security headers are unchanged.
   - Ten views have 0 axe violations and no horizontal overflow: home on desktop, dark and iPhone 13, a story on desktop and iPhone 13, the AI-written explainer, the opinion piece, About, How we work, and a section page.
 
+## Verified on the live services, v0.7.0 and v0.7.1 (EV-0060 to EV-0068)
+
+- **Database.** The story-images migration is applied and recorded. The publisher may read image files, staff may attach images but not read the files, and agents may not attach.
+- **Desk.** Revision `sc-desk-00005-dw7` reports version 0.7.1 and runs with 1 CPU and 1 GiB. The image route refuses requests without a session (401) or from another site (403), and a 12.6 MB request is no longer cut off.
+- **Photographs.** Six samples have photographs, each with 10 renditions whose hashes were re-checked in the database. The site was rebuilt with them: 95 files, 60 of them image renditions, served as AVIF or WebP and cached for a year.
+- **Public site:**
+  - Eleven views have 0 axe violations and no horizontal overflow, including reduced motion. Pages are complete without JavaScript, and the animation switch reverts exactly.
+  - Page weight on a first visit is 383 to 532 KB, and 755 KB for the home page on an iPhone. Largest contentful paint is 0.4 to 1.2 seconds.
+- **Before v0.7.1 went live,** the desk's container was tested with the service's old limits (512 MiB, one CPU). A 24-megapixel upload crashed v0.7.0; v0.7.1 handles 12 to 59 megapixels (EV-0064, EV-0065).
+
 **Not yet exercised live:**
+- **An image upload through the desk.** It is tested end to end locally and in the desk's container; Paul's first upload is the first live one.
 - **Sign-in with a real email.** Paul's first sign-in is the first one.
 - **A publication by the desk service on Cloud Run.** The samples went live through the desk's own publishing code, run by an operator with a short-lived token. On Cloud Run the same code gets its token from the metadata server as `sc-desk-runtime` (Firebase Hosting Admin), and that has not run yet.
 
