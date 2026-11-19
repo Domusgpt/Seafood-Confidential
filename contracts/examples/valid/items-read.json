@@ -1,0 +1,10 @@
+{
+  "why": "Agent reads one assigned editorial item; the server still applies scope and redaction (AT-06).",
+  "acceptance": ["AT-06"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0002",
+    "tool": "items.read",
+    "arguments": { "itemId": "demo-item-001" }
+  }
+}

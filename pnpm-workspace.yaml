@@ -1,0 +1,19 @@
+# pnpm workspace: the desk app (apps/desk) and shared packages (packages/*); the repository
+# root holds tooling (tools/) and is itself a workspace package (decisions/ADR-003).
+#
+# Supply-chain posture (see decisions/ADR-002-repository-foundation.md):
+# - Dependency build scripts are denied unless approved here (strictDepBuilds is on by default).
+# - Newly published versions must be at least one day old before they can be installed.
+# - A release whose publishing trust is weaker than its predecessors' fails installation.
+packages:
+  - apps/*
+  - packages/*
+
+allowBuilds:
+  # Downloads the pinned Supabase CLI binary for `pnpm exec supabase`.
+  supabase: true
+  # Prebuilt platform binaries ship as optional dependencies; their install scripts are not needed.
+  sharp: false
+  unrs-resolver: false
+minimumReleaseAge: 1440
+trustPolicy: no-downgrade

@@ -1,0 +1,34 @@
+SEAFOOD CONFIDENTIAL — LAUNCH AND DEVELOPMENT PACKET
+Prepared November 17, 2026
+
+START HERE
+1. Read Seafood_Confidential_Launch_Packet.pdf for the 24-page founder plan.
+2. Edit the matching .docx when the founding team settles its decisions.
+3. Use Seafood_Confidential_Sprint_Workbook.xlsx for the sprint, costs,
+   six-week editorial calendar and proposed founder decisions.
+4. Give Seafood_Confidential_Development_Kit to the developer or coding agent.
+   Begin with its README.md, AGENTS.md, docs/PRODUCT_SPEC.md and
+   decisions/ADR-001-managed-publishing.md.
+
+The development kit contains 16 scoped tickets, 26 planned acceptance
+scenarios, an agent request contract, an illustrative content fixture,
+a runbook, a brand guide, a visual concept and editorial templates.
+
+STATUS
+This is a researched planning and implementation handoff package.
+The application has not been built or deployed. Runtime acceptance
+scenarios are explicitly UNRUN. Workbook formulas, schema examples,
+backlog consistency and the rendered packet have been reviewed.
+
+PLANNING BASELINE
+One experienced developer; 20 working days; 118–160 engineering hours
+including reserve. Ghost publication, private Next.js/Supabase desk,
+and two social channels using Buffer. Estimated initial operation:
+USD 119–169 per month equivalent before optional podcast, labor,
+tax, equipment, themes and overages. Ghost and Buffer annual billing
+require USD 588 upfront at the researched prices. Assumptions are
+editable in the workbook. Vendor details were checked November 17, 2026.
+
+No domain availability, trademark clearance, account setup or service
+purchase is represented as completed. The visual board is an initial
+brand concept, not production logo artwork or documentary photography.

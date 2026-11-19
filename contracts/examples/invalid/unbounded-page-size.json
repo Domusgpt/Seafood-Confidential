@@ -1,0 +1,10 @@
+{
+  "why": "List operations are bounded (limit 1-50).",
+  "acceptance": [],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0108",
+    "tool": "briefs.list",
+    "arguments": { "limit": 5000 }
+  }
+}

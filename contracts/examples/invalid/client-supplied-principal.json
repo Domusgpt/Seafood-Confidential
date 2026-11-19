@@ -1,0 +1,12 @@
+{
+  "why": "Authority comes from authentication, never from the request body (AGENTS.md).",
+  "acceptance": ["AT-07"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0104",
+    "principalId": "editor-1",
+    "scopes": ["publish"],
+    "tool": "briefs.list",
+    "arguments": {}
+  }
+}

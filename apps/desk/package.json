@@ -1,0 +1,63 @@
+{
+  "name": "@sc/desk",
+  "version": "0.7.4",
+  "private": true,
+  "description": "Seafood Confidential operations desk: writing, publishing to the static public site, newsletter and the policy-gated agent gateway (Next.js 16, Supabase).",
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/build-site-assets.mjs && next dev --hostname 127.0.0.1",
+    "build": "node scripts/build-site-assets.mjs && next build",
+    "start": "next start --hostname 127.0.0.1",
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "tokens": "node scripts/build-tokens.mjs",
+    "site:assets": "node scripts/build-site-assets.mjs",
+    "site:serve": "node scripts/serve-site.mjs",
+    "env:local": "node scripts/write-local-env.mjs",
+    "staff": "node --env-file=.env.ops.local scripts/staff.ts",
+    "agent": "node --env-file=.env.ops.local scripts/agent.ts",
+    "scan:bundle": "node scripts/scan-bundle.mjs",
+    "tokens:check": "node scripts/build-tokens.mjs --check",
+    "images": "node --env-file=.env.ops.local scripts/images.ts",
+    "audit:images": "node scripts/audit-images.mjs",
+    "site:contours": "node scripts/build-contours.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource-variable/source-sans-3": "5.3.1",
+    "@opentelemetry/api": "1.9.1",
+    "@sc/contracts": "workspace:*",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.119.0",
+    "@vercel/otel": "2.3.0",
+    "gsap": "3.15.1",
+    "jose": "6.2.17",
+    "markdown-it": "14.1.0",
+    "next": "16.4.6",
+    "pino": "10.4.0",
+    "postgres": "4.1.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "0.0.1",
+    "sharp": "0.35.5",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.63.0",
+    "@types/markdown-it": "14.1.2",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.6",
+    "typescript": "6.0.3",
+    "vitest": "5.1.0"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}

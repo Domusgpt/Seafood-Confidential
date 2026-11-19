@@ -1,0 +1,10 @@
+{
+  "why": "Agent reads the plain-language state of its own job.",
+  "acceptance": ["AT-14"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0006",
+    "tool": "jobs.read",
+    "arguments": { "jobId": "job-demo-001" }
+  }
+}

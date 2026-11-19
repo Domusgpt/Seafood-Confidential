@@ -1,0 +1,16 @@
+# Keep secrets, build output and dependencies out of every image build context.
+**/node_modules
+**/.next
+**/.env
+**/.env.*
+!apps/desk/.env.example
+.git
+_site
+test-results
+**/test-results
+**/playwright-report
+apps/agent-lab/reports
+supabase/.temp
+supabase/.branches
+packet
+devlog/assets

@@ -1,0 +1,10 @@
+{
+  "why": "Subscriber export is not an agent capability.",
+  "acceptance": ["AT-06"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0103",
+    "tool": "members.export",
+    "arguments": {}
+  }
+}

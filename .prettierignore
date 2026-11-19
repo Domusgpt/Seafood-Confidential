@@ -1,0 +1,41 @@
+# The founder packet and the development kit are preserved byte-for-byte as delivered
+# (2026-11-17). Edit them deliberately, never through a formatter.
+packet/
+docs/
+decisions/
+editorial/
+planning/
+contracts/agent-tools.schema.json
+fixtures/example-article.json
+brand/Seafood_Confidential_Brand_Concept.png
+AGENTS.md
+CLAUDE.md
+
+# Narrative records are hand-written.
+devlog/
+CHANGELOG.md
+
+# Generated or vendored
+pnpm-lock.yaml
+_site/
+node_modules/
+
+# Machine-written by the devtrack CLI (JSON.stringify formatting is canonical there).
+devtrack/*.json
+test-results/
+
+# Desk build output and generated files
+apps/desk/.next/
+apps/desk/next-env.d.ts
+apps/desk/src/app/tokens.css
+apps/desk/playwright-report/
+apps/desk/test-results/
+supabase/.temp/
+supabase/.branches/
+
+# Agent lab run reports (generated, git-ignored)
+apps/agent-lab/reports/
+
+# Public site build output (generated, git-ignored)
+apps/desk/site-static/
+apps/desk/.site-output/

@@ -1,0 +1,35 @@
+name: Decision needed
+description: A founder decision (D##) or an engineering decision that may become an ADR.
+title: 'Decision: '
+labels: ['decision']
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - Founder decision (planning/WORKBOOK_DECISIONS.json)
+        - Engineering decision (ADR in decisions/)
+        - Planning question (docs/planning/FOUNDATION_PLANNING_BRIEF.md)
+    validations:
+      required: true
+  - type: input
+    id: ref
+    attributes:
+      label: Reference
+      placeholder: D10, Q4, or ADR-003
+  - type: textarea
+    id: question
+    attributes:
+      label: The question
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options and trade-offs
+  - type: textarea
+    id: recommendation
+    attributes:
+      label: Recommendation and owner
+      description: Who decides, by when, and what it blocks.

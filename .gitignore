@@ -1,0 +1,36 @@
+# Dependencies and caches
+node_modules/
+.pnpm-store/
+.cache/
+
+# Build output (project hub) and test artifacts
+_site/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Local environment and secrets — never commit real credentials (see SECURITY.md)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+supabase/.temp/
+supabase/.branches/
+.vercel/
+.firebase/
+firebase-debug.log*
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*

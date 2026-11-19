@@ -1,0 +1,13 @@
+{
+  "why": "Every write carries a durable idempotency key for duplicate control.",
+  "acceptance": ["AT-12", "AT-13"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0105",
+    "tool": "drafts.propose",
+    "arguments": {
+      "briefId": "brief-demo-001",
+      "content": { "title": "x", "bodyMarkdown": "x", "sourceIds": [] }
+    }
+  }
+}

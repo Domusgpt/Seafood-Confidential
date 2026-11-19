@@ -1,0 +1,328 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:seafood-confidential:agent-request:1",
+  "title": "Proposed Seafood Confidential internal agent request contract",
+  "description": "Planning schema, implemented by the desk gateway. Authentication supplies the principal and scopes; a request cannot choose its own authority. Publication exists only as drafts.publish, which publishes the agent's own existing proposal under the desk's publishing policy and automated checks (ADR-005). No send, approve, permission or subscriber-export operation exists.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "requestId",
+    "tool",
+    "arguments"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "tool": {
+      "enum": [
+        "briefs.list",
+        "items.read",
+        "drafts.propose",
+        "drafts.revise",
+        "drafts.publish",
+        "social.propose",
+        "jobs.read"
+      ]
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "arguments": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "objectId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "draftFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "bodyMarkdown",
+        "sourceIds"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 180
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "bodyMarkdown": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100000
+        },
+        "section": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "sourceIds": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/$defs/objectId"
+          }
+        },
+        "editorNotes": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "briefs.list"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "cursor": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 50
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "items.read"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "itemId"
+            ],
+            "properties": {
+              "itemId": {
+                "$ref": "#/$defs/objectId"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "drafts.propose"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "briefId",
+              "content"
+            ],
+            "properties": {
+              "briefId": {
+                "$ref": "#/$defs/objectId"
+              },
+              "content": {
+                "$ref": "#/$defs/draftFields"
+              }
+            }
+          }
+        },
+        "required": [
+          "idempotencyKey"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "drafts.revise"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "draftId",
+              "expectedRevision",
+              "content"
+            ],
+            "properties": {
+              "draftId": {
+                "$ref": "#/$defs/objectId"
+              },
+              "expectedRevision": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "content": {
+                "$ref": "#/$defs/draftFields"
+              }
+            }
+          }
+        },
+        "required": [
+          "idempotencyKey"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "drafts.publish"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "draftId"
+            ],
+            "properties": {
+              "draftId": {
+                "$ref": "#/$defs/objectId"
+              },
+              "sendEmail": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "required": [
+          "idempotencyKey"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "social.propose"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "itemId",
+              "reviewSnapshotId",
+              "channelConnectionId",
+              "text"
+            ],
+            "properties": {
+              "itemId": {
+                "$ref": "#/$defs/objectId"
+              },
+              "reviewSnapshotId": {
+                "$ref": "#/$defs/objectId"
+              },
+              "channelConnectionId": {
+                "$ref": "#/$defs/objectId"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "assetIds": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/$defs/objectId"
+                }
+              },
+              "suggestedLocalTime": {
+                "type": "string",
+                "maxLength": 80
+              },
+              "timeZone": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          }
+        },
+        "required": [
+          "idempotencyKey"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {
+            "const": "jobs.read"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "jobId"
+            ],
+            "properties": {
+              "jobId": {
+                "$ref": "#/$defs/objectId"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

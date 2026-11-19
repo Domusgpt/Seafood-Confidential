@@ -1,0 +1,10 @@
+{
+  "why": "Agent lists assigned briefs with bounded pagination.",
+  "acceptance": [],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0001",
+    "tool": "briefs.list",
+    "arguments": { "limit": 20 }
+  }
+}

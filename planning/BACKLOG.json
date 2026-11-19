@@ -1,0 +1,366 @@
+{
+  "schemaVersion": "1.0",
+  "project": "Seafood Confidential",
+  "status": "planning_only_not_implemented",
+  "createdOn": "2026-11-17",
+  "currency": "USD",
+  "engineeringHours": {
+    "low": 123,
+    "high": 175,
+    "reserve": 11
+  },
+  "sprintAssumptions": {
+    "developerCount": 1,
+    "workdayHours": 8,
+    "targetWorkingDays": 20,
+    "theme": "existing licensed Ghost theme",
+    "socialChannels": 2,
+    "founderHoursSeparate": [
+      10,
+      16
+    ],
+    "mandatoryOwner": "Named human editor"
+  },
+  "tickets": [
+    {
+      "id": "SC-001",
+      "priority": "P0",
+      "title": "Decisions and development environment",
+      "status": "in_progress",
+      "hoursLow": 4,
+      "hoursHigh": 6,
+      "dependencies": [],
+      "owner": "Developer and founders",
+      "scope": "Freeze one launch audience, two social channels, account ownership and existing theme; establish repository, feature branch, staging secrets and vendor API feasibility.",
+      "acceptance": [
+        "Named account owners and recovery contacts recorded privately",
+        "Staging access restricted; no production credentials in source",
+        "Ghost and Buffer integration feasibility recorded with manual fallback"
+      ]
+    },
+    {
+      "id": "SC-002",
+      "priority": "P0",
+      "title": "Public site hosting and publishing roles (ADR-005: Firebase Hosting, no Ghost)",
+      "status": "planned",
+      "hoursLow": 4,
+      "hoursHigh": 6,
+      "dependencies": [
+        "SC-001"
+      ],
+      "owner": "Developer",
+      "scope": "Create the Firebase Hosting site on the Google project, allow the desk service account to deploy it, connect the domain, and confirm who may publish (owners and managing editors) and that contributors and readers cannot.",
+      "acceptance": [
+        "Only the desk service account can deploy the site; founders hold the project",
+        "Contributors and reader identities cannot publish or reach the desk",
+        "Site title, time zone and reply address are owner reviewed"
+      ]
+    },
+    {
+      "id": "SC-003",
+      "priority": "P0",
+      "title": "Public site pages from the desk (ADR-005)",
+      "status": "in_progress",
+      "hoursLow": 8,
+      "hoursHigh": 12,
+      "dependencies": [
+        "SC-002"
+      ],
+      "owner": "Developer with founder content",
+      "scope": "Render home, section, story, feed, sitemap and 404 pages from published articles in the Working Waterfront design; full-snapshot deploys.",
+      "acceptance": [
+        "Core routes readable on phone and desktop",
+        "Clear heading structure, contrast, focus state, image alt text and article metadata",
+        "No fabricated social proof, audience totals or invented contributor biographies"
+      ]
+    },
+    {
+      "id": "SC-004",
+      "priority": "P0",
+      "title": "Newsletter signup and sending with Kit (ADR-005)",
+      "status": "in_progress",
+      "hoursLow": 4,
+      "hoursHigh": 6,
+      "dependencies": [
+        "SC-002"
+      ],
+      "owner": "Developer and editor",
+      "scope": "Kit free plan: signup form on the public site, broadcast per publication only when chosen, at most once; consent and unsubscribe handled by Kit.",
+      "acceptance": [
+        "Consented test signup and unsubscribe complete",
+        "Web publication does not silently send newsletter",
+        "Sender and reply addresses verified before live send"
+      ]
+    },
+    {
+      "id": "SC-005",
+      "priority": "P0",
+      "title": "Private operations shell and auth",
+      "status": "in_progress",
+      "hoursLow": 10,
+      "hoursHigh": 12,
+      "dependencies": [
+        "SC-001"
+      ],
+      "owner": "Developer",
+      "scope": "Create Next.js operations console with Supabase Auth, RLS and explicit staff/agent principals.",
+      "acceptance": [
+        "Unauthorized and disabled accounts cannot retrieve operational data",
+        "RLS policies enforce object ownership and staff-only source access",
+        "Server service keys absent from frontend bundles; no shared member/staff identity"
+      ]
+    },
+    {
+      "id": "SC-006",
+      "priority": "P0",
+      "title": "Pitch intake and source and rights records",
+      "status": "in_progress",
+      "hoursLow": 8,
+      "hoursHigh": 10,
+      "dependencies": [
+        "SC-005"
+      ],
+      "owner": "Developer with editor review",
+      "scope": "Implement bounded pitch form, moderation disposition and private source/media permission records.",
+      "acceptance": [
+        "Public intake cannot enumerate submissions or upload executable files",
+        "Contact and permission records excluded from public article responses",
+        "Required source and credit fields visible during review"
+      ]
+    },
+    {
+      "id": "SC-007",
+      "priority": "P0",
+      "title": "Editorial queue and next actions",
+      "status": "in_progress",
+      "hoursLow": 6,
+      "hoursHigh": 8,
+      "dependencies": [
+        "SC-005",
+        "SC-002"
+      ],
+      "owner": "Developer",
+      "scope": "Link editorial items to canonical Ghost post IDs; add assigned owner, editorial status, section, region and species tags.",
+      "acceptance": [
+        "One unique Ghost post mapping per editorial item",
+        "Friend sees next action and exact native editor link",
+        "Operations states do not overwrite Ghost with unsupported status values"
+      ]
+    },
+    {
+      "id": "SC-008",
+      "priority": "P0",
+      "title": "Read-only review snapshots and stale detection",
+      "status": "planned",
+      "hoursLow": 10,
+      "hoursHigh": 12,
+      "dependencies": [
+        "SC-006",
+        "SC-007"
+      ],
+      "owner": "Developer",
+      "scope": "Capture append-only review snapshots, digest and Ghost updated_at; display changes and invalidate stale review indicators.",
+      "acceptance": [
+        "Edit after review creates stale banner and preserves earlier snapshot",
+        "Application role cannot edit or delete a completed snapshot",
+        "Review screen distinguishes web, newsletter and each social destination; no automated release button"
+      ]
+    },
+    {
+      "id": "SC-009",
+      "priority": "P0",
+      "title": "Scoped agent draft gateway",
+      "status": "in_progress",
+      "hoursLow": 12,
+      "hoursHigh": 18,
+      "dependencies": [
+        "SC-005",
+        "SC-007"
+      ],
+      "owner": "Developer",
+      "scope": "Implement the proposed internal contract with named agents, scoped access, strict field validation, expected revision and credential revocation.",
+      "acceptance": [
+        "Agent may create/update permitted drafts and suggest metadata",
+        "Agent publish, send, role-change, subscriber-export and published-edit attempts fail",
+        "Revoked agent is denied; request/revision conflicts are clear and logged without secrets"
+      ]
+    },
+    {
+      "id": "SC-010",
+      "priority": "P0",
+      "title": "Two-channel social drafts and Buffer adapter",
+      "status": "planned",
+      "hoursLow": 8,
+      "hoursHigh": 12,
+      "dependencies": [
+        "SC-008",
+        "SC-009"
+      ],
+      "owner": "Developer and editor",
+      "scope": "Produce exact channel drafts, assets and dates; use a Buffer Needs Approval principal where supported; always provide copy/export fallback.",
+      "acceptance": [
+        "Agent-created Buffer output remains awaiting human approval",
+        "Manual export contains exact text, image credits, destination and canonical URL",
+        "Changed source item flags affected packs for human rechecking; native scheduling boundary disclosed"
+      ]
+    },
+    {
+      "id": "SC-011",
+      "priority": "P0",
+      "title": "Durable publish jobs and reconciliation",
+      "status": "in_progress",
+      "hoursLow": 10,
+      "hoursHigh": 12,
+      "dependencies": [
+        "SC-007",
+        "SC-009"
+      ],
+      "owner": "Developer",
+      "scope": "Idempotent publish jobs with one site build at a time, leases, retries that redeploy the same snapshot, and newsletter sends that are never repeated after an uncertain outcome.",
+      "acceptance": [
+        "Repeated request does not create duplicate local work",
+        "Same key plus different payload returns conflict",
+        "Unknown provider acceptance enters needs-attention instead of blind retry",
+        "Duplicate webhook is harmless; missed event reconciliation updates stale status"
+      ]
+    },
+    {
+      "id": "SC-012",
+      "priority": "P1",
+      "title": "Podcast-ready episode article template",
+      "status": "planned",
+      "hoursLow": 3,
+      "hoursHigh": 5,
+      "dependencies": [
+        "SC-003"
+      ],
+      "owner": "Developer and editor",
+      "scope": "Add a reusable interview/episode article format with guest bio, show notes, transcript and optional external player; actual podcast hosting remains optional.",
+      "acceptance": [
+        "Episode without audio displays cleanly without dead controls",
+        "External media embed is accessible and carries ownership/consent reference",
+        "No unsupported claim of an existing distributed podcast"
+      ]
+    },
+    {
+      "id": "SC-013",
+      "priority": "P0",
+      "title": "Editorial policies and corrections visibility",
+      "status": "planned",
+      "hoursLow": 4,
+      "hoursHigh": 6,
+      "dependencies": [
+        "SC-003",
+        "SC-006"
+      ],
+      "owner": "Editor with developer",
+      "scope": "Publish approved standards, guest guidance, correction contact and labels for opinion, reporting and sponsorship.",
+      "acceptance": [
+        "Policy pages linked from footer and submission flow",
+        "Correction timestamp and notice can be added without silently rewriting history",
+        "Founders sign off on actual wording and contact details"
+      ]
+    },
+    {
+      "id": "SC-014",
+      "priority": "P0",
+      "title": "Exports backup and restore procedure",
+      "status": "planned",
+      "hoursLow": 4,
+      "hoursHigh": 6,
+      "dependencies": [
+        "SC-005",
+        "SC-007"
+      ],
+      "owner": "Developer",
+      "scope": "Document and rehearse Ghost exports plus operations database/private asset backup and restore.",
+      "acceptance": [
+        "Recovery rehearsal restores sample content and linked operations records",
+        "Export inventory includes themes, routes, media, members and private rights assets as applicable",
+        "Owner can locate recovery credentials without developer intervention"
+      ]
+    },
+    {
+      "id": "SC-015",
+      "priority": "P0",
+      "title": "Launch failure-path and accessibility checks",
+      "status": "planned",
+      "hoursLow": 8,
+      "hoursHigh": 12,
+      "dependencies": [
+        "SC-003",
+        "SC-004",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-014"
+      ],
+      "owner": "Developer",
+      "scope": "Exercise permission, stale-review, retry and operator critical journeys; review public layout and metadata.",
+      "acceptance": [
+        "Acceptance matrix has actual evidence and results",
+        "No drafts exposed through public routes, feeds, previews or search",
+        "Unmet P0 behavior blocks release; remaining issues named and assigned"
+      ]
+    },
+    {
+      "id": "SC-016",
+      "priority": "P0",
+      "title": "Operator rehearsal and handoff",
+      "status": "planned",
+      "hoursLow": 4,
+      "hoursHigh": 6,
+      "dependencies": [
+        "SC-012",
+        "SC-013",
+        "SC-015"
+      ],
+      "owner": "Friend editor with developer",
+      "scope": "Rehearse guest draft to article to newsletter to social, then correction and recovery; capture concise how-to recordings and final runbook.",
+      "acceptance": [
+        "Friend completes the daily workflow without source-code access",
+        "Accounts, costs, handoff documents and support contact recorded",
+        "A founder authorizes actual launch only after reviewing staging results"
+      ]
+    },
+    {
+      "id": "SC-017",
+      "priority": "P0",
+      "title": "Agent publishing under owner switches and automated checks (ADR-005)",
+      "status": "in_progress",
+      "hoursLow": 10,
+      "hoursHigh": 16,
+      "dependencies": [
+        "SC-009",
+        "SC-011"
+      ],
+      "owner": "Developer and owner",
+      "scope": "drafts.publish for an agent's own proposal: master switch, section lanes, publish scope, people-first rule, content checks in the database, daily cap, email permission, disclosure label, audit and an off switch for all staff.",
+      "acceptance": [
+        "An agent publishes only inside an open lane with every check passing (AT-27)",
+        "Every refusal names the failed checks and nothing is published (AT-28)",
+        "A person's text is never overwritten by an agent (AT-29); the off switch cancels queued agent jobs (AT-30)"
+      ]
+    },
+    {
+      "id": "SC-018",
+      "priority": "P0",
+      "title": "Story text written in the desk with revisions (ADR-005)",
+      "status": "in_progress",
+      "hoursLow": 6,
+      "hoursHigh": 10,
+      "dependencies": [
+        "SC-005",
+        "SC-007"
+      ],
+      "owner": "Developer and editor",
+      "scope": "Markdown story editor in the desk with revision history, stale-save protection, adopting agent proposals as the starting text, and citable-source selection.",
+      "acceptance": [
+        "A save from an outdated page is refused and the newer text kept (AT-08)",
+        "Every save is kept as an append-only revision",
+        "Adopted agent text stays labelled as AI-written on the public site (AT-24)"
+      ]
+    }
+  ]
+}

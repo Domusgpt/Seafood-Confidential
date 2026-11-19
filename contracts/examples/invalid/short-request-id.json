@@ -1,0 +1,10 @@
+{
+  "why": "Request IDs must be durable (8-128 chars) for audit and replay detection.",
+  "acceptance": ["AT-12"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "r1",
+    "tool": "jobs.read",
+    "arguments": { "jobId": "job-demo-001" }
+  }
+}

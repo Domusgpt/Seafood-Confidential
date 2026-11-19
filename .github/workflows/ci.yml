@@ -1,0 +1,167 @@
+name: CI
+
+on:
+  push:
+    branches-ignore: [gh-pages]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Validate, test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # full history for the secret scan
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Kit and tracking integrity
+        run: pnpm validate
+      - name: Tool tests
+        run: pnpm test
+      - name: Implementation status is current
+        run: pnpm devtrack status --check
+      - name: Build and check the project hub
+        run: |
+          pnpm hub:build
+          pnpm hub:check
+      - name: Formatting
+        run: pnpm format:check
+      - name: Install pinned lint and scan tools
+        run: bash tools/bootstrap/install-dev-tools.sh --binaries
+      - name: Lint workflows (actionlint) and shell (shellcheck)
+        run: |
+          actionlint
+          shellcheck tools/bootstrap/*.sh
+      - name: Secret scan (gitleaks, full history)
+        run: gitleaks git --no-banner --redact --config .gitleaks.toml --exit-code 1 .
+      - name: Validate GLSL shaders (Khronos glslang)
+        run: |
+          sudo apt-get update -q > /dev/null
+          sudo apt-get install -y --no-install-recommends glslang-tools > /dev/null
+          glslangValidator tools/hub/assets/shaders/bathymetry.vert tools/hub/assets/shaders/bathymetry.frag
+
+  visual:
+    name: Visual and accessibility check
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # The Ubuntu package mirrors behind --with-deps time out at times: apt retries each download,
+      # and the whole install is tried three times before the job fails.
+      - name: Install Chromium for Playwright (retried)
+        run: |
+          echo 'Acquire::Retries "5";' | sudo tee /etc/apt/apt.conf.d/80-retries > /dev/null
+          for attempt in 1 2 3; do
+            pnpm exec playwright install --with-deps chromium && exit 0
+            echo "::warning::Browser install attempt $attempt failed; retrying"
+            sleep $((attempt * 20))
+          done
+          exit 1
+      - run: pnpm hub:build
+      - name: Screenshots and axe scan (desktop, mobile, dark, reduced motion)
+        run: pnpm hub:shots --out test-results/hub-shots
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: hub-screenshots-${{ github.sha }}
+          path: test-results/hub-shots
+          retention-days: 14
+
+  desk:
+    name: Desk (database policies, build, end-to-end)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Static checks (tokens, lint, types, unit tests)
+        run: pnpm desk:check
+      # A runner can report a port as busy on the first start; stop and try once more.
+      - name: Start local Supabase (Postgres, Auth, Mailpit; retried once)
+        run: |
+          pnpm db:start && exit 0
+          echo "::warning::Supabase did not start; stopping and retrying once"
+          pnpm db:stop || true
+          sleep 15
+          pnpm db:start
+      - name: Database policy tests (pgTAP)
+        run: pnpm db:test
+      - name: Local environment for the desk (generated, never committed)
+        run: pnpm desk:env
+      - name: Production build and client bundle secret scan
+        run: pnpm desk:build
+      - name: Install Chromium for Playwright (retried)
+        run: |
+          echo 'Acquire::Retries "5";' | sudo tee /etc/apt/apt.conf.d/80-retries > /dev/null
+          for attempt in 1 2 3; do
+            pnpm --filter @sc/desk exec playwright install --with-deps chromium && exit 0
+            echo "::warning::Browser install attempt $attempt failed; retrying"
+            sleep $((attempt * 20))
+          done
+          exit 1
+      - name: End-to-end tests (Playwright, axe WCAG 2.2 AA)
+        run: pnpm desk:e2e
+        env:
+          DESK_SHOTS_DIR: ${{ github.workspace }}/apps/desk/test-results/shots
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: desk-e2e-${{ github.sha }}
+          path: |
+            apps/desk/test-results
+            apps/desk/playwright-report
+          retention-days: 14
+      - name: Stop Supabase
+        if: always()
+        run: pnpm db:stop
+
+  container:
+    name: Desk container image (build and smoke test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build the production image
+        run: docker build -f apps/desk/Dockerfile -t sc-desk:ci .
+      - name: Smoke test (health, pages, gateway refusal, non-root)
+        run: |
+          docker run -d --name desk -p 8080:8080 \
+            -e DESK_SITE_URL=http://127.0.0.1:8080 -e SUPABASE_URL=http://127.0.0.1:54321 \
+            -e SUPABASE_PUBLISHABLE_KEY=sb_publishable_ci_placeholder \
+            -e DESK_DATABASE_URL=postgresql://desk_app:unused@127.0.0.1:5432/postgres \
+            -e INTAKE_HASH_SECRET=ci-placeholder-intake-hash-secret-0123456789 \
+            -e DESK_TRUSTED_PROXY_HOPS=1 sc-desk:ci
+          for _ in $(seq 1 30); do curl -fsS http://127.0.0.1:8080/api/health && break; sleep 1; done
+          curl -fsS http://127.0.0.1:8080/api/health | grep -q '"status":"ok"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/pitch)" = 200
+          curl -s -D - -o /dev/null http://127.0.0.1:8080/pitch | grep -qi "content-security-policy: default-src 'self'"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:8080/api/agent/v1)" = 401
+          test "$(docker exec desk whoami)" = node
+      - if: always()
+        run: docker logs desk || true

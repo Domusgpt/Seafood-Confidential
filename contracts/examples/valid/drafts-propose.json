@@ -1,0 +1,21 @@
+{
+  "why": "Agent proposes a draft for an assigned brief, citing source IDs; idempotencyKey is required for writes (AT-12).",
+  "acceptance": ["AT-12"],
+  "request": {
+    "schemaVersion": "1.0",
+    "requestId": "req-2026-0003",
+    "idempotencyKey": "idem-demo-item-001-v1",
+    "tool": "drafts.propose",
+    "arguments": {
+      "briefId": "brief-demo-001",
+      "content": {
+        "title": "The questions to ask before the next seafood shipment",
+        "summary": "FIXTURE ONLY: not publishable reporting.",
+        "bodyMarkdown": "DRAFT WORKFLOW FIXTURE: NOT FOR PUBLICATION.",
+        "section": "The Trade",
+        "sourceIds": ["SRC-DEMO-01"],
+        "editorNotes": "Unresolved: every claim needs a verified source."
+      }
+    }
+  }
+}

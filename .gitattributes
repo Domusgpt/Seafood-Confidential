@@ -1,0 +1,22 @@
+# Normalize text to LF; keep binaries byte-exact.
+* text=auto eol=lf
+
+# The kit's CSV exports use RFC 4180 CRLF line endings; store them byte-for-byte.
+*.csv -text
+
+*.sh text eol=lf
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.woff2 binary
+*.zip binary
+
+# Linguist: the packet and kit specifications are documentation, not code.
+packet/** linguist-documentation
+docs/** linguist-documentation
+editorial/** linguist-documentation
+planning/build_workbook.mjs linguist-vendored
