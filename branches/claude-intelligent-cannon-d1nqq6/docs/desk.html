@@ -33,8 +33,8 @@
       <span>Project hub</span>
       <span>v0.6.0</span>
       <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
-      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/84a1622c3fdaa023f34a047850d056caa7fa0d3b">Commit <code>84a1622</code></a>
-      <span>Built Nov 18, 2026, 7:34 PM EST</span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/bf588e7cd650962400cbfe65cc23d330e1f2d716">Commit <code>bf588e7</code></a>
+      <span>Built Nov 18, 2026, 7:56 PM EST</span>
       <a href="../../../index.html">All branch previews</a>
     </div>
   </div>
@@ -43,7 +43,7 @@
 <main id="content" tabindex="-1">
 <div class="docs-layout">
   <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="desk.html" aria-current="page">Operations desk</a></li><li><a href="deployment.html">Deploying the desk and the public site</a></li><li><a href="hosting-and-costs.html">Hosting and running costs</a></li><li><a href="agent-lab.html">Agent lab (Claude against the gateway)</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li><li><a href="adr-003.html">ADR-003 operations desk foundation stack and data access</a></li><li><a href="adr-004.html">ADR-004 desk-driven Ghost drafts and one-click human publishing</a></li><li><a href="adr-005.html">ADR-005 Ghost-free publishing from the desk, with agents publishing under policy</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
-  <article class="prose"><h1 id="operations-desk-v041">Operations desk (v0.4.1)</h1>
+  <article class="prose"><h1 id="operations-desk-v060">Operations desk (v0.6.0)</h1>
 <p>The operations desk for Seafood Confidential:</p>
 <ul>
 <li>staff sign-in;</li>
@@ -102,6 +102,32 @@
 <li>email addresses and phone numbers, including ones hidden by Markdown escapes, emphasis or invisible characters.</li>
 </ul>
 <p>The desk checks the rendered page once more before deploying.</p>
+</li>
+</ul>
+<h2 id="public-site-preview-mode-standing-pages-samples-sweep-v050v060">Public site: preview mode, standing pages, samples, sweep (v0.5.0–v0.6.0)</h2>
+<ul>
+<li><strong>Preview mode.</strong> With <code>SITE_PREVIEW_NOTICE</code> set, every public page shows that text in a banner, carries <code>noindex</code>, and <code>robots.txt</code> says <code>Disallow: /</code>. The desk itself always sends <code>X-Robots-Tag: noindex, nofollow</code>.</li>
+<li><strong>Standing pages.</strong> Each Markdown file in <code>apps/desk/site-src/pages/</code> becomes a page at <code>/&lt;file name&gt;/</code>, linked from every footer and listed in the sitemap.<ul>
+<li>Front matter needs <code>title</code>, <code>description</code> and an optional numeric <code>order</code> (footer order).</li>
+<li><code>{{pitch_url}}</code> is replaced with the pitch form&#39;s address.</li>
+<li>Headings start at h2 whatever level the file uses.</li>
+<li>Names that would collide with site paths (<code>stories</code>, <code>sections</code>, <code>assets</code>, the feed and sitemap) are refused.</li>
+<li>The pages are copied into the image at build time, so a change needs a redeploy.</li>
+</ul>
+</li>
+<li><strong>Sample stories.</strong> A story marked <code>is_sample</code> is placeholder content for a preview.<ul>
+<li>Only an operator (the database owner) can set or clear the flag; a trigger refuses every API role.</li>
+<li>The site labels samples everywhere, and the builder refuses to publish a site that is not a preview while any sample is live.</li>
+<li>In the desk, samples show a badge, and their next action is &quot;Sample: nothing to do&quot;.</li>
+<li><code>supabase/sample/preview-content.sql</code> loads seven; <code>remove-preview-content.sql</code> removes them (steps in <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/LAUNCH_PREVIEW.md">LAUNCH_PREVIEW.md</a>).</li>
+</ul>
+</li>
+<li><strong>Publishing sweep.</strong> <code>POST /api/publishing/sweep</code> runs up to ten waiting publish jobs, for a scheduler such as Cloud Scheduler.<ul>
+<li>It exists only when <code>PUBLISH_SWEEP_INVOKER</code> names the calling service account; otherwise it answers 404.</li>
+<li>It accepts only a Google-signed RS256 ID token from that account, issued for that exact address, with a verified email and at most an hour old.</li>
+<li>Refusals are logged with a reason class and the request ID, never the token.</li>
+<li>Without a scheduler, waiting jobs run after each publication (up to three) or from &quot;Run … queued jobs now&quot; on <code>/publishing</code> (up to five per press).</li>
+</ul>
 </li>
 </ul>
 <h2 id="scope-delivered-in-this-version">Scope delivered in this version</h2>
@@ -364,7 +390,8 @@
 <li><strong>Founder decision, 18 November 2026: the intake limits stay as built</strong> (5 pitches per client per hour, 200 an hour overall, no challenge). Revisit if spam appears; a privacy-respecting challenge can be added later.</li>
 <li>Review snapshots and stale detection (SC-008) before any social or newsletter work.</li>
 <li>Hosted Supabase verification of the role-membership grants and transaction pooling (ADR-003 review triggers, SC-015).</li>
-<li>Live Firebase Hosting deploys and Kit broadcasts are verified only against protocol fakes; their first live runs are part of SC-015. Scheduled publication, a public corrections note and images in stories are not built yet.</li>
+<li>Firebase Hosting deploys have run live on the preview, through the desk&#39;s own deploy code run by an operator (EV-0047, EV-0053). A publication by the desk service on Cloud Run has not run yet. Kit broadcasts are verified only against protocol fakes. Their first live runs are part of SC-015.</li>
+<li>Not built yet: publication at a scheduled time, a public corrections note, and images in stories.</li>
 <li>The legacy &quot;link a Ghost post&quot; form and <code>ghost_post_id</code> column remain in the code and schema but are unused (ADR-005).</li>
 </ul>
 
@@ -373,7 +400,7 @@
 </div>
 </main>
 <footer class="site-footer"><div>
-  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/84a1622c3fdaa023f34a047850d056caa7fa0d3b">84a1622</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/bf588e7cd650962400cbfe65cc23d330e1f2d716">bf588e7</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
   <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
 </div></footer>
 </body>
