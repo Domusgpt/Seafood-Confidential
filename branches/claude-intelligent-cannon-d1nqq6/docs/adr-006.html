@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>ADR-006 Story images in the desk database, and a motion system for the public site · Seafood Confidential project hub</title>
+<meta name="description" content="ADR-006 Story images in the desk database, and a motion system for the public site (decisions/ADR-006-story-images-and-motion.md).">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.7.0</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/c0f06c73faf5bd96844dcada54d5296e7402b2c8">Commit <code>c0f06c7</code></a>
+      <span>Built Nov 18, 2026, 9:12 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../devlog/index.html">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<div class="docs-layout">
+  <nav class="docs-nav" aria-label="Documents"><h2>Start here</h2><ul><li><a href="readme.html">Repository README</a></li><li><a href="agents.html">AGENTS.md: shared rules</a></li><li><a href="claude.html">CLAUDE.md</a></li><li><a href="development-kit.html">Development kit README</a></li><li><a href="contributing.html">Contributing</a></li></ul><h2>Planning and status</h2><ul><li><a href="foundation-planning-brief.html">Foundation planning brief</a></li><li><a href="implementation-status.html">Implementation status</a></li><li><a href="kit-audit.html">Kit audit</a></li><li><a href="sprint-plan.html">Sprint plan</a></li><li><a href="workbook.html">Using the sprint workbook</a></li></ul><h2>Product and architecture</h2><ul><li><a href="product-spec.html">Product specification</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="desk.html">Operations desk</a></li><li><a href="deployment.html">Deploying the desk and the public site</a></li><li><a href="hosting-and-costs.html">Hosting and running costs</a></li><li><a href="agent-lab.html">Agent lab (Claude against the gateway)</a></li><li><a href="acceptance-tests.html">Acceptance tests</a></li><li><a href="runbook.html">Runbook</a></li><li><a href="agent-contract.html">Agent request contract</a></li><li><a href="launch-packet.html">Launch packet (full text)</a></li></ul><h2>Decisions</h2><ul><li><a href="adr-001.html">ADR-001 managed publishing foundation</a></li><li><a href="adr-002.html">ADR-002 repository foundation, delivery tracking and previews</a></li><li><a href="adr-003.html">ADR-003 operations desk foundation stack and data access</a></li><li><a href="adr-004.html">ADR-004 desk-driven Ghost drafts and one-click human publishing</a></li><li><a href="adr-005.html">ADR-005 Ghost-free publishing from the desk, with agents publishing under policy</a></li><li><a href="adr-006.html" aria-current="page">ADR-006 Story images in the desk database, and a motion system for the public site</a></li></ul><h2>Editorial</h2><ul><li><a href="brand-guide.html">Brand guide</a></li><li><a href="editorial-playbook.html">Editorial playbook</a></li><li><a href="template-article-brief.html">Template: article brief</a></li><li><a href="template-guest-contributor.html">Template: guest contributor</a></li><li><a href="template-interview.html">Template: interview run of show</a></li><li><a href="template-social-release.html">Template: social release checklist</a></li><li><a href="template-source-record.html">Template: source record</a></li></ul><h2>Engineering</h2><ul><li><a href="development-environment.html">Development environment</a></li><li><a href="project-hub.html">Project hub and previews</a></li><li><a href="devtrack.html">Delivery tracking</a></li><li><a href="devlog-guide.html">Dev log guide</a></li><li><a href="visual-codex-source.html">Visual codex sources</a></li><li><a href="security.html">Security policy</a></li><li><a href="third-party-notices.html">Third-party notices</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="packet.html">Founder packet originals</a></li></ul></nav>
+  <article class="prose"><h1 id="adr-006-story-images-in-the-desk-database-and-a-motion-system-for-the-public-site">ADR 006 Story images in the desk database, and a motion system for the public site</h1>
+<p>Date: November 18, 2026. Status: <strong>Proposed</strong> in session S01, turn 7 (v0.7.0), for the founders to confirm. It builds on <a href="adr-005.html">ADR-005</a> (the desk publishes the site) and the Working Waterfront visual codex.</p>
+<h2 id="context">Context</h2>
+<p>Paul asked for images, style improvements, GSAP scroll motion, tighter layouts, neo-skeuomorphic depth, more parallax layers, and text and image motion that is cohesive, can be tuned, and reverses (&quot;We need images and this needs some style enhancements and GSAP scroll dynamics…&quot;).</p>
+<p>Until v0.7.0 the site carried no images. ADR-005 lets agents publish only text, because agents cannot confirm image rights. The desk already kept a rights record for each asset (<code>app.asset_rights</code>: provenance, licence, credit, cleared status), and the editorial playbook and brand guide require:</p>
+<ul>
+<li>recorded permission, a credit and a caption;</li>
+<li>accurate labels for illustration and generated media;</li>
+<li>the original kept beside the published derivative.</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<h3 id="1-one-lead-image-per-story-tied-to-a-rights-record">1. One lead image per story, tied to a rights record</h3>
+<ul>
+<li><strong>Reaching the site:</strong> a story may have one lead (&quot;hero&quot;) image (<code>app.story_images</code>). It always points at a rights record of the same story, and reaches the public site only while that record is <strong>cleared and permits the web</strong>. Clearing or revoking rights takes effect at the next rebuild.</li>
+<li><strong>What is live is what was published, for images too:</strong><ul>
+<li>Publishing pins the story&#39;s cleared image (<code>editorial_items.published_image_id</code>).</li>
+<li>Replacing or removing the image of a live story changes the site only when someone updates the story.</li>
+<li>A replaced image is kept while the site still shows it.</li>
+</ul>
+</li>
+<li><strong>Agents:</strong> they never publish a story that has a lead image (the <code>no_images</code> gate).</li>
+<li><strong>Editors:</strong> staff attach images in the desk (any desk role); operators use <code>pnpm --filter @sc/desk images</code>.</li>
+</ul>
+<h3 id="2-the-desk-makes-the-renditions-the-database-keeps-them">2. The desk makes the renditions; the database keeps them</h3>
+<ul>
+<li><strong>Renditions:</strong><ul>
+<li>At upload, the desk re-encodes the image (sharp) as AVIF and WebP at 480, 800, 1200, 1600 and 2400 px wide, never wider than the original.</li>
+<li>Orientation is applied and all metadata, including GPS, is removed.</li>
+<li>Each rendition is named by its SHA-256, so the host caches it for a year.</li>
+</ul>
+</li>
+<li><strong>Storage:</strong> renditions and the uploaded original are stored as <code>bytea</code> in private tables. Only security-definer functions reach them:<ul>
+<li><code>app.attach_story_image</code> checks every rendition&#39;s hash;</li>
+<li><code>app.site_media</code> hands the publisher the files, under the same claim token as the snapshot.</li>
+</ul>
+</li>
+<li><strong>Uploads:</strong> they go through a route handler (<code>/stories/&lt;id&gt;/image</code>), not a Server Action. The other actions, the public pitch form among them, keep their 1 MB body limit, and the upload is size-, origin- and session-checked before its body is read.</li>
+</ul>
+<p><strong>Why the database, not object storage:</strong></p>
+<ul>
+<li><strong>One fenced read:</strong> a publication reads text and images in one claim-fenced transaction, with no second credential.</li>
+<li><strong>No new credentials or public surface:</strong> the desk holds no service key, and a Supabase Storage bucket would need either one or a public bucket, which would expose unpublished images.</li>
+<li><strong>One backup:</strong> backups and restores stay one system.</li>
+<li><strong>Size:</strong> at preview scale this is small, about 1 MB of renditions per image.</li>
+</ul>
+<h3 id="3-a-motion-system-tuned-from-tokens">3. A motion system, tuned from tokens</h3>
+<ul>
+<li><strong>Tokens:</strong> <code>brand/tokens.json</code> v0.2 adds <code>space</code>, <code>radius</code>, <code>elevation</code> (one light from above, set per theme) and <code>motion</code>. Motion covers durations, easings for CSS and GSAP, distances, parallax depths and presets (<code>calm</code>, <code>standard</code>, <code>expressive</code>).</li>
+<li><strong>Engine:</strong> GSAP 3.15.1 with ScrollTrigger, self-hosted under the strict CSP. <code>site-src/motion.js</code> reads every value from the tokens.</li>
+<li><strong>Choosing a preset:</strong> the site&#39;s preset is the <code>SITE_MOTION</code> setting. Readers can turn animation off in the footer, and <code>prefers-reduced-motion</code> turns it off.</li>
+<li><strong>What moves:</strong><ul>
+<li>parallax masthead layers;</li>
+<li>titles that rise word by word, keeping their exact text;</li>
+<li>images that open from the edges and develop into colour;</li>
+<li>reveals that reverse on scroll-back;</li>
+<li>a reading-progress bar;</li>
+<li>a lead panel that leans toward the pointer.</li>
+</ul>
+</li>
+<li><strong>Without JavaScript:</strong> every page works fully. A two-and-a-half-second failsafe shows everything if the motion script never arrives, and turning motion off restores the server&#39;s HTML exactly.</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<ul>
+<li><strong>The database grows with images.</strong> Review this decision, and move renditions to Cloud Storage (keeping the hash names), when either of these happens:<ul>
+<li>the database passes 2 GB;</li>
+<li>a full site build loads more than about 200 MB of image files into memory. Today every build loads every published image; Firebase uploads only new hashes, but the builder reads them all.</li>
+</ul>
+</li>
+<li><strong>GSAP is not open source.</strong><ul>
+<li>Its &quot;no charge&quot; Standard license allows this commercial use, requires its notices to stay intact, and can be changed by Webflow (THIRD_PARTY_NOTICES.md).</li>
+<li>The site does not depend on it to be read, so it can be replaced by CSS scroll-driven animations if needed.</li>
+</ul>
+</li>
+<li><strong>Image processing takes time:</strong> 20 to 30 seconds per large photograph on one CPU (mostly AVIF). The desk says so on the form; a lower AVIF effort is the first lever if that becomes a problem.</li>
+<li><strong>Fix found while building this:</strong> staff could insert a story with publication fields already set. Inserts by API roles may no longer set them (migration <code>20261119120000_story_images.sql</code>).</li>
+</ul>
+
+    <p class="doc-source">Source: <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/decisions/ADR-006-story-images-and-motion.md">decisions/ADR-006-story-images-and-motion.md</a> on <code>claude/intelligent-cannon-d1nqq6</code>.</p>
+  </article>
+</div>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/c0f06c73faf5bd96844dcada54d5296e7402b2c8">c0f06c7</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
