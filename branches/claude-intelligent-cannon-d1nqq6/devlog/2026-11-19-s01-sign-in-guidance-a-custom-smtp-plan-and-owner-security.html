@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Sign-in guidance, a custom SMTP plan and owner security · Seafood Confidential project hub</title>
+<meta name="description" content="Dev log DL-20261119-02.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.7.4</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/14911453f1d91d9ab8d6d1364ac14f337e4dba4f">Commit <code>1491145</code></a>
+      <span>Built Nov 19, 2026, 11:53 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html">Docs</a></li><li><a href="../devlog/index.html" aria-current="page">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<article class="prose" style="max-width:none">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Entry details" style="max-width:78ch"><table><tbody><tr><th scope="row">Entry</th><td>DL-20261119-02</td></tr><tr><th scope="row">Session</th><td>S01, turn 10</td></tr><tr><th scope="row">Version</th><td>0.7.4</td></tr><tr><th scope="row">Branch</th><td>claude/intelligent-cannon-d1nqq6</td></tr><tr><th scope="row">Base commit</th><td>9f405193e59a</td></tr><tr><th scope="row">Started</th><td>Nov 19, 2026, 11:40 AM EST</td></tr><tr><th scope="row">Recorded</th><td>Nov 19, 2026, 11:55 AM EST</td></tr><tr><th scope="row">Tickets</th><td>SC-005</td></tr><tr><th scope="row">Workstreams</th><td>WS-ENV</td></tr><tr><th scope="row">Status</th><td>complete</td></tr></tbody></table></div>
+  <div style="max-width:78ch"><h1 id="sign-in-guidance-a-custom-smtp-plan-and-owner-security">Sign-in guidance, a custom SMTP plan and owner security</h1>
+<h2 id="summary">Summary</h2>
+<p>Paul invited Dave and asked what else could improve this.</p>
+<p><strong>Dave&#39;s status.</strong> He has accepted, as an Owner of the Supabase organization, but has not signed in to the desk yet.</p>
+<p><strong>Two findings:</strong></p>
+<ul>
+<li><strong>The sign-in link trap.</strong> The built-in mailer&#39;s sign-in link works only in the browser that asked for it, and the free plan does not let us change the template.</li>
+<li><strong>No two-factor authentication.</strong> Neither owner&#39;s Supabase account has it.</li>
+</ul>
+<p><strong>What changed:</strong></p>
+<ul>
+<li><strong>The sign-in page now warns up front</strong> (v0.7.4, live): open the email on the same device and browser, check spam, each link lasts 15 minutes, and there is an hourly limit. Before, it said so only after a link had failed.</li>
+<li><strong>The launch guide has the custom SMTP plan.</strong> That is the change that removes all four mailer limits: membership, volume, browser-bound links and sender.</li>
+<li><strong>Two-factor authentication is now a founders&#39; security follow-up.</strong></li>
+</ul>
+<h2 id="what-changed">What changed</h2>
+<ul>
+<li><strong>Desk (v0.7.4):</strong><ul>
+<li>A &quot;Getting the link to work&quot; panel under the sign-in form.</li>
+<li>The &quot;link on its way&quot; message now says &quot;Open it in this browser within 15 minutes&quot;.</li>
+<li>A new setting, <code>DESK_AUTH_EMAIL</code> (<code>builtin</code> by default, or <code>custom</code>). With <code>custom</code>, which means custom SMTP and our template whose links work anywhere, the browser and hourly-limit lines disappear.</li>
+<li>Styled from the desk&#39;s tokens. The end-to-end sign-in test checks the panel and the message.</li>
+</ul>
+</li>
+<li><strong>Docs:</strong><ul>
+<li><code>docs/LAUNCH_PREVIEW.md</code>, &quot;Custom SMTP: what it fixes and how&quot;: the four limits; the founders&#39; steps with Resend (sending address, DNS records, Supabase SMTP settings); and what the agent session does next: the template, the rate limit, <code>DESK_AUTH_EMAIL=custom</code>, and a test sign-in.</li>
+<li>A security follow-up for two-factor authentication on both owners&#39; Supabase and Google accounts.</li>
+<li><code>docs/DEPLOYMENT.md</code> and <code>.env.example</code> document the new setting.</li>
+</ul>
+</li>
+<li><strong>Live:</strong> the desk runs v0.7.4 on revision <code>sc-desk-00008-gw2</code>.</li>
+</ul>
+<h2 id="decisions">Decisions</h2>
+<ul>
+<li><strong>Warn up front, not after a failure.</strong> Dave&#39;s first try is the one that matters. Opening the email on a phone after asking on a laptop is the most likely mistake, and the old page mentioned it only once a link had already failed.</li>
+<li><strong>Make the warning depend on the mailer, not hard-coded.</strong> When custom SMTP arrives, one setting turns the browser and hourly-limit lines off, so the page never tells people something untrue.</li>
+<li><strong>Recommend, do not change, the founders&#39; account security.</strong> Two-factor authentication is set by each person on their own Supabase and Google accounts. The Free plan cannot require it for the organization.</li>
+<li><strong>Custom SMTP needs the founders&#39; choices</strong>: a sending domain and an email-provider account. The guide asks only for those, and the session does the rest.</li>
+</ul>
+<h2 id="problems-and-resolutions">Problems and resolutions</h2>
+<ul>
+<li><strong>The Docker daemon had stopped again while the session was paused,</strong> so the first end-to-end run could not reach the local database. It was restarted and the run passed (33/33). This keeps happening whenever the session sleeps; any session that resumes should check Docker before the end-to-end tests.</li>
+</ul>
+<h2 id="evidence">Evidence</h2>
+<ul>
+<li><strong>EV-0077</strong> (observation):<ul>
+<li>Dave is an organization Owner, with no desk sign-in yet.</li>
+<li>Both owners lack two-factor authentication.</li>
+<li>The built-in template cannot change.</li>
+<li>Requiring two-factor authentication for the whole organization needs a paid plan.</li>
+</ul>
+</li>
+<li><strong>EV-0078:</strong> <code>pnpm check</code> (Vitest 132/132), the build and bundle scan, and Playwright 33/33.</li>
+<li><strong>EV-0079:</strong> desk v0.7.4 is live, and the sign-in page shows the guidance, with 0 axe violations and no overflow on desktop and an iPhone 13.</li>
+</ul>
+<p><img src="../devlog/assets/2026-11-19-s01-t10/live-sign-in-desktop.jpg" alt="The live sign-in page with &quot;Getting the link to work&quot;" loading="lazy" decoding="async"></p>
+<p><img src="../devlog/assets/2026-11-19-s01-t10/live-sign-in-iphone13.jpg" alt="The same page on an iPhone 13" loading="lazy" decoding="async"></p>
+<h2 id="risks-and-open-questions">Risks and open questions</h2>
+<ul>
+<li><strong>Dave holds full control of the infrastructure</strong> as a Supabase Owner, and so does Paul, both without two-factor authentication. That is the biggest security gap today.</li>
+<li><strong>Until custom SMTP is in place,</strong> every new staff member needs a Supabase account and organization membership. Two people share about two sign-in emails an hour.</li>
+</ul>
+<h2 id="next-actions">Next actions</h2>
+<ol>
+<li><strong>Dave:</strong> sign in at the desk, opening the email on the same device and browser. Settings, under Staff, will show it.</li>
+<li><strong>Paul and Dave:</strong> turn on two-factor authentication on your Supabase accounts (and the Google accounts that own the Cloud project), and save the recovery codes.</li>
+<li><strong>Founders:</strong> choose a sending domain and create a Resend account, following &quot;Custom SMTP: what it fixes and how&quot; in the launch guide. Then the session does the rest.</li>
+<li><strong>After SMTP:</strong> an &quot;Add a staff member&quot; screen, so owners add people without an operator.</li>
+</ol>
+</div>
+  <h2>Evidence referenced</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">ID</th><th scope="col">Result</th><th scope="col">Summary</th><th scope="col">Observed</th></tr></thead><tbody><tr><td class="id"><a href="evidence.html#EV-0077">EV-0077</a></td><td><span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.2" y="7" width="1.6" height="4.5" fill="currentColor"/><circle cx="8" cy="4.9" r="1" fill="currentColor"/></svg>info</span></td><td>Dave accepted the Supabase invitation as an Owner; he has not signed in to the desk yet; neither owner&#39;s Supabase account has two-factor authentication</td><td>Organization members: 2, both Owner, both mfa_enabled false. Dave: no sign-in yet. Built-in mailer: the template uses the default confirmation link, which opens only in the requesting browser, and it cannot be changed without custom SMTP. Supabase: each user turns MFA on in account settings; requiring it for an organization needs Pro, Team or Enterprise</td></tr><tr><td class="id"><a href="evidence.html#EV-0078">EV-0078</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>v0.7.4 tree: pnpm check (Vitest 132/132), desk build and bundle scan, Playwright 33/33 including the sign-in guidance</td><td>All exit 0. The sign-in test checks the &#39;Getting the link to work&#39; region (same device and browser; spam), the message &#39;Open it in this browser&#39;, and still finds 0 axe violations</td></tr><tr><td class="id"><a href="evidence.html#EV-0079">EV-0079</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live: desk v0.7.4 on revision sc-desk-00008-gw2; the sign-in page shows the guidance, with 0 axe violations and no overflow on desktop and an iPhone 13</td><td>Health {version: 0.7.4}. The page carries &#39;Getting the link to work&#39;, the same-device-and-browser line and the hourly-limit line (DESK_AUTH_EMAIL defaults to builtin). Desktop and iPhone: 0 axe violations, no horizontal overflow</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/14911453f1d91d9ab8d6d1364ac14f337e4dba4f">1491145</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
