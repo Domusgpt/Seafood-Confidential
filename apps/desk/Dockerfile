@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 # Operations desk container: one image for Google Cloud Run (recommended) or a Hugging Face
 # Docker Space. Build from the repository root:
-#   docker build -f apps/desk/Dockerfile -t sc-desk:0.7.2 .
+#   docker build -f apps/desk/Dockerfile -t sc-desk:0.7.3 .
 # Runtime configuration comes from the environment (see apps/desk/.env.example); no secret is
 # baked in except the Server Actions key Next.js embeds at build time (keep the image private).
 

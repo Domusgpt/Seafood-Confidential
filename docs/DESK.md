@@ -1,4 +1,4 @@
-# Operations desk (v0.7.2)
+# Operations desk (v0.7.3)
 
 The operations desk for Seafood Confidential:
 - staff sign-in;
@@ -64,6 +64,11 @@ Hosting and costs: [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md
   - It accepts only a Google-signed RS256 ID token from that account, issued for that exact address, with a verified email and at most an hour old.
   - Refusals are logged with a reason class and the request ID, never the token.
   - Without a scheduler, waiting jobs run after each publication (up to three) or from "Run … queued jobs now" on `/publishing` (up to five per press).
+
+## Staff (v0.7.3)
+
+- **Who has access.** Settings, under Staff, lists everyone who can sign in, with their roles and status. Owners also see when each person last signed in, or "Not yet". A new owner or editor shows up there as soon as they are added, and the column changes when they first get in.
+- **Adding people** still needs an operator: `pnpm --filter @sc/desk staff add …`, or the agent session. Self-service invitations belong with custom SMTP: until the desk sends email through its own provider, each person must also be a member of the Supabase organization to receive sign-in links.
 
 ## Story images and motion (v0.7.0, ADR-006)
 

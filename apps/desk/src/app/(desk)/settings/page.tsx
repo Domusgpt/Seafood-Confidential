@@ -17,6 +17,7 @@ import {
   getPublishingPolicy,
   listStaff,
   recentAudit,
+  staffSignIns,
   type AuditRow,
   type CredentialRow,
 } from '@/lib/queries';
@@ -47,9 +48,10 @@ export default async function SettingsPage() {
     let credentials: CredentialRow[] = [];
     let audit: AuditRow[] = [];
     if (canAudit) [credentials, audit] = await Promise.all([listCredentials(tx), recentAudit(tx, 100)]);
-    return { session, isOwner, canAudit, staff, agents, credentials, audit, publishing };
+    const signIns = isOwner ? await staffSignIns(tx) : null;
+    return { session, isOwner, canAudit, staff, signIns, agents, credentials, audit, publishing };
   });
-  const { session, isOwner, canAudit, staff, agents, credentials, audit, publishing } = data;
+  const { session, isOwner, canAudit, staff, signIns, agents, credentials, audit, publishing } = data;
   const config = env();
   const site = {
     publicUrl: config.SITE_PUBLIC_URL,
@@ -176,7 +178,7 @@ export default async function SettingsPage() {
 
       <Card
         title="Staff"
-        note="Desk staff are separate from Ghost members and Ghost staff. Invitations are issued by the owner with the operator CLI in this release (docs/DESK.md)."
+        note="People who can sign in to the desk. There is no add-staff form yet: an operator adds people (docs/LAUNCH_PREVIEW.md). Until the desk sends email through its own provider, each person must also be a member of the Supabase organization, or their sign-in links are not delivered."
       >
         <div className="table-scroll">
           <table className="table">
@@ -186,6 +188,7 @@ export default async function SettingsPage() {
                 <th scope="col">Name</th>
                 <th scope="col">Roles</th>
                 <th scope="col">Status</th>
+                {signIns ? <th scope="col">Last signed in</th> : null}
               </tr>
             </thead>
             <tbody>
@@ -207,10 +210,19 @@ export default async function SettingsPage() {
                           ? 'Active'
                           : s.status === 'active'
                             ? 'No access'
-                            : s.status
+                            : s.status.charAt(0).toUpperCase() + s.status.slice(1)
                       }
                     />
                   </td>
+                  {signIns ? (
+                    <td className="num small">
+                      {signIns.get(s.id) ? (
+                        formatDateTime(signIns.get(s.id)!)
+                      ) : (
+                        <span className="muted">Not yet</span>
+                      )}
+                    </td>
+                  ) : null}
                 </tr>
               ))}
             </tbody>

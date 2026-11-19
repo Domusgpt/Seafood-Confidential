@@ -238,6 +238,17 @@ export function listStaff(tx: Tx) {
   `;
 }
 
+/**
+ * When each staff member last signed in (v0.7.3). Owners only: the database returns no rows to anyone
+ * else, so this is safe to ask for whenever the staff list is shown. Null means never.
+ */
+export async function staffSignIns(tx: Tx): Promise<Map<string, Date | null>> {
+  const rows = await tx<{ principalId: string; lastSignInAt: Date | null }[]>`
+    select principal_id, last_sign_in_at from app.staff_sign_ins()
+  `;
+  return new Map(rows.map((r) => [r.principalId, r.lastSignInAt]));
+}
+
 export function listAgents(tx: Tx) {
   return tx<PrincipalRow[]>`
     select p.id, p.display_name, p.status, '{}'::text[] as roles

@@ -22,10 +22,20 @@ A working preview of the desk and the public site, so the founders can try them 
 2. Open the email **in the same browser** and click the link. Sign-in links are single-use and last 15 minutes. A link opened in another browser is refused; request a new one.
 3. Supabase's free built-in mailer sends only to members of the Supabase organization, and only about two emails an hour for the whole project. If no email arrives, wait and try again later. Custom SMTP (Resend, with our own domain) removes both limits; it is the first item under "Next steps".
 
-**Paul** has an owner account. **Dave** needs two things:
+**Paul and Dave** both have owner accounts. Dave's was added on 19 November (v0.7.3): a confirmed sign-in identity, his desk record and the owner role, checked as the desk checks access.
 
-- an invitation to the Supabase organization (Supabase dashboard, Organization, Team, Invite), so the built-in mailer can email him;
-- a desk account. The desk has no "add staff" screen yet. Ask the agent session to add him (it uses the Supabase access token and SQL), or run `pnpm --filter @sc/desk staff add --email … --name … --role owner --allow-remote` on a trusted machine.
+**Dave can sign in once he is a member of the Supabase organization.** Until the desk sends email through its own provider, Supabase refuses to email anyone outside the organization's team ("Email address not authorized").
+1. **Paul invites him.** In the Supabase dashboard, open the organization "Seafood-Confidential", then Team, then Invite. Enter Dave's address and choose a role. Any role lets the mailer reach him:
+   - **Owner** if he should co-own the infrastructure: full control, including billing and deleting the project;
+   - **Read-only** if he only needs the desk.
+
+   The organization holds only this project.
+2. **Dave accepts** from the invitation email. That creates his Supabase login, which is separate from the desk.
+3. **Dave signs in** at the desk with the same address, opening the link in the same browser. Remember the limit of about two emails an hour for the whole project.
+
+Owners can see in Settings, under Staff, whether each person has signed in yet.
+
+**Adding someone else.** The desk has no "add staff" form yet. Ask the agent session (it uses the Supabase access token and SQL), or run `pnpm --filter @sc/desk staff add --email … --name … --role owner|managing_editor|editor --allow-remote` on a trusted machine. Then invite them to the Supabase organization as above.
 
 ## Sample stories and standing pages (v0.6.0)
 

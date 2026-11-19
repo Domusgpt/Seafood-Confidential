@@ -4,6 +4,23 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-11-19 · Session S01, turn 9 · `claude/intelligent-cannon-d1nqq6`
+
+Dave has an owner account on the live desk, and owners can now see whether each staff member has signed in yet.
+
+### Added
+- **Staff sign-ins for owners** (migration `20261119140000_staff_sign_ins.sql`):
+  - `app.staff_sign_ins()` returns when each staff member last signed in, to owners only. Anyone else gets no rows.
+  - Only that one value leaves the auth schema.
+  - Settings, under Staff, shows it as "Last signed in" ("Not yet" for someone who has never signed in).
+  - 10 new pgTAP tests and an end-to-end check, including that editors do not see it.
+
+### Changed
+- **The Staff card's note** no longer mentions Ghost (ADR-005 replaced it). It says how people are added today, and that each person must be a member of the Supabase organization until the desk sends email through its own provider.
+
+### Operations (live)
+- **Dave Simpson's owner account** is on the preview desk: a confirmed sign-in identity, his desk record and the owner role, checked as the desk checks access. He can sign in once Paul invites him to the Supabase organization and he accepts (docs/LAUNCH_PREVIEW.md).
+
 ## [0.7.2] - 2026-11-18 · Session S01, turn 8 · `claude/intelligent-cannon-d1nqq6`
 
 Paul asked whether the site wastes bandwidth by posting images at native size. It does not: readers never receive the original, and each browser downloads the smallest of up to five renditions that covers the image on its screen. A measurement on the live site found 0% excess over that across 15 page and device combinations. One saving remained, and this release takes it.

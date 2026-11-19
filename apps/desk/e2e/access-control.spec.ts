@@ -46,6 +46,39 @@ test('an editor cannot see the audit trail or manage agents', async ({ page }) =
   await expect(page.getByRole('heading', { name: 'Audit trail' })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Agent tokens' })).toHaveCount(0);
   await expect(page.getByRole('main').getByText('Create an agent')).toHaveCount(0);
+  await expect(page.getByRole('columnheader', { name: 'Last signed in' })).toHaveCount(0);
+});
+
+test('SC-005: owners see whether each staff member has signed in yet (v0.7.3)', async ({ page }) => {
+  // A newly added staff member shows "Not yet"; the owner, signed in now, shows a time.
+  const name = `Newcomer ${uniqueSuffix()}`;
+  execFileSync(
+    'node',
+    [
+      '--env-file=.env.ops.local',
+      'scripts/staff.ts',
+      'add',
+      '--email',
+      `${name.replace(' ', '.').toLowerCase()}@example.test`,
+      '--name',
+      name,
+      '--role',
+      'editor',
+    ],
+    { encoding: 'utf8' },
+  );
+  await signIn(page, 'owner@example.test');
+  await page.goto('/settings');
+  const staff = page.getByRole('table', { name: 'Staff principals and roles' });
+  await expect(staff.getByRole('columnheader', { name: 'Last signed in' })).toBeVisible();
+  await expect(staff.getByRole('row', { name: new RegExp(`${name}.*Not yet`) })).toBeVisible();
+  await expect(
+    staff
+      .getByRole('row', { name: /Morgan Owner/ })
+      .getByRole('cell')
+      .last(),
+  ).not.toHaveText('Not yet');
+  await expectAccessible(page, '/settings (owner)');
 });
 
 test('sign-in does not reveal whether an address has an account', async ({ page }) => {
