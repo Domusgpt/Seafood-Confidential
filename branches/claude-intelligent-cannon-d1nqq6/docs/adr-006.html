@@ -31,10 +31,10 @@
     <p class="tagline">Seafood, from the people who know it.</p>
     <div class="hub-meta">
       <span>Project hub</span>
-      <span>v0.7.0</span>
+      <span>v0.7.1</span>
       <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
-      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/c0f06c73faf5bd96844dcada54d5296e7402b2c8">Commit <code>c0f06c7</code></a>
-      <span>Built Nov 18, 2026, 9:12 PM EST</span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/b99e04c629086721e7b55a73bb6d78c32939c90e">Commit <code>b99e04c</code></a>
+      <span>Built Nov 18, 2026, 10:13 PM EST</span>
       <a href="../../../index.html">All branch previews</a>
     </div>
   </div>
@@ -116,7 +116,12 @@
 <li>The site does not depend on it to be read, so it can be replaced by CSS scroll-driven animations if needed.</li>
 </ul>
 </li>
-<li><strong>Image processing takes time:</strong> 20 to 30 seconds per large photograph on one CPU (mostly AVIF). The desk says so on the form; a lower AVIF effort is the first lever if that becomes a problem.</li>
+<li><strong>Image processing takes time and memory.</strong><ul>
+<li><strong>Time:</strong> 20 to 60 seconds per photograph on one CPU, mostly the AVIF encoder. The desk says so on the form; a lower AVIF effort is the first lever if that becomes a problem.</li>
+<li><strong>Memory (v0.7.1):</strong> the first version made every rendition from a full-size decode, and the desk&#39;s container with Cloud Run&#39;s 512 MiB was killed by a 24-megapixel photograph. The upload is now decoded once to a master of at most 2400 px and about 4.3 megapixels, one image at a time, with glibc&#39;s malloc arenas limited. The container&#39;s charged memory now peaks at 300 to 456 MiB for 12 to 59 megapixels, and the server process&#39;s high-water mark at 509 MiB. The service runs with 1 GiB for headroom.</li>
+<li><strong>Moving processing out of the desk:</strong> if uploads become frequent or large, a separate job, such as a Cloud Run job or a function, could do the processing; the hashes and tables stay the same.</li>
+</ul>
+</li>
 <li><strong>Fix found while building this:</strong> staff could insert a story with publication fields already set. Inserts by API roles may no longer set them (migration <code>20261119120000_story_images.sql</code>).</li>
 </ul>
 
@@ -125,7 +130,7 @@
 </div>
 </main>
 <footer class="site-footer"><div>
-  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/c0f06c73faf5bd96844dcada54d5296e7402b2c8">c0f06c7</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/b99e04c629086721e7b55a73bb6d78c32939c90e">b99e04c</a>. The publication and operations desk are not deployed; every acceptance scenario is UNRUN until evidence says otherwise.</p>
   <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
 </div></footer>
 </body>
