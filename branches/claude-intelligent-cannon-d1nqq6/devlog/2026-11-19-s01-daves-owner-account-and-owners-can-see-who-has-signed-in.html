@@ -33,8 +33,8 @@
       <span>Project hub</span>
       <span>v0.7.3</span>
       <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
-      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/d365e19b431793474edf076254c3e314dfca971c">Commit <code>d365e19</code></a>
-      <span>Built Nov 19, 2026, 7:12 AM EST</span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9f405193e59a9505faa40076ae6fc6b97e469478">Commit <code>9f40519</code></a>
+      <span>Built Nov 19, 2026, 7:23 AM EST</span>
       <a href="../../../index.html">All branch previews</a>
     </div>
   </div>
@@ -98,6 +98,13 @@
 <li><strong>The Docker daemon stopped while the session was paused, twice.</strong> The first restart was tied to the shell that started it. It now runs detached in its own session, and the local Supabase containers came back on their own.</li>
 <li><strong>The new column showed times &quot;in the future&quot;.</strong> It did not: the session had been paused for several hours, and the clock was right. The release and account dates in the docs were corrected from 18 to 19 November.</li>
 <li><strong>A first query used a wrong table name</strong> (<code>publishing_settings</code>) and failed harmlessly inside a rolled-back check.</li>
+<li><strong>CI failed three times on GitHub&#39;s side, not the code&#39;s.</strong><ul>
+<li>On <code>58ab7c8</code> the runner could not start the local database: port 54322 was already in use.</li>
+<li>On <code>d365e19</code> both end-to-end jobs and one visual check failed while installing the test browser, because Ubuntu&#39;s package mirrors timed out.</li>
+<li>In every case the steps that ran passed, including the new database tests and the build.</li>
+<li>CI now retries those setup steps: apt retries each download, the browser install gets three attempts with backoff, and the Supabase start gets one stop-and-retry. Each retry leaves a warning in the log.</li>
+</ul>
+</li>
 </ul>
 <h2 id="evidence">Evidence</h2>
 <ul>
@@ -142,7 +149,7 @@
 </article>
 </main>
 <footer class="site-footer"><div>
-  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/d365e19b431793474edf076254c3e314dfca971c">d365e19</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9f405193e59a9505faa40076ae6fc6b97e469478">9f40519</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
   <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
 </div></footer>
 </body>
