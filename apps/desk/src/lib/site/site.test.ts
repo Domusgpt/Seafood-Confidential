@@ -4,7 +4,16 @@ import os from 'node:os';
 import path from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { afterAll, describe, expect, it } from 'vitest';
-import { buildSite, storyPath, type SiteConfig, type SiteSnapshot, type SiteStory } from './build';
+import {
+  buildSite,
+  mediaPath,
+  mediaRefs,
+  storyPath,
+  type SiteConfig,
+  type SiteImage,
+  type SiteSnapshot,
+  type SiteStory,
+} from './build';
 import { DeployError, FirebaseHostingDestination, LocalDirectoryDestination } from './deploy';
 import { parseSitePage } from './assets';
 import { KitClient, KitError } from './kit';
@@ -237,6 +246,133 @@ describe('buildSite', () => {
 
   it('refuses unsafe slugs', () => {
     expect(() => storyPath({ slug: '../etc' })).toThrow(/unsafe slug/);
+  });
+});
+
+describe('story images and motion (v0.7.0)', () => {
+  const bytes = (seed: string) => Buffer.from(`image bytes ${seed}`);
+  const hash = (b: Buffer) => createHash('sha256').update(b).digest('hex');
+  const variant = (seed: string, format: 'avif' | 'webp', width: number) => {
+    const body = bytes(`${seed}-${format}-${width}`);
+    return { v: { format, width, height: Math.round((width * 2) / 3), sha256: hash(body) }, body };
+  };
+  const made = [
+    variant('a', 'avif', 480),
+    variant('a', 'webp', 480),
+    variant('a', 'avif', 1200),
+    variant('a', 'webp', 1200),
+  ];
+  const image: SiteImage = {
+    id: '6d2b79f5-0000-4000-8000-000000000001',
+    alt: 'A fishing boat tied up at a dock',
+    caption: 'A boat at the dock <b>early</b>.',
+    credit: 'Photo: Fixture (public domain)',
+    provenance: 'documentary',
+    kind: 'photo',
+    width: 1200,
+    height: 800,
+    focalX: 0.7,
+    focalY: 0.2,
+    variants: made.map((m) => m.v),
+  };
+  const media = made.map((m) => ({
+    path: mediaPath(m.v),
+    body: m.body,
+    contentType: 'application/octet-stream',
+  }));
+  const withImage = story({ aiGenerated: false, heroImage: image });
+  const other = story({
+    contentId: 'SC-2026-016',
+    slug: 'another-story-2026-016',
+    title: 'Another story',
+    aiGenerated: false,
+  });
+  const files = buildSite(snapshot([withImage, other]), config, [asset], [], media);
+  const page = file(files, '/stories/how-the-scallop-season-opened-2026-014/index.html')!;
+
+  it('serves each rendition at a content-addressed path, and lists exactly the files pages use', () => {
+    expect(mediaPath(made[0].v)).toBe(`/media/${made[0].v.sha256.slice(0, 32)}.avif`);
+    expect(() => mediaPath({ sha256: 'not-a-hash', format: 'webp' })).toThrow(/unsafe media hash/);
+    expect(
+      mediaRefs(snapshot([withImage, other]))
+        .map((r) => r.path)
+        .sort(),
+    ).toEqual(media.map((m) => m.path).sort());
+    for (const m of media) {
+      const out = files.find((f) => f.path === m.path)!;
+      expect(out.contentType).toBe(m.path.endsWith('.avif') ? 'image/avif' : 'image/webp');
+    }
+  });
+
+  it('puts the photograph on the story page with its alt text, caption and credit, AVIF first', () => {
+    expect(page).toMatch(/<picture><source type="image\/avif" srcset="[^"]+ 480w, [^"]+ 1200w"/);
+    expect(page).toContain('alt="A fishing boat tied up at a dock"');
+    expect(page).toContain('fetchpriority="high"');
+    expect(page).toContain('class="fx-3 fy-1"');
+    expect(page).toContain('A boat at the dock &lt;b&gt;early&lt;/b&gt;.');
+    expect(page).toContain('<span class="credit">Photo: Fixture (public domain)</span>');
+    expect(page).toContain('<meta property="og:image" content="https://news.example.test/media/');
+    expect(page).not.toContain('Generated image');
+  });
+
+  it('keeps card images decorative and lazy, and draws a plate for a story without one', () => {
+    const home = file(files, '/index.html')!;
+    expect(home).toContain('alt="" class="fx-3 fy-1" decoding="async" fetchpriority="high"');
+    const section = file(files, '/sections/the-trade/index.html')!;
+    expect(section).toContain('loading="lazy"');
+    expect(section).toContain('<div class="plate plate--the-trade" aria-hidden="true">');
+  });
+
+  it('labels illustrations and generated images', () => {
+    const generated = buildSite(
+      snapshot([story({ heroImage: { ...image, provenance: 'generated' } })]),
+      config,
+      [asset],
+      [],
+      media,
+    );
+    expect(file(generated, '/stories/how-the-scallop-season-opened-2026-014/index.html')).toContain(
+      'Generated image',
+    );
+  });
+
+  it('refuses to build when an image file is missing or does not match its hash', () => {
+    expect(() => buildSite(snapshot([withImage]), config, [asset], [], media.slice(1))).toThrow(
+      /missing image file/,
+    );
+    const swapped = media.map((m, i) => (i === 0 ? { ...m, body: Buffer.from('substituted') } : m));
+    expect(() => buildSite(snapshot([withImage]), config, [asset], [], swapped)).toThrow(
+      /does not match its hash/,
+    );
+  });
+
+  it('links related stories, the same section first, never the story itself', () => {
+    expect(page).toContain('More from the waterfront');
+    expect(page).toContain('href="/stories/another-story-2026-016/"');
+    expect(page.match(/href="\/stories\/how-the-scallop-season-opened-2026-014\/"/g)).toBeNull();
+  });
+
+  it('ships the motion system with its preset, and a reading estimate', () => {
+    expect(page).toContain('<html lang="en" data-motion="standard" data-motion-preset="standard">');
+    expect(page).toMatch(/<script src="\/assets\/motion-boot\.js\?v=[0-9a-f]+"><\/script>/);
+    expect(page).toMatch(/<script src="\/assets\/vendor\/gsap\.min\.js\?v=[0-9a-f]+" defer><\/script>/);
+    expect(page).toContain('min read');
+    expect(page).toContain('<div class="progress" aria-hidden="true">');
+    const calm = buildSite(snapshot([other]), { ...config, motion: 'calm' }, [asset]);
+    expect(file(calm, '/index.html')).toContain('data-motion="calm" data-motion-preset="calm"');
+    const bogus = buildSite(snapshot([other]), { ...config, motion: 'wild' as never }, [asset]);
+    expect(file(bogus, '/index.html')).toContain('data-motion="standard"');
+  });
+
+  it('keeps media out of standing-page slugs', () => {
+    expect(() =>
+      buildSite(
+        snapshot([]),
+        config,
+        [asset],
+        [{ slug: 'media', title: 'M', description: 'D', bodyMarkdown: 'x', order: 1 }],
+      ),
+    ).toThrow(/unsafe page slug/);
   });
 });
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Prepare the public site's static assets in site-static/assets (git-ignored): brand tokens compiled
-// from brand/tokens.json, the site stylesheet, self-hosted fonts with their licences, the favicon
-// and the bathymetry motif with its validated shaders inlined (sc-visual-codex).
+// from brand/tokens.json, the site stylesheet, self-hosted fonts with their licences, the favicon,
+// the bathymetry motif with its validated shaders inlined, the contour linework, and the motion
+// system with GSAP (sc-visual-codex).
 import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -28,6 +29,16 @@ await mkdir(path.join(out, 'fonts'), { recursive: true });
 await writeFile(path.join(out, 'tokens.css'), tokensCss(tokens));
 await copyFile(path.join(desk, 'site-src/site.css'), path.join(out, 'site.css'));
 await copyFile(path.join(desk, 'site-src/favicon.svg'), path.join(out, 'favicon.svg'));
+// The contour linework (scripts/build-contours.mjs) and the motion system (sc-visual-codex v0.7.0).
+for (const f of ['contours.svg', 'motion-boot.js', 'motion.js'])
+  await copyFile(path.join(desk, 'site-src', f), path.join(out, f));
+// GSAP and ScrollTrigger, self-hosted under the strict CSP. Webflow's Standard "no charge" licence
+// (https://gsap.com/standard-license) asks that GSAP's notices stay intact: the files are copied
+// byte for byte. THIRD_PARTY_NOTICES.md records the version and terms.
+await mkdir(path.join(out, 'vendor'), { recursive: true });
+const gsapDist = path.join(path.dirname(require.resolve('gsap/package.json')), 'dist');
+for (const f of ['gsap.min.js', 'ScrollTrigger.min.js'])
+  await copyFile(path.join(gsapDist, f), path.join(out, 'vendor', f));
 
 const fonts = {
   '@fontsource-variable/fraunces': ['fraunces-latin-full-normal.woff2', 'fraunces-latin-full-italic.woff2'],

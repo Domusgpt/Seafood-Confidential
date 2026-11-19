@@ -4,7 +4,14 @@ import { pgCode, withPublisher, type PublisherActor } from '../db';
 import { env } from '../env';
 import { logger } from '../logger';
 import { loadSiteAssets, loadSitePages } from '../site/assets';
-import { buildSite, storyPath, type SiteConfig, type SiteSnapshot } from '../site/build';
+import {
+  buildSite,
+  mediaPath,
+  storyPath,
+  type SiteConfig,
+  type SiteFile,
+  type SiteSnapshot,
+} from '../site/build';
 import {
   DeployError,
   FirebaseHostingDestination,
@@ -71,6 +78,7 @@ export function siteConfig(): SiteConfig {
     pitchUrl: `${config.DESK_SITE_URL.replace(/\/+$/, '')}/pitch`,
     builtAt: new Date().toISOString(),
     preview: config.SITE_PREVIEW_NOTICE ?? null,
+    motion: config.SITE_MOTION,
   };
 }
 
@@ -246,13 +254,25 @@ async function runClaimed(
 
   const config = siteConfig();
   let snapshot: SiteSnapshot;
+  let media: SiteFile[];
   try {
-    snapshot = await withPublisher(ctx, async (tx) => {
+    // Text and image files are read under the same claim, in one transaction.
+    ({ snapshot, media } = await withPublisher(ctx, async (tx) => {
       const [row] = await tx<{ snapshot: SiteSnapshot }[]>`
         select app.site_snapshot(${job.jobId}, ${job.claimToken}) as snapshot
       `;
-      return row.snapshot;
-    });
+      const files = await tx<{ sha256: string; format: 'avif' | 'webp'; body: Buffer }[]>`
+        select sha256, format, body from app.site_media(${job.jobId}, ${job.claimToken})
+      `;
+      return {
+        snapshot: row.snapshot,
+        media: files.map((f) => ({
+          path: mediaPath(f),
+          body: f.body,
+          contentType: f.format === 'avif' ? 'image/avif' : 'image/webp',
+        })),
+      };
+    }));
   } catch (error) {
     if (pgCode(error) === '55000')
       return {
@@ -298,6 +318,7 @@ async function runClaimed(
       config,
       await loadSiteAssets(assetsDir),
       await loadSitePages(assetsDir),
+      media,
     );
     deployed = await destinationFromEnv().deploy(files, {
       signal: lease.signal,

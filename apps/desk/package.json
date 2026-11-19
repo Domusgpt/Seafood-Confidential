@@ -1,6 +1,6 @@
 {
   "name": "@sc/desk",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "description": "Seafood Confidential operations desk: writing, publishing to the static public site, newsletter and the policy-gated agent gateway (Next.js 16, Supabase).",
   "license": "UNLICENSED",
@@ -20,7 +20,9 @@
     "staff": "node --env-file=.env.ops.local scripts/staff.ts",
     "agent": "node --env-file=.env.ops.local scripts/agent.ts",
     "scan:bundle": "node scripts/scan-bundle.mjs",
-    "tokens:check": "node scripts/build-tokens.mjs --check"
+    "tokens:check": "node scripts/build-tokens.mjs --check",
+    "images": "node --env-file=.env.ops.local scripts/images.ts",
+    "site:contours": "node scripts/build-contours.mjs"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "5.3.0",
@@ -30,6 +32,7 @@
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.119.0",
     "@vercel/otel": "2.3.0",
+    "gsap": "3.15.1",
     "jose": "6.2.17",
     "markdown-it": "14.1.0",
     "next": "16.4.6",
@@ -38,6 +41,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "0.0.1",
+    "sharp": "0.35.5",
     "zod": "4.6.7"
   },
   "devDependencies": {

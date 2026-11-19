@@ -17,6 +17,8 @@ const schema = z.object({
   SITE_DESTINATION: z.enum(['local', 'firebase']).default('local'),
   // A staging or pre-launch site: shown on every page, and search engines are asked not to index it.
   SITE_PREVIEW_NOTICE: z.string().trim().min(1).max(200).optional(),
+  // Motion preset for the public site (brand/tokens.json motion.presets); "off" ships a still site.
+  SITE_MOTION: z.enum(['calm', 'standard', 'expressive', 'off']).default('standard'),
   SITE_OUTPUT_DIR: z.string().min(1).default('.site-output'),
   SITE_ASSETS_DIR: z.string().min(1).default('site-static'),
   FIREBASE_SITE_ID: z
@@ -68,4 +70,4 @@ export function env(): DeskEnv {
   return cached;
 }
 
-export const DESK_VERSION = '0.6.0';
+export const DESK_VERSION = '0.7.0';

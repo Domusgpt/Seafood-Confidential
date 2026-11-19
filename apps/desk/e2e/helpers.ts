@@ -59,11 +59,32 @@ export async function signIn(page: Page, email: string) {
 
 /** WCAG 2.2 AA scan (axe); fails the test on any violation. */
 export async function expectAccessible(page: Page, label: string) {
+  // The public site animates text and images in (v0.7.0): judge the page at rest, as a reader sees it
+  // once motion settles, not half-way through a fade.
+  await page
+    .waitForFunction(
+      () => {
+        const gsap = (
+          window as unknown as {
+            gsap?: {
+              globalTimeline: {
+                getChildren: (a: boolean, b: boolean, c: boolean) => { isActive: () => boolean }[];
+              };
+            };
+          }
+        ).gsap;
+        return !gsap || gsap.globalTimeline.getChildren(true, true, false).every((t) => !t.isActive());
+      },
+      undefined,
+      { timeout: 5000 },
+    )
+    .catch(() => {});
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze();
   const summary = results.violations.map(
-    (v) => `${v.id} (${v.impact}): ${v.nodes.length} node(s) — ${v.help}`,
+    (v) =>
+      `${v.id} (${v.impact}): ${v.nodes.length} node(s) — ${v.help} [${v.nodes.map((n) => n.target.join(' ')).join(', ')}]`,
   );
   expect(summary, `axe violations on ${label}`).toEqual([]);
 }

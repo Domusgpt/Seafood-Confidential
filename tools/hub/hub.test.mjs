@@ -37,6 +37,27 @@ test('token CSS declares light, dark (system and explicit) and masthead roles', 
   assert.match(css, /--masthead-line: #7FA59A;/);
 });
 
+test('token CSS declares space, radius, per-theme elevation and motion presets (v0.2)', async () => {
+  const tokens = await repo.readJson('brand/tokens.json');
+  const css = tokensCss(tokens);
+  assert.match(css, /--space-sm: 16px;/);
+  assert.match(css, /--radius-pill: 999px;/);
+  // Elevation is declared for light and again, with its own colours, in both dark blocks.
+  assert.equal((css.match(/--elevation-1: /g) ?? []).length, 3);
+  assert.match(css, /--elevation-highlight: #FFFFFF;/);
+  assert.match(css, /--elevation-shadow: #01070B;/);
+  // Motion: tunable numbers for scripts, CSS and GSAP easings, and one block per preset.
+  assert.match(css, /--motion-duration-base: 760ms;/);
+  assert.match(css, /--motion-gsap-ease-out: expo\.out;/);
+  assert.match(css, /--motion-parallax-deep: 0\.5;/);
+  for (const preset of ['calm', 'standard', 'expressive'])
+    assert.match(css, new RegExp(`:root\\[data-motion='${preset}'\\]`));
+  // A reference that does not resolve is a build error, not a silent "undefined".
+  const broken = structuredClone(tokens);
+  broken.elevation.light.shadow = '{color.brand.nope}';
+  assert.throws(() => tokensCss(broken), /unresolved reference/);
+});
+
 test('cost table reconciles with the workbook totals and rejects drift', async () => {
   const md = await repo.readText('docs/LAUNCH_PACKET.md');
   const verification = await repo.readJson('planning/WORKBOOK_VERIFICATION.json');

@@ -4,7 +4,7 @@
     {
       "id": "S01",
       "title": "Repository foundation (turn 1), operations desk foundation and first slice (turn 2), hosting plan and Claude agent lab (turn 3), Ghost-free publishing with agents under policy (turn 4)",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "branch": "claude/intelligent-cannon-d1nqq6",
       "baseCommit": "2eb97235e0ba517432ee213a2bbe1dff34931c03",
       "startedAt": "2026-11-18T10:43:00-05:00",

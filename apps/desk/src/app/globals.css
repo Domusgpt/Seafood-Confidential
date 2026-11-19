@@ -850,3 +850,25 @@ code,
     display: none;
   }
 }
+
+/* Story lead image (v0.7.0): a preview beside its record. */
+.story-image {
+  margin: 0 0 var(--space-sm, 16px);
+  display: grid;
+  gap: var(--space-sm, 16px);
+  align-items: start;
+}
+@media (min-width: 720px) {
+  .story-image {
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  }
+}
+.story-image__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid var(--rule, rgb(16 43 58 / 14%));
+  box-shadow: var(--elevation-1, none);
+  background: var(--surface-2);
+}

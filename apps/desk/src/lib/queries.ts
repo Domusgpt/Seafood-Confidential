@@ -142,6 +142,43 @@ export function listRights(tx: Tx, itemId: string) {
   `;
 }
 
+export interface StoryImageRow {
+  id: string;
+  altText: string;
+  caption: string | null;
+  focalX: string;
+  focalY: string;
+  width: number;
+  height: number;
+  createdAt: Date;
+  rightsId: string;
+  rightsLabel: string;
+  creditLine: string | null;
+  rightsStatus: RightsStatus;
+  provenance: Provenance;
+  assetKind: AssetKind;
+  permittedUses: PermittedUse[];
+  /** The live site shows this image. */
+  live: boolean;
+}
+
+/** The story's current lead image, and whether the live site still shows an earlier one. */
+export async function getStoryImage(tx: Tx, itemId: string) {
+  const [image] = await tx<StoryImageRow[]>`
+    select s.id, s.alt_text, s.caption, s.focal_x, s.focal_y, s.width, s.height, s.created_at,
+           ar.id as rights_id, ar.asset_label as rights_label, ar.credit_line, ar.status as rights_status,
+           ar.provenance, ar.asset_kind, ar.permitted_uses, (i.published_image_id = s.id) as live
+    from app.story_images s
+    join app.asset_rights ar on ar.id = s.asset_rights_id
+    join app.editorial_items i on i.id = s.item_id
+    where s.item_id = ${itemId} and s.superseded_at is null
+  `;
+  const [pin] = await tx<{ pinned: boolean }[]>`
+    select published_image_id is not null as pinned from app.editorial_items where id = ${itemId}
+  `;
+  return { image: image ?? null, liveShowsEarlier: Boolean(pin?.pinned) && !image?.live };
+}
+
 export interface ProposalRow {
   id: string;
   agentName: string;

@@ -1,4 +1,4 @@
-# Operations desk (v0.6.0)
+# Operations desk (v0.7.0)
 
 The operations desk for Seafood Confidential:
 - staff sign-in;
@@ -64,6 +64,23 @@ Hosting and costs: [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md
   - It accepts only a Google-signed RS256 ID token from that account, issued for that exact address, with a verified email and at most an hour old.
   - Refusals are logged with a reason class and the request ID, never the token.
   - Without a scheduler, waiting jobs run after each publication (up to three) or from "Run … queued jobs now" on `/publishing` (up to five per press).
+
+## Story images and motion (v0.7.0, ADR-006)
+
+- **A lead image per story.** On the story page, "Lead image" takes a JPEG, PNG, WebP or AVIF of at least 640 px and up to 15 MB. It also takes alternative text, an optional caption, where the subject sits, and the rights record that covers the image. Add the rights record first, under Rights and credits.
+- **What the desk does with it:** it makes AVIF and WebP renditions at the site's widths, turns the picture upright, and removes all metadata, location included. The original is kept for the record.
+- **What readers see.** The image appears on the site only while its rights record is cleared for the web.
+  - Publishing pins the image. Replacing or removing it on a live story changes the site only when the story is updated.
+  - Illustrations and generated images are labelled as such.
+  - Agents never publish a story that has a lead image.
+- **On the site:**
+  - The image leads the story page, with its caption and credit.
+  - Cards use it as a decorative thumbnail. A story without one shows a drawn plate of its section.
+  - Previews on social media use it (`og:image`).
+- **Motion.** The public site animates in layers, tuned from the motion tokens in `brand/tokens.json` (see the sc-visual-codex skill).
+  - `SITE_MOTION` picks the preset: `calm`, `standard` or `expressive`, or `off` for a still site.
+  - Readers can turn animation off in the footer, and `prefers-reduced-motion` turns it off.
+  - Without JavaScript every page is complete.
 
 ## Scope delivered in this version
 

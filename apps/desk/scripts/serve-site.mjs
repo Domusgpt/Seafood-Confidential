@@ -16,6 +16,8 @@ const TYPES = {
   '.txt': 'text/plain; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.woff2': 'font/woff2',
+  '.avif': 'image/avif',
+  '.webp': 'image/webp',
 };
 const CSP =
   "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action https://app.kit.com; base-uri 'none'; object-src 'none'; frame-ancestors 'none'";

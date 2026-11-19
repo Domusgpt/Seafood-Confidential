@@ -4,6 +4,65 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-18 · Session S01, turn 7 · `claude/intelligent-cannon-d1nqq6`
+
+The public site gets photographs and a motion and depth system: layered parallax, titles and images that animate in and reverse, raised and recessed surfaces lit from above, and a tighter type and spacing scale. Readers can turn animation off, and nothing depends on it. See ADR-006.
+
+### Added
+- **Story images (`supabase/migrations/20261119120000_story_images.sql`):**
+  - A lead image per story, tied to a rights record. It reaches the site only while that record is cleared for the web.
+  - Publishing pins the image, so replacing or removing it on a live story waits for an update.
+  - Agents never publish a story with an image.
+  - Renditions and the original are stored beside the story and read by the publisher under the job's claim token.
+- **Image processing (`src/lib/images/process.ts`, sharp 0.35.5):**
+  - AVIF and WebP at 480 to 2400 px, never upscaled;
+  - EXIF orientation applied, and all metadata (GPS included) removed;
+  - decoding bounded by size, pixels, format and aspect ratio.
+- **In the desk:**
+  - A "Lead image" card on the story page: preview, rights status, alternative text, caption, credit, and where the subject sits.
+  - Uploads go through a route handler that checks the session, origin and size before reading the body; other actions keep their 1 MB limit.
+  - An operator CLI, `pnpm --filter @sc/desk images samples | attach`.
+- **Sample photographs:** six public-domain photographs (USFWS, USDA, FDA, NOAA, and Carol M. Highsmith via the Library of Congress), with verified licences, credits and alternative text (`supabase/sample/images/`).
+- **On the public site:**
+  - `<picture>` with AVIF and WebP `srcset` and focal-point crops, all without inline styles;
+  - a wide hero with caption and credit, and image cards;
+  - a drawn plate for stories without an image;
+  - `og:image` for previews on social media;
+  - related stories, reading time, a drop cap on reported features;
+  - an ink footer.
+- **Motion (GSAP 3.15.1 and ScrollTrigger, self-hosted; `site-src/motion.js`):**
+  - parallax masthead layers (bathymetry, contour linework, light, type);
+  - titles rising word by word with their exact text kept;
+  - images opening from the edges and developing into colour;
+  - reveals that reverse on scroll-back, section rules that draw, a reading-progress bar, and a lead panel that leans toward the pointer.
+- **Turning motion off or tuning it:**
+  - Readers can turn animation off (remembered), and `prefers-reduced-motion` turns it off.
+  - Without JavaScript the page is complete.
+  - Turning motion off restores the server's HTML exactly.
+  - `SITE_MOTION` chooses the preset: calm, standard, expressive or off.
+- **Design tokens v0.2:** `space`, `radius`, `elevation` per theme (one light from above) and `motion` with presets, compiled for the site and the desk. Contour linework is generated from a seeded script (`scripts/build-contours.mjs`).
+
+### Changed
+- **The site stylesheet is rewritten on the tokens:**
+  - a tighter type scale;
+  - a breakout grid so figures run wider than the text;
+  - raised cards and a lead panel, recessed sources, bevelled chips;
+  - a sticky, frosted section bar marking the current section;
+  - phone navigation with faded edges;
+  - print styles.
+- **The bathymetry renderer** also stops when the reader turns animation off.
+- **The repository's accessibility checks** judge pages once motion has settled.
+
+### Fixed
+- **Inserting a story could set publication fields.** Staff could insert a story with `slug` or `published_revision` already set, which would have put it on the site at the next rebuild without the publishing workflow. Inserts by API roles may no longer set publication fields.
+
+### Verified (local)
+- pgTAP 272/272, including 34 new image tests.
+- Vitest 126/126.
+- Playwright 32/32, including a new test that uploads a photograph, publishes it and fetches its AVIF and WebP with no metadata.
+- 0 axe violations and no overflow on eleven site views: desktop, dark, iPhone 13, reduced motion, and the AI and black-and-white stories.
+- The page is complete without JavaScript, and the animation switch reverts exactly.
+
 ## [0.6.0] - 2026-11-18 · Session S01, turn 6 · `claude/intelligent-cannon-d1nqq6`
 
 The preview now looks and works like the publication:

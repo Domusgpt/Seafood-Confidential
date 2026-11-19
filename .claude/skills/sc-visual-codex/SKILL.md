@@ -115,3 +115,27 @@ Reusable for any staged or pre-launch site in this brand. Live reference: `apps/
 - **Placeholder copy makes no factual claims:** no figures, names, quotations or real sources. It shows form, never facts.
 - **Guard it in code, not only in style:** the build refuses to publish placeholder items to a site that is not a preview.
 - **Empty state:** "Coming soon" with one plain line ("The first stories are on their way."), and no sign-up offer unless a form really exists.
+
+## Motion and depth (v0.7.0)
+
+Reusable for any public page in this brand. Live reference: `apps/desk/site-src/motion.js`, `motion-boot.js`, `site.css`; tokens `space`, `radius`, `elevation`, `motion` in `brand/tokens.json` (v0.2); decision in `decisions/ADR-006-story-images-and-motion.md`.
+
+- **One light from above.** Raised surfaces use `--elevation-1/2/3`: a top highlight and layered ambient and key shadows. Recessed ones (source trays, inputs) use `--elevation-inset`, and chips and buttons `--elevation-bevel`.
+  - Each theme sets its own highlight and shadow colours; dark mode has a faint highlight and deep shadows.
+  - Depth never replaces the 1px rule that marks an edge.
+- **Tune motion in tokens, never in code.** Durations, CSS and GSAP easings, distances, parallax depths and `mediaScale` are read at runtime.
+  - Presets (`data-motion-preset`: calm, standard, expressive) scale distance and speed.
+  - `off` ships a still site.
+- **Layers.** A masthead is a stack moving at different depths: bathymetry (deep), contour linework (mid; `contours.svg` as a CSS mask so the theme colours it), light (near), and type (moves against the scroll and fades).
+- **Text.** Titles rise word by word: each word is a span with real spaces between, so the heading's text, which screen readers, find-in-page and copying see, is unchanged. Never duplicate text into a hidden copy.
+- **Images:**
+  - Frames open from their edges and develop from muted to full colour (no colour filter on phones).
+  - The photograph drifts inside its frame, scaled just enough that no edge shows.
+- **Scroll behaviour.** Everything scroll-linked reverses when the reader scrolls back. Things above the fold play on load, not on scroll.
+- **Off switches, and no flash:**
+  - A synchronous same-origin `motion-boot.js` decides before first paint whether to hide revealable elements.
+  - A 2.5-second failsafe shows everything if motion never starts.
+  - The reader's toggle (remembered) and `prefers-reduced-motion` turn motion off.
+  - Turning it off reverts every change: GSAP context revert, then the style attributes motion added are removed. That is safe because the server's HTML has none under the CSP.
+- **Accessibility gates.** Run axe on pages at rest, after motion has settled. Keyboard focus reveals content at once, and reveals use opacity only, never visibility, so links stay focusable.
+- **CSP.** Self-host GSAP, copied byte for byte so its license notices stay intact. Set styles only through CSSOM (`el.style`) or classes, never inline `style=` in markup. Focal points are classes (`fx-0…4`, `fy-0…4`), not inline `object-position`.

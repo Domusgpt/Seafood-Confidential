@@ -195,6 +195,8 @@ export class FirebaseHostingDestination implements Destination {
             headers: [
               { glob: '**', headers: { ...SITE_HEADERS, 'Cache-Control': 'public, max-age=300' } },
               { glob: '/assets/**', headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+              // Story images are named by their content hash, so they never change under one name.
+              { glob: '/media/**', headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
             ],
           },
         }),

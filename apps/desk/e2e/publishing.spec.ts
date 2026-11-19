@@ -7,6 +7,7 @@ import {
   type Page,
   type TestInfo,
 } from '@playwright/test';
+import sharp from 'sharp';
 import { expectAccessible, openDetails, shot, signIn, SITE, uniqueSuffix } from './helpers';
 
 // ADR-005 through the real desk, the real gateway and the real (local) public site:
@@ -269,7 +270,9 @@ test('a person publishes, updates and unpublishes; warnings never block (ADR-005
   expect(live.status()).toBe(200);
   const html = await live.text();
   expect(html).toContain(`A person wrote this ${suffix}`);
-  expect(html).not.toContain('Written by an AI agent');
+  // The story itself carries no AI label (related stories further down may be agents' own work).
+  const start = html.indexOf('<article class="story');
+  expect(html.slice(start, html.indexOf('</article>', start))).not.toContain('Written by an AI agent');
   expect(live.headers()['content-security-policy']).toContain("default-src 'self'");
 
   // Edit, then update the live page.
@@ -304,6 +307,84 @@ test('a person publishes, updates and unpublishes; warnings never block (ADR-005
     'Unpublished.',
   );
   expect((await request.get(url)).status()).toBe(404);
+});
+
+test('a person adds a photograph; it goes live with its credit, in AVIF and WebP (v0.7.0)', async ({
+  request,
+  browser,
+}, testInfo) => {
+  const page = await as('owner', browser, testInfo);
+  const contentId = await newStory(page, `A story with a photograph ${suffix}`);
+  const text = page.getByRole('form', { name: 'Story text' });
+  await text.getByLabel('Headline', { exact: true }).fill(`A story with a photograph ${suffix}`);
+  await text.getByLabel('Story', { exact: true }).fill(BODY);
+  await text.getByRole('button', { name: 'Save the text' }).click();
+  await expect(text.getByRole('status')).toContainText('Saved as revision 1.');
+
+  // The image needs a rights record first: cleared for the web, with a credit line.
+  await expect(page.locator('#image')).toContainText('First add a rights record');
+  await openDetails(page, 'Add a rights record');
+  const rights = page.getByRole('form', { name: 'Add a rights record' });
+  await rights.getByLabel('Asset', { exact: true }).fill('Dock at dawn');
+  await rights.getByLabel('Kind', { exact: true }).selectOption('photo');
+  await rights.getByLabel('Provenance').selectOption('documentary');
+  await rights.getByLabel('Credit line').fill(`Photo: E2E fixture ${suffix} (public domain)`);
+  await rights.getByLabel('Web', { exact: true }).check();
+  await rights.getByLabel('Status').selectOption('cleared');
+  await rights.getByRole('button', { name: 'Save rights record' }).click();
+  await expect(rights.getByRole('status')).toContainText('saved');
+
+  // Upload: an ordinary form post (works without JavaScript); location data never survives.
+  await page.reload();
+  const jpeg = await sharp({
+    create: { width: 900, height: 600, channels: 3, background: { r: 44, g: 90, b: 112 } },
+  })
+    .withExif({ IFD3: { GPSLatitudeRef: 'N', GPSLatitude: '43/1 39/1 0/1' } })
+    .jpeg()
+    .toBuffer();
+  const upload = page.getByRole('form', { name: 'Add a lead image' });
+  await upload
+    .getByLabel('Image file')
+    .setInputFiles({ name: 'dock.jpg', mimeType: 'image/jpeg', buffer: jpeg });
+  await upload.getByLabel('Alternative text').fill('A fishing boat tied up at a dock at dawn');
+  await upload.getByLabel(/Caption/).fill('The dock at dawn.');
+  await upload.getByLabel('Keep in frame').selectOption('bottom');
+  await upload.getByRole('button', { name: 'Add image' }).click();
+  await expect(page).toHaveURL(new RegExp(`/stories/${contentId}\\?image=attached#image$`));
+  const card = page.locator('#image');
+  await expect(card.getByRole('status')).toContainText('Image attached.');
+  const preview = card.getByRole('img', { name: 'A fishing boat tied up at a dock at dawn' });
+  await expect(preview).toBeVisible();
+  expect(await preview.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+  await expectAccessible(page, 'lead image card');
+  await shot(page, testInfo, 'story-lead-image');
+
+  // Publish: the page shows the photograph with its credit, served as AVIF and WebP.
+  await page
+    .getByRole('form', { name: 'Publish this story' })
+    .getByRole('button', { name: 'Publish now' })
+    .click();
+  // Warnings (no sources yet) come back first; one click goes ahead (ADR-005).
+  const confirm = page.getByRole('form', { name: 'Confirm publication' });
+  const done = page.getByRole('form', { name: 'Publish this story' }).getByRole('status');
+  await expect(confirm.or(done)).toBeVisible();
+  if (await confirm.isVisible()) await confirm.getByRole('button', { name: 'Publish anyway' }).click();
+  await expect(done).toContainText('Published.');
+  await page.reload();
+  const url = (await page.getByTestId('public-url').textContent())!.trim();
+  const html = await (await request.get(url)).text();
+  expect(html).toContain('<picture><source type="image/avif"');
+  expect(html).toContain('alt="A fishing boat tied up at a dock at dawn"');
+  expect(html).toContain(`Photo: E2E fixture ${suffix} (public domain)`);
+  expect(html).toContain('class="fx-2 fy-3"');
+  for (const format of ['avif', 'webp']) {
+    const src = new RegExp(`/media/[0-9a-f]{32}\\.${format}`).exec(html)![0];
+    const file = await request.get(`${SITE}${src}`);
+    expect(file.status()).toBe(200);
+    expect(file.headers()['content-type']).toBe(`image/${format}`);
+    const meta = await sharp(Buffer.from(await file.body())).metadata();
+    expect(meta.exif).toBeUndefined();
+  }
 });
 
 test('AT-30: the master switch stops agents at once', async ({ request, browser }, testInfo) => {

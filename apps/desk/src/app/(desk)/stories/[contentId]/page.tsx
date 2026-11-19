@@ -21,6 +21,7 @@ import { markdownToHtml } from '@/lib/site/markdown';
 import {
   getArticle,
   getItem,
+  getStoryImage,
   listPublishJobs,
   listAgents,
   listItemGrants,
@@ -47,6 +48,7 @@ import {
   addRights,
   addSource,
   deleteSource,
+  removeStoryImage,
   grantAgent,
   reviewProposal,
   revokeAgentGrant,
@@ -55,6 +57,7 @@ import {
   updateItem,
 } from '../actions';
 import { ItemFields } from '../item-fields';
+import { FOCUS_LABELS, IMAGE_OUTCOMES, focusKey } from '@/lib/images/focus';
 import { adoptProposal, cancelJob, requestPublish, retryJob, saveArticle } from '../../publishing/actions';
 
 const CONTENT_ID = /^SC-[0-9]{4}-[0-9]{3,}$/;
@@ -64,13 +67,14 @@ export async function generateMetadata({ params }: PageProps<'/stories/[contentI
   return { title: CONTENT_ID.test(contentId) ? contentId : 'Story' };
 }
 
-export default async function StoryPage({ params }: PageProps<'/stories/[contentId]'>) {
+export default async function StoryPage({ params, searchParams }: PageProps<'/stories/[contentId]'>) {
   const { contentId } = await params;
+  const imageOutcome = IMAGE_OUTCOMES[String((await searchParams).image ?? '')] ?? null;
   if (!CONTENT_ID.test(contentId)) notFound();
   const data = await staffTx(async (tx, session) => {
     const item = await getItem(tx, contentId);
     if (!item) return null;
-    const [sources, rights, proposals, grants, staff, agents, article, jobs] = await Promise.all([
+    const [sources, rights, proposals, grants, staff, agents, article, jobs, storyImage] = await Promise.all([
       listSources(tx, item.id),
       listRights(tx, item.id),
       listProposals(tx, item.id),
@@ -79,11 +83,17 @@ export default async function StoryPage({ params }: PageProps<'/stories/[content
       listAgents(tx),
       getArticle(tx, item.id),
       listPublishJobs(tx, { itemId: item.id, limit: 5 }),
+      getStoryImage(tx, item.id),
     ]);
-    return { item, sources, rights, proposals, grants, staff, agents, article, jobs, session };
+    return { item, sources, rights, proposals, grants, staff, agents, article, jobs, storyImage, session };
   });
   if (!data) notFound();
-  const { item, sources, rights, proposals, grants, staff, agents, article, jobs, session } = data;
+  const { item, sources, rights, proposals, grants, staff, agents, article, jobs, storyImage, session } =
+    data;
+  const imageRights = rights.filter(
+    (r) => ['photo', 'illustration', 'graphic'].includes(r.assetKind) && r.status !== 'rejected',
+  );
+  const { image, liveShowsEarlier } = storyImage;
   const canManageAgents = hasRole(session, 'owner', 'managing_editor');
   const canPublish = canManageAgents;
   const newsletterReady = Boolean(env().KIT_API_KEY);
@@ -527,6 +537,186 @@ export default async function StoryPage({ params }: PageProps<'/stories/[content
                   <SubmitButton small>Record source</SubmitButton>
                 </div>
               </ActionForm>
+            </details>
+          </Card>
+
+          <Card
+            id="image"
+            title="Lead image"
+            note="One photograph or illustration leads the story on the site and in previews. It needs a rights record, cleared for the web, with a credit line. Agents never publish a story that has one."
+          >
+            {imageOutcome ? (
+              <div
+                className={`notice ${imageOutcome.ok ? 'notice--ok' : 'notice--error'}`}
+                role={imageOutcome.ok ? 'status' : 'alert'}
+              >
+                {imageOutcome.text}
+              </div>
+            ) : null}
+            {image ? (
+              <figure className="story-image">
+                {/* eslint-disable-next-line @next/next/no-img-element -- a staff-only preview served by the desk */}
+                <img
+                  src={`/stories/${item.contentId}/image?v=${image.id}`}
+                  alt={image.altText}
+                  width={image.width}
+                  height={image.height}
+                  className="story-image__img"
+                />
+                <figcaption className="stack">
+                  <div className="row">
+                    <StatusBadge
+                      tone={RIGHTS_STATUSES[image.rightsStatus].tone}
+                      label={`Rights: ${RIGHTS_STATUSES[image.rightsStatus].label}`}
+                    />
+                    <span className="small muted">
+                      {ASSET_KINDS[image.assetKind]} · {PROVENANCE[image.provenance]} · {image.width} ×{' '}
+                      {image.height} · keep in frame:{' '}
+                      {FOCUS_LABELS[focusKey(Number(image.focalX), Number(image.focalY))]}
+                    </span>
+                  </div>
+                  <dl className="facts">
+                    <dt>Alternative text</dt>
+                    <dd>{image.altText}</dd>
+                    <dt>Caption</dt>
+                    <dd>{image.caption ?? <span className="muted">None</span>}</dd>
+                    <dt>Credit</dt>
+                    <dd>
+                      {image.creditLine ?? (
+                        <span className="muted">Missing: add it to the rights record</span>
+                      )}
+                    </dd>
+                  </dl>
+                  {image.rightsStatus !== 'cleared' || !image.permittedUses.includes('web') ? (
+                    <p className="small">
+                      Not shown to readers yet: its rights record must be cleared for the web.
+                    </p>
+                  ) : null}
+                  {item.status === 'published' && !image.live ? (
+                    <p className="small">
+                      The live site shows the previous image until you update the story.
+                    </p>
+                  ) : null}
+                  <form action={removeStoryImage} className="row">
+                    <input type="hidden" name="itemId" value={item.id} />
+                    <input type="hidden" name="contentId" value={item.contentId} />
+                    <button type="submit" className="button button--secondary button--small">
+                      Remove image
+                    </button>
+                  </form>
+                </figcaption>
+              </figure>
+            ) : (
+              <EmptyState>
+                No lead image.
+                {liveShowsEarlier ? ' The live site keeps the previous one until you update the story.' : ''}
+              </EmptyState>
+            )}
+            <details open={!image}>
+              <summary className="link-button">{image ? 'Replace the image' : 'Add an image'}</summary>
+              {imageRights.length === 0 ? (
+                <p className="small">
+                  First add a rights record for the image under <a href="#rights">Rights and credits</a>: its
+                  kind, provenance, licence and credit line.
+                </p>
+              ) : (
+                <form
+                  method="post"
+                  action={`/stories/${item.contentId}/image`}
+                  encType="multipart/form-data"
+                  className="form"
+                  aria-label={image ? 'Replace the lead image' : 'Add a lead image'}
+                >
+                  <div className="form__grid form__grid--2">
+                    <div className="field form__wide">
+                      <label className="field__label" htmlFor="image-file">
+                        Image file
+                      </label>
+                      <input
+                        id="image-file"
+                        name="image"
+                        type="file"
+                        required
+                        accept="image/jpeg,image/png,image/webp,image/avif"
+                        aria-describedby="image-file-hint"
+                        className="input"
+                      />
+                      <p className="field__hint" id="image-file-hint">
+                        JPEG, PNG, WebP or AVIF, at least 640 pixels wide, up to 15 MB. Camera details and
+                        location data are removed. Processing takes up to half a minute.
+                      </p>
+                    </div>
+                    <div className="field">
+                      <label className="field__label" htmlFor="image-rights">
+                        Rights record
+                      </label>
+                      <select id="image-rights" name="rightsId" required className="select">
+                        {imageRights.map((r) => (
+                          <option key={r.id} value={r.id}>
+                            {r.assetLabel} ({RIGHTS_STATUSES[r.status].label})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="field">
+                      <label className="field__label" htmlFor="image-focus">
+                        Keep in frame
+                      </label>
+                      <select
+                        id="image-focus"
+                        name="focus"
+                        defaultValue="center"
+                        className="select"
+                        aria-describedby="image-focus-hint"
+                      >
+                        {Object.entries(FOCUS_LABELS).map(([value, label]) => (
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="field__hint" id="image-focus-hint">
+                        Where the subject sits, so crops on cards and phones keep it.
+                      </p>
+                    </div>
+                    <div className="field form__wide">
+                      <label className="field__label" htmlFor="image-alt">
+                        Alternative text
+                      </label>
+                      <textarea
+                        id="image-alt"
+                        name="alt"
+                        required
+                        minLength={5}
+                        maxLength={300}
+                        rows={2}
+                        className="textarea"
+                        aria-describedby="image-alt-hint"
+                      />
+                      <p className="field__hint" id="image-alt-hint">
+                        What the image shows, for readers who cannot see it.
+                      </p>
+                    </div>
+                    <div className="field form__wide">
+                      <label className="field__label" htmlFor="image-caption">
+                        Caption <span className="field__optional">(optional)</span>
+                      </label>
+                      <textarea
+                        id="image-caption"
+                        name="caption"
+                        maxLength={400}
+                        rows={2}
+                        className="textarea"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <button type="submit" className="button">
+                      {image ? 'Replace image' : 'Add image'}
+                    </button>
+                  </div>
+                </form>
+              )}
             </details>
           </Card>
 

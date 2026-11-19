@@ -337,3 +337,15 @@ export async function setSourceCitation(formData: FormData) {
   );
   revalidatePath(`/stories/${contentId}`);
 }
+
+/** Remove a story's lead image (v0.7.0). On a live story the site keeps it until the story is updated. */
+export async function removeStoryImage(formData: FormData): Promise<void> {
+  const itemId = String(formData.get('itemId') ?? '');
+  const contentId = String(formData.get('contentId') ?? '');
+  if (!/^[0-9a-f-]{36}$/.test(itemId) || !/^SC-[0-9]{4}-[0-9]{3,}$/.test(contentId)) return;
+  await quietly('removeStoryImage', itemId, () =>
+    staffTx((tx) => tx`select app.remove_story_image(${itemId})`),
+  );
+  revalidatePath(`/stories/${contentId}`);
+  redirect(`/stories/${contentId}?image=removed#image`);
+}

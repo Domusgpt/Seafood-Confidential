@@ -1,4 +1,4 @@
-# Preview launch (v0.5.0, 18 November 2026; sample stories and standing pages v0.6.0, same day)
+# Preview launch (v0.5.0, 18 November 2026; sample stories and standing pages v0.6.0; images and motion v0.7.0, same day)
 
 A working preview of the desk and the public site, so the founders can try them before the real launch. It runs on Paul's existing accounts: a Supabase project and a Google Cloud project with Firebase. Moving to accounts owned by the publication (decision D01) is a later step; see "Moving to the publication's own accounts" below.
 
@@ -48,6 +48,16 @@ The site also has two **standing pages**, linked from every footer:
 - **How we work** follows the standards in `editorial/EDITORIAL_PLAYBOOK.md` and the agent rules in ADR-005.
 
 Both are still drafts for the founders to approve. They live in `apps/desk/site-src/pages/` as Markdown and are built into the desk's image. To change one: edit the file, redeploy the desk (see "Redeploying"), and the next publication carries the change.
+
+## Images and motion (v0.7.0)
+
+- **Six sample stories have photographs.** All are public domain, from U.S. agencies and the Library of Congress via Wikimedia Commons, and each is credited under its picture. `supabase/sample/images/manifest.json` records each one's source, author and licence, verified on its Commons page. The AI-written sample has no photograph: agents never publish images.
+- **Loading them:**
+  - `pnpm --filter @sc/desk images samples` attaches them to the samples, each with a cleared rights record.
+  - With `--emit-sql <dir>` it writes the same work as SQL files, for a database this machine cannot reach (run them in the SQL editor).
+  - A sample that was already live shows its photograph once the story is updated, because publishing pins the image.
+- **Adding an image to a real story:** add a rights record (photo, provenance, licence, credit line, cleared for the web), then use "Lead image" on the story page. See `docs/DESK.md`.
+- **Motion:** parallax masthead, titles and images animated in on scroll, reversing on the way back. Readers can turn it off in the footer ("Animation: on"), and devices that ask for reduced motion never see it.
 
 ## Publishing sweep (v0.6.0): ready, not scheduled
 

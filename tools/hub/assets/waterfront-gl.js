@@ -1,6 +1,7 @@
 // Bathymetry masthead renderer (WebGL2). Progressive enhancement only:
 // - no WebGL2, compile failure or context loss → CSS fallback (class "gl-fallback")
-// - prefers-reduced-motion → one static frame, no animation loop
+// - prefers-reduced-motion, or the site's animation switch (data-motion="off" on <html>) → one
+//   static frame, no animation loop
 // - paused when offscreen or the tab is hidden; device pixel ratio capped at 1.5; ~30 fps
 // Shader sources are inlined at build time from assets/shaders/*.{vert,frag} (validated with glslang).
 (() => {
@@ -108,6 +109,7 @@
   });
 
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const still = () => motion.matches || document.documentElement.dataset.motion === 'off';
   let visible = true;
   let raf = 0;
   let last = 0;
@@ -121,12 +123,12 @@
     pointer.s += (pointer.ts - pointer.s) * 0.05;
     gl.uniform1f(U.time, seconds);
     gl.uniform2f(U.pointer, pointer.x, pointer.y);
-    gl.uniform1f(U.strength, motion.matches ? 0 : pointer.s);
+    gl.uniform1f(U.strength, still() ? 0 : pointer.s);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
   const frame = (now) => {
     raf = 0;
-    if (!visible || document.hidden || motion.matches) return;
+    if (!visible || document.hidden || still()) return;
     if (now - last >= 33) {
       last = now;
       draw(STATIC_TIME + (now - start) / 1000);
@@ -134,7 +136,7 @@
     raf = requestAnimationFrame(frame);
   };
   const schedule = () => {
-    if (motion.matches) {
+    if (still()) {
       draw(STATIC_TIME);
       canvas.dataset.state = 'static';
       return;
@@ -149,7 +151,11 @@
   }).observe(canvas);
   document.addEventListener('visibilitychange', schedule);
   motion.addEventListener?.('change', schedule);
-  window.addEventListener('resize', () => motion.matches && draw(STATIC_TIME));
+  new MutationObserver(schedule).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-motion'],
+  });
+  window.addEventListener('resize', () => still() && draw(STATIC_TIME));
   canvas.addEventListener('webglcontextlost', (e) => {
     e.preventDefault();
     cancelAnimationFrame(raf);
