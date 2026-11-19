@@ -24,11 +24,12 @@ export type ImageErrorCode =
 
 /** A reason an upload was refused. The code is stable (the desk maps it to its own message). */
 export class ImageError extends Error {
-  constructor(
-    readonly code: ImageErrorCode,
-    message: string,
-  ) {
+  // A plain field, not a constructor parameter property: the operator CLI runs this file with
+  // Node's built-in type stripping, which only removes erasable syntax.
+  code: ImageErrorCode;
+  constructor(code: ImageErrorCode, message: string) {
     super(message);
+    this.code = code;
   }
 }
 
