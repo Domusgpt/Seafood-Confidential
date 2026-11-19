@@ -1283,6 +1283,76 @@
       "steps": "Cloud Build from git archive of b99e04c (build 9a4b752d, SUCCESS); gcloud run deploy sc-desk --image .../desk:b99e04c --memory 1Gi (settings and secrets kept); probes with curl; Cloud Logging read for the new revision",
       "observed": "Revision sc-desk-00005-dw7 serves 100% of traffic with cpu=1, memory=1Gi. /api/health {version: 0.7.1}. GET /stories/<id>/image without a session 401; cross-origin POST 403; same-origin POST without a session 303 to /sign-in; a same-origin 12.6 MB multipart POST 303 in 1.7 s. The revision's log has no 'Request body exceeded' warning; its only warnings are the request logs of the 401 and 403 probes. /sign-in and /pitch 200 with the nonce CSP, HSTS and X-Robots-Tag noindex",
       "result": "pass"
+    },
+    {
+      "id": "EV-0069",
+      "recordedAt": "2026-11-18T23:06:57-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@e3479e40bbe4f154e4c252ba61d8239b29ddb789",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-015"
+      ],
+      "kind": "verification",
+      "summary": "Live image weight before v0.7.2: readers never receive originals, and every browser downloaded the smallest rendition covering its slot (0% over right-sized, 15 page and screen combinations); 3x phones fetched each photograph at about 3x",
+      "steps": "Playwright with the cache disabled against https://seafood-confidential-preview.web.app: home, a story and a section page on a 1440x900 desktop at 1x and 2x, an iPad Mini, a Pixel 7 and an iPhone 13; every lazy image loaded; for each picture, the drawn width (object-fit cover) times devicePixelRatio against the srcset candidate chosen and its bytes",
+      "observed": "Total 2,475 KB of images across the 15 views, all right-sized for the screen's full density. Desktop 1x: 96, 93 and 9 KB per page; laptop 2x: 266, 234, 24 KB; iPad: 266, 192, 24 KB. Phones at 2.6x and 3x: 369 KB home, 214 KB story, 52 KB section, each photograph a 1,200 px rendition for a slot about 356 to 380 CSS px wide",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0070",
+      "recordedAt": "2026-11-18T23:06:57-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@e3479e40bbe4f154e4c252ba61d8239b29ddb789",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005",
+        "SC-015"
+      ],
+      "kind": "test",
+      "summary": "v0.7.2 tree: pgTAP 272/272, Vitest 132/132, Playwright 32/32 (an iPhone 13 gets the 800 px rendition of a 900 px photograph, a desktop the 900 px one), pnpm check, bundle scan",
+      "steps": "pnpm devtrack status --write; pnpm db:reset; pnpm db:test; pnpm check; pnpm desk:build; pnpm desk:e2e. The Docker daemon stopped during the first run (a session restart); it was restarted and the database-dependent steps re-ran",
+      "observed": "All exit 0 on the final run. New: an imageSizes() unit test, and the end-to-end photograph test now opens the published story as an iPhone 13 and as a desktop and reads which srcset candidate each chose",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0071",
+      "recordedAt": "2026-11-18T23:06:57-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@e3479e40bbe4f154e4c252ba61d8239b29ddb789",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005"
+      ],
+      "kind": "verification",
+      "summary": "Live: desk v0.7.2 on revision sc-desk-00006-hq2 (1 GiB kept), and the site rebuilt by one operator republish through the desk's publishing steps",
+      "steps": "Cloud Build from git archive of e3479e4 (b57616c1, SUCCESS); gcloud run deploy with the new image only; probes; operator republish of SC-2026-007 (claim, snapshot, media, the desk's builder, Firebase Hosting deploy, complete); curl of the live HTML and stylesheet",
+      "observed": "Health {version: 0.7.2}; image route 401 without a session; sign-in 200. Job 9d7206af succeeded: 95 files, 60 image renditions, release cc440e7e714cc853. Live pages carry the capped sizes; the stylesheet loads contours.svg and four fonts with ?v=<content hash>, each 200 with Cache-Control public, max-age=31536000, immutable; the font preload uses the same versioned address",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0072",
+      "recordedAt": "2026-11-18T23:06:57-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@e3479e40bbe4f154e4c252ba61d8239b29ddb789",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-015"
+      ],
+      "kind": "verification",
+      "summary": "Live image weight after v0.7.2: phones download 47 to 54% fewer image bytes, other screens unchanged, every image right-sized under the 2x policy",
+      "steps": "pnpm --filter @sc/desk audit:images https://seafood-confidential-preview.web.app (the measurement above, now a repository tool that applies the density policy); then the story photograph captured on an emulated iPhone 13 before and after, compared at actual size and enlarged 2x",
+      "observed": "Phones (iPhone 13 and Pixel 7): home 369 to 188 KB, story 214 to 113 KB, section 52 to 24 KB; each photograph is now the 800 px rendition. Desktop, laptop and iPad identical to before. All 15 views: 2,475 to 1,852 KB; 0 images larger or smaller than the right rendition (audit exit 0). The story photograph: 46 KB to 26 KB; indistinguishable at actual size, slightly softer only when enlarged 2x",
+      "result": "pass",
+      "location": "devlog/assets/2026-11-18-s01-t8"
     }
   ]
 }

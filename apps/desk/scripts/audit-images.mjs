@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-// Image delivery audit (v0.7.2): for every photograph on a page, the width it is shown at times the
-// screen's density, against the rendition the browser downloaded and the smallest one that would
-// have covered it. Cold cache, every lazy image loaded, on a desktop, a 2x laptop, a tablet and two
-// phones.
+// Image delivery audit (v0.7.2). For every photograph on a page it compares the rendition the
+// browser downloaded with the right one: the smallest rendition covering the width the picture is
+// drawn at, times the density the site serves. That density is the screen's own up to 2.5x; denser
+// screens are served at two-thirds of theirs, about 2x (imageSizes in src/lib/site/build.ts).
+// Cold cache, every lazy image loaded, on a desktop, a 2x laptop, a tablet and two phones.
 //
 //   pnpm --filter @sc/desk audit:images https://seafood-confidential-preview.web.app [path ...]
 //
 // With no paths it audits the home page, the first story and the first section page it links to.
-// Exits 1 if any image downloaded more than 5% over the right-sized renditions.
+// Exits 1 if any image is larger or smaller than the right rendition.
 import { chromium, devices } from '@playwright/test';
 
 const [site, ...given] = process.argv.slice(2);
@@ -41,6 +42,7 @@ if (!paths.length) {
 
 let downloaded = 0;
 let rightSized = 0;
+let wrong = 0;
 for (const [profile, options] of PROFILES) {
   for (const path of paths) {
     const context = await browser.newContext({ ...options });
@@ -74,7 +76,8 @@ for (const [profile, options] of PROFILES) {
         if (!candidates.length) continue;
         // Frames crop with object-fit: cover, so the picture is drawn at least as wide as this.
         const drawn = Math.max(img.offsetWidth, img.offsetHeight * (img.naturalWidth / img.naturalHeight));
-        const needed = drawn * devicePixelRatio;
+        const density = devicePixelRatio >= 2.5 ? devicePixelRatio * 0.67 : devicePixelRatio;
+        const needed = drawn * density;
         const chosen = candidates.find((c) => c.url === img.currentSrc);
         const right = candidates.find((c) => c.width >= needed) ?? candidates[candidates.length - 1];
         out.push({
@@ -92,8 +95,12 @@ for (const [profile, options] of PROFILES) {
     const right = rows.reduce((n, r) => n + r.rightBytes, 0);
     downloaded += got;
     rightSized += right;
+    wrong += rows.filter((r) => r.chosen !== r.right).length;
     const detail = rows
-      .map((r) => `${r.needed}→${r.chosen}${r.chosen === r.right ? '' : `(want ${r.right})`}`)
+      .map(
+        (r) =>
+          `${r.needed}→${r.chosen}${r.chosen === r.right ? '' : ` (${r.chosen > r.right ? 'over' : 'under'}: want ${r.right})`}`,
+      )
       .join(' ');
     console.log(
       `${profile.padEnd(13)} ${path.padEnd(40).slice(0, 40)} ${kb(got).padStart(7)} (right-sized ${kb(right)})  ${detail}`,
@@ -102,8 +109,7 @@ for (const [profile, options] of PROFILES) {
   }
 }
 await browser.close();
-const excess = downloaded ? (downloaded - rightSized) / downloaded : 0;
 console.log(
-  `\nAll pages and screens: ${kb(downloaded)} of images; right-sized ${kb(rightSized)}; excess ${(excess * 100).toFixed(1)}%`,
+  `\nAll pages and screens: ${kb(downloaded)} of images, right-sized ${kb(rightSized)}; ${wrong} image(s) not right-sized`,
 );
-process.exit(excess > 0.05 ? 1 : 0);
+process.exit(wrong ? 1 : 0);
