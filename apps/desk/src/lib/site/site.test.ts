@@ -6,8 +6,9 @@ import { gunzipSync } from 'node:zlib';
 import { afterAll, describe, expect, it } from 'vitest';
 import { buildSite, storyPath, type SiteConfig, type SiteSnapshot, type SiteStory } from './build';
 import { DeployError, FirebaseHostingDestination, LocalDirectoryDestination } from './deploy';
+import { parseSitePage } from './assets';
 import { KitClient, KitError } from './kit';
-import { markdownToHtml, markdownToText } from './markdown';
+import { markdownToHtml, markdownToText, typeset } from './markdown';
 
 const config: SiteConfig = {
   siteName: 'Seafood Confidential',
@@ -73,6 +74,16 @@ describe('markdown', () => {
     expect(html).not.toContain('<script>');
     expect(html).not.toContain('href="javascript:');
     expect(html).toContain('<a href="https://example.test" rel="noopener nofollow">ok</a>');
+  });
+  it('starts the highest heading a writer used at h2, without skipping levels', () => {
+    expect(markdownToHtml('## Section\n\n### Detail')).toBe('<h2>Section</h2>\n<h3>Detail</h3>');
+    expect(markdownToHtml('# Section\n\n## Detail')).toBe('<h2>Section</h2>\n<h3>Detail</h3>');
+    expect(markdownToHtml('###### Deep')).toBe('<h2>Deep</h2>');
+  });
+  it('sets in-word apostrophes typographically in titles, leaving other quotes alone', () => {
+    expect(typeset("A day boat's day, 'quoted' and O'Neill's")).toBe(
+      "A day boat’s day, 'quoted' and O’Neill’s",
+    );
   });
   it('makes short plain-text descriptions', () => {
     expect(markdownToText('**Bold** and <b>tags</b> & more', 100)).toBe('Bold and <b>tags</b> & more');
@@ -182,6 +193,46 @@ describe('buildSite', () => {
     expect(text(files, '/index.html')).not.toContain('noindex');
     expect(text(files, '/index.html')).not.toContain('preview-banner');
     expect(text(files, '/robots.txt')).toContain('Allow: /');
+  });
+
+  it('labels sample stories everywhere, and refuses to put them on a site that is not a preview', () => {
+    const sample = story({ isSample: true, aiGenerated: false, sources: [] });
+    const preview = buildSite(snapshot([sample]), { ...config, preview: 'Not launched yet.' }, [asset]);
+    const page = file(preview, `${storyPath(sample)}index.html`)!;
+    expect(page).toContain('<span class="label label--sample">Sample</span>');
+    expect(page).toContain('<strong>Sample story.</strong>');
+    expect(file(preview, '/index.html')).toContain('label--sample');
+    expect(file(preview, '/feed.xml')).toContain('<title>Sample: How the scallop season opened</title>');
+    expect(() => buildSite(snapshot([sample]), config, [asset])).toThrow(/only appear on a preview site/);
+    // A real story on a real site carries none of it.
+    expect(file(files, '/index.html')).not.toContain('label--sample');
+  });
+
+  it('renders the standing pages with footer links, a sitemap entry and the pitch link filled in', () => {
+    const about = parseSitePage(
+      'about.md',
+      '---\ntitle: About us\ndescription: Who we are.\norder: 1\n---\n## Who\n\nSee [how we work](/how-we-work/) or [pitch]({{pitch_url}}). [Off-site](//evil.example)',
+    );
+    const how = parseSitePage(
+      'how-we-work.md',
+      '---\ntitle: How we work\ndescription: Standards.\norder: 2\n---\nText.',
+    );
+    const built = buildSite(snapshot([]), config, [asset], [how, about]);
+    const page = file(built, '/about/index.html')!;
+    expect(page).toContain('<h1 class="story__title">About us</h1>');
+    expect(page).toContain('<h2>Who</h2>');
+    expect(page).toContain('<a href="/how-we-work/">how we work</a>');
+    expect(page).toContain('<a href="https://desk.example.test/pitch" rel="noopener nofollow">pitch</a>');
+    expect(page).not.toContain('href="//evil.example"');
+    const home = file(built, '/index.html')!;
+    expect(home.indexOf('href="/about/">About us</a>')).toBeLessThan(
+      home.indexOf('href="/how-we-work/">How we work</a>'),
+    );
+    expect(file(built, '/sitemap.xml')).toContain('https://news.example.test/how-we-work/');
+    expect(() => buildSite(snapshot([]), config, [asset], [{ ...about, slug: 'stories' }])).toThrow(
+      /unsafe page slug/,
+    );
+    expect(() => parseSitePage('x.md', 'no front matter')).toThrow(/front matter/);
   });
 
   it('refuses unsafe slugs', () => {

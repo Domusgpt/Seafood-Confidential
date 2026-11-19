@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { escapeHtml as esc, markdownToHtml, markdownToText } from './markdown';
+import { escapeHtml as esc, markdownToHtml, markdownToText, typeset } from './markdown';
 
 // Builds the whole public site from the publishable snapshot (ADR-005). Every build is complete, so
 // a deploy is idempotent: publishing the same snapshot twice gives the same site, and a retry after
@@ -34,6 +34,8 @@ export interface SiteStory {
   label: 'reporting' | 'opinion' | 'sponsored';
   format: string;
   aiGenerated: boolean;
+  /** Placeholder content for a preview site (operator-loaded); never allowed on the real site. */
+  isSample?: boolean;
   revision: number;
   publishedAt: string;
   updatedAt: string;
@@ -44,6 +46,19 @@ export interface SiteSnapshot {
   disclosure: string;
   stories: SiteStory[];
 }
+
+/** A standing page of the publication (About, How we work), written in Markdown in the repository. */
+export interface SitePage {
+  slug: string;
+  title: string;
+  description: string;
+  bodyMarkdown: string;
+  /** Position in the footer, lowest first. */
+  order: number;
+}
+
+/** Paths a standing page may not take, because stories, sections and assets live there. */
+const RESERVED_PAGE_SLUGS = new Set(['stories', 'sections', 'assets', 'feed.xml', 'sitemap.xml', '404.html']);
 
 export interface SiteConfig {
   siteName: string;
@@ -60,6 +75,8 @@ export interface SiteConfig {
    * asks search engines not to index it, and robots.txt disallows everything. Null for the real site.
    */
   preview?: string | null;
+  /** Footer links to the standing pages; filled in by buildSite. */
+  pageLinks?: { href: string; label: string }[];
 }
 
 export interface SiteFile {
@@ -116,6 +133,13 @@ const AI_ICON =
 function aiBadge(story: SiteStory): string {
   return story.aiGenerated ? `<span class="label label--ai">${AI_ICON}Written by an AI agent</span>` : '';
 }
+
+function sampleBadge(story: SiteStory): string {
+  return story.isSample ? '<span class="label label--sample">Sample</span>' : '';
+}
+
+const SAMPLE_NOTE =
+  '<aside class="sample-note" aria-label="About this sample"><p><strong>Sample story.</strong> Placeholder text that shows how a story looks on the site. It is not reporting, and it will be removed before launch.</p></aside>';
 
 interface PageInput {
   config: SiteConfig;
@@ -185,7 +209,9 @@ ${p.body}
 <footer class="site-footer">
   <div class="site-footer__inner">
     ${signup(config, 'footer')}
-    <div class="site-footer__links">
+    <div class="site-footer__links">${(config.pageLinks ?? [])
+      .map((l) => `\n      <a href="${esc(l.href)}">${esc(l.label)}</a>`)
+      .join('')}
       <a href="/feed.xml">RSS feed</a>${
         config.pitchUrl ? `\n      <a href="${esc(config.pitchUrl)}">Pitch us a story</a>` : ''
       }
@@ -215,9 +241,9 @@ function signup(config: SiteConfig, place: 'footer' | 'article'): string {
 function storyCard(story: SiteStory, lead = false): string {
   const tag = lead ? 'h2' : 'h3';
   return `<article class="card${lead ? ' card--lead' : ''}">
-  <p class="eyebrow"><a href="/sections/${sectionSlug(story.section)}/">${esc(SECTION_NAMES[story.section])}</a>${labelBadge(story)}${aiBadge(story)}</p>
-  <${tag} class="card__title"><a href="${storyPath(story)}">${esc(story.title)}</a></${tag}>
-  ${story.dek ? `<p class="card__dek">${esc(story.dek)}</p>` : ''}
+  <p class="eyebrow"><a href="/sections/${sectionSlug(story.section)}/">${esc(SECTION_NAMES[story.section])}</a>${labelBadge(story)}${aiBadge(story)}${sampleBadge(story)}</p>
+  <${tag} class="card__title"><a href="${storyPath(story)}">${esc(typeset(story.title))}</a></${tag}>
+  ${story.dek ? `<p class="card__dek">${esc(typeset(story.dek))}</p>` : ''}
   <p class="meta"><span>${esc(bylineFor(story))}</span><time datetime="${esc(story.publishedAt)}">${esc(day(story.publishedAt))}</time></p>
 </article>`;
 }
@@ -290,17 +316,39 @@ function storyPage(story: SiteStory, snapshot: SiteSnapshot, config: SiteConfig,
     publishedAt: story.publishedAt,
     body: `<article class="story">
   <header class="story__header">
-    <p class="eyebrow"><a href="/sections/${sectionSlug(story.section)}/">${esc(SECTION_NAMES[story.section])}</a>${labelBadge(story)}${aiBadge(story)}</p>
-    <h1 class="story__title">${esc(story.title)}</h1>
-    ${story.dek ? `<p class="story__dek">${esc(story.dek)}</p>` : ''}
+    <p class="eyebrow"><a href="/sections/${sectionSlug(story.section)}/">${esc(SECTION_NAMES[story.section])}</a>${labelBadge(story)}${aiBadge(story)}${sampleBadge(story)}</p>
+    <h1 class="story__title">${esc(typeset(story.title))}</h1>
+    ${story.dek ? `<p class="story__dek">${esc(typeset(story.dek))}</p>` : ''}
     <p class="meta"><span>By ${esc(bylineFor(story))}</span><time datetime="${esc(story.publishedAt)}">${esc(day(story.publishedAt))}</time>${updated}</p>
   </header>
+  ${story.isSample ? SAMPLE_NOTE : ''}
   <div class="story__body">
 ${markdownToHtml(story.bodyMarkdown)}
   </div>
   ${disclosure}
   ${sources}
   ${signup(config, 'article')}
+</article>`,
+  });
+}
+
+function standingPage(page: SitePage, config: SiteConfig, v: string): string {
+  // The one placeholder pages may use: the desk's public pitch form differs per environment.
+  const body = page.bodyMarkdown.replaceAll('{{pitch_url}}', config.pitchUrl ?? '/');
+  return layout({
+    config,
+    assetVersion: v,
+    title: page.title,
+    description: page.description,
+    path: `/${page.slug}/`,
+    body: `<article class="story page">
+  <header class="story__header">
+    <h1 class="story__title">${esc(page.title)}</h1>
+    <p class="story__dek">${esc(page.description)}</p>
+  </header>
+  <div class="story__body">
+${markdownToHtml(body)}
+  </div>
 </article>`,
   });
 }
@@ -323,7 +371,7 @@ function feed(snapshot: SiteSnapshot, config: SiteConfig): string {
     .slice(0, 30)
     .map(
       (s) => `  <item>
-    <title>${xml(s.title)}</title>
+    <title>${xml(s.isSample ? `Sample: ${s.title}` : s.title)}</title>
     <link>${xml(`${config.publicUrl}${storyPath(s)}`)}</link>
     <guid isPermaLink="false">${xml(`seafood-confidential:${s.contentId}`)}</guid>
     <pubDate>${new Date(s.publishedAt).toUTCString()}</pubDate>
@@ -346,9 +394,15 @@ ${items}
 `;
 }
 
-function sitemap(snapshot: SiteSnapshot, config: SiteConfig, sections: SectionKey[]): string {
+function sitemap(
+  snapshot: SiteSnapshot,
+  config: SiteConfig,
+  sections: SectionKey[],
+  pages: SitePage[],
+): string {
   const urls = [
     `${config.publicUrl}/`,
+    ...pages.map((p) => `${config.publicUrl}/${p.slug}/`),
     ...sections.map((s) => `${config.publicUrl}/sections/${sectionSlug(s)}/`),
     ...snapshot.stories.map((s) => `${config.publicUrl}${storyPath(s)}`),
   ];
@@ -372,7 +426,25 @@ export function assetVersion(assets: SiteFile[]): string {
   return h.digest('hex').slice(0, 10);
 }
 
-export function buildSite(snapshot: SiteSnapshot, config: SiteConfig, assets: SiteFile[]): SiteFile[] {
+export function buildSite(
+  snapshot: SiteSnapshot,
+  baseConfig: SiteConfig,
+  assets: SiteFile[],
+  pages: SitePage[] = [],
+): SiteFile[] {
+  // Placeholder stories exist to show a preview; they can never reach the real site.
+  if (!baseConfig.preview && snapshot.stories.some((s) => s.isSample))
+    throw new Error(
+      'Sample stories can only appear on a preview site. Take them down (docs/LAUNCH_PREVIEW.md) before publishing to the real site.',
+    );
+  for (const page of pages)
+    if (!SLUG.test(page.slug) || RESERVED_PAGE_SLUGS.has(page.slug))
+      throw new Error(`unsafe page slug: ${page.slug}`);
+  const orderedPages = [...pages].sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
+  const config: SiteConfig = {
+    ...baseConfig,
+    pageLinks: orderedPages.map((p) => ({ href: `/${p.slug}/`, label: p.title })),
+  };
   const v = assetVersion(assets);
   const stories = [...snapshot.stories].sort(
     (a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.contentId.localeCompare(b.contentId),
@@ -384,7 +456,7 @@ export function buildSite(snapshot: SiteSnapshot, config: SiteConfig, assets: Si
     text('/index.html', homePage(ordered, config, v), html),
     text('/404.html', notFoundPage(config, v), html),
     text('/feed.xml', feed(ordered, config), 'application/rss+xml; charset=utf-8'),
-    text('/sitemap.xml', sitemap(ordered, config, sections), 'application/xml; charset=utf-8'),
+    text('/sitemap.xml', sitemap(ordered, config, sections, orderedPages), 'application/xml; charset=utf-8'),
     text(
       '/robots.txt',
       config.preview
@@ -405,6 +477,7 @@ export function buildSite(snapshot: SiteSnapshot, config: SiteConfig, assets: Si
       ),
     ),
     ...stories.map((s) => text(`${storyPath(s)}index.html`, storyPage(s, ordered, config, v), html)),
+    ...orderedPages.map((p) => text(`/${p.slug}/index.html`, standingPage(p, config, v), html)),
     ...assets,
   ];
   const seen = new Set<string>();

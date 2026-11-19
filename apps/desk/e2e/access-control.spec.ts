@@ -76,3 +76,16 @@ test('HTML responses carry a nonce CSP and hardening headers', async ({ request 
   expect(h['x-request-id']).toMatch(/^req_[0-9a-f]{32}$/);
   expect(h['x-powered-by']).toBeUndefined();
 });
+
+test('the scheduled publishing sweep does not exist unless a scheduler identity is configured', async ({
+  request,
+}) => {
+  for (const auth of [undefined, 'Bearer aaa.bbb.ccc']) {
+    const res = await request.post('/api/publishing/sweep', {
+      headers: auth ? { Authorization: auth } : {},
+      failOnStatusCode: false,
+    });
+    expect(res.status()).toBe(404);
+    expect(res.headers()['cache-control']).toContain('no-store');
+  }
+});

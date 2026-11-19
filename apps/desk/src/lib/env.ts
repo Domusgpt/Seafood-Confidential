@@ -37,6 +37,8 @@ const schema = z.object({
     .default('true')
     .transform((v) => v === 'true'),
   DESK_TRUSTED_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
+  // The service account Cloud Scheduler uses to call the publishing sweep; unset disables the route.
+  PUBLISH_SWEEP_INVOKER: z.email().optional(),
   DESK_AGENT_RATE_PER_MINUTE: z.coerce.number().int().min(1).max(10_000).default(120),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
 });
@@ -66,4 +68,4 @@ export function env(): DeskEnv {
   return cached;
 }
 
-export const DESK_VERSION = '0.5.0';
+export const DESK_VERSION = '0.6.0';

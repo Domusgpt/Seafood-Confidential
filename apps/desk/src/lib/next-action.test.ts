@@ -91,4 +91,11 @@ describe('newsroomToday', () => {
     expect(newsroomToday(new Date('2026-11-19T03:00:00Z'))).toBe('2026-11-18');
     expect(newsroomToday(new Date('2026-11-19T06:00:00Z'))).toBe('2026-11-19');
   });
+
+  it('asks nothing of sample stories', () => {
+    const action = nextAction({ ...base, assignedEditorName: null, status: 'published', isSample: true });
+    expect(action.key).toBe('sample');
+    expect(action.tone).toBe('neutral');
+    expect(action.target).toBeNull();
+  });
 });

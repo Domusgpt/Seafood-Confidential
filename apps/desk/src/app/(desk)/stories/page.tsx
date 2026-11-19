@@ -104,7 +104,10 @@ export default async function StoriesPage({ searchParams }: PageProps<'/stories'
                         <Link className="table__primary" href={`/stories/${item.contentId}`}>
                           {item.title}
                         </Link>
-                        <div className="small muted">{SECTIONS[item.section]}</div>
+                        <div className="small muted">
+                          {SECTIONS[item.section]}
+                          {item.isSample ? ' · Sample (preview placeholder)' : ''}
+                        </div>
                       </td>
                       <td>
                         <StatusBadge

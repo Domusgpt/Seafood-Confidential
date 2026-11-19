@@ -45,6 +45,8 @@ export interface ItemRow {
   publishedRevision: number | null;
   publicUrl: string | null;
   textRevision: number;
+  /** Placeholder content an operator loaded for a preview site (docs/LAUNCH_PREVIEW.md). */
+  isSample: boolean;
   pitchId: string | null;
   pitchReceipt: string | null;
   updatedAt: Date;
@@ -59,7 +61,7 @@ const ITEM_SELECT = (tx: Tx) => tx`
   select i.id, i.content_id, i.title, i.summary, i.section, i.format, i.label, i.focus, i.status,
          i.due_on, i.assigned_editor_id, e.display_name as assigned_editor_name, i.author_display,
          i.region, i.species, i.ghost_post_id, i.slug, i.published_at, i.published_via,
-         pb.display_name as published_by_name, i.published_revision, i.public_url,
+         pb.display_name as published_by_name, i.published_revision, i.public_url, i.is_sample,
          coalesce((select a.revision from app.articles a where a.item_id = i.id), 0) as text_revision,
          i.pitch_id, p.receipt_code as pitch_receipt, i.updated_at,
          (select count(*)::int from app.sources s where s.item_id = i.id) as source_count,

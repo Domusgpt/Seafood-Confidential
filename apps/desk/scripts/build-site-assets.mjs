@@ -2,7 +2,7 @@
 // Prepare the public site's static assets in site-static/assets (git-ignored): brand tokens compiled
 // from brand/tokens.json, the site stylesheet, self-hosted fonts with their licences, the favicon
 // and the bathymetry motif with its validated shaders inlined (sc-visual-codex).
-import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,4 +47,10 @@ const gl = (await readFile(path.join(root, 'tools/hub/assets/waterfront-gl.js'),
   .replace('__BATHYMETRY_VERT__', JSON.stringify(await shader('bathymetry.vert')))
   .replace('__BATHYMETRY_FRAG__', JSON.stringify(await shader('bathymetry.frag')));
 await writeFile(path.join(out, 'waterfront-gl.js'), gl);
+// Standing pages (About, How we work): Markdown, rendered by the site builder at every publication.
+const pagesOut = path.join(desk, 'site-static', 'pages');
+await rm(pagesOut, { recursive: true, force: true });
+await mkdir(pagesOut, { recursive: true });
+for (const f of (await readdir(path.join(desk, 'site-src', 'pages'))).filter((n) => n.endsWith('.md')))
+  await copyFile(path.join(desk, 'site-src', 'pages', f), path.join(pagesOut, f));
 console.log(`site assets ready in ${path.relative(root, out)}`);

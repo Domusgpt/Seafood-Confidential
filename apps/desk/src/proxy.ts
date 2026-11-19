@@ -45,8 +45,9 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      // Everything except framework assets, the machine API (it sets its own headers) and health.
-      source: '/((?!_next/static|_next/image|api/agent|api/health|favicon.ico|robots.txt).*)',
+      // Everything except framework assets, the machine APIs (they set their own headers and
+      // authenticate on their own: agent tokens, the scheduler's signed token) and health.
+      source: '/((?!_next/static|_next/image|api/agent|api/publishing|api/health|favicon.ico|robots.txt).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },

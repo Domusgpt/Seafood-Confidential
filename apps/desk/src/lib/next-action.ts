@@ -17,6 +17,8 @@ export interface NextActionInput {
   rightsBlocked: number; // restricted or rejected records still attached
   rightsMissingCredit: number; // cleared records without a credit line
   proposalsWaiting: number;
+  /** Placeholder content an operator loaded for a preview site: nothing to do. */
+  isSample?: boolean;
   today: string; // YYYY-MM-DD in the newsroom's time zone
 }
 
@@ -67,6 +69,15 @@ export function nextAction(input: NextActionInput): NextAction {
       'none',
       'No further action',
       'This item was withdrawn. Keep its records for the archive.',
+      'neutral',
+      null,
+    );
+  }
+  if (input.isSample) {
+    return make(
+      'sample',
+      'Sample: nothing to do',
+      'Placeholder content for the preview. Samples come down before launch (docs/LAUNCH_PREVIEW.md).',
       'neutral',
       null,
     );

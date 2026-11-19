@@ -3,7 +3,7 @@ import path from 'node:path';
 import { pgCode, withPublisher, type PublisherActor } from '../db';
 import { env } from '../env';
 import { logger } from '../logger';
-import { loadSiteAssets } from '../site/assets';
+import { loadSiteAssets, loadSitePages } from '../site/assets';
 import { buildSite, storyPath, type SiteConfig, type SiteSnapshot } from '../site/build';
 import {
   DeployError,
@@ -292,8 +292,13 @@ async function runClaimed(
 
   let deployed: { version: string };
   try {
-    const assets = await loadSiteAssets(path.resolve(env().SITE_ASSETS_DIR));
-    const files = buildSite(snapshot, config, assets);
+    const assetsDir = path.resolve(env().SITE_ASSETS_DIR);
+    const files = buildSite(
+      snapshot,
+      config,
+      await loadSiteAssets(assetsDir),
+      await loadSitePages(assetsDir),
+    );
     deployed = await destinationFromEnv().deploy(files, {
       signal: lease.signal,
       beforeRelease: () => lease.confirm(),

@@ -129,6 +129,7 @@ export default async function StoryPage({ params }: PageProps<'/stories/[content
           <div className="row">
             <StatusBadge tone={ITEM_STATUSES[item.status].tone} label={ITEM_STATUSES[item.status].label} />
             <StatusBadge tone="neutral" label={FORMATS[item.format]} />
+            {item.isSample ? <StatusBadge tone="warning" label="Sample: preview placeholder" /> : null}
             {item.label !== 'reporting' ? (
               <StatusBadge tone="warning" label={`Labelled ${item.label}`} />
             ) : null}
