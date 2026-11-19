@@ -31,10 +31,10 @@
     <p class="tagline">Seafood, from the people who know it.</p>
     <div class="hub-meta">
       <span>Project hub</span>
-      <span>v0.7.3</span>
+      <span>v0.7.4</span>
       <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
-      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9f405193e59a9505faa40076ae6fc6b97e469478">Commit <code>9f40519</code></a>
-      <span>Built Nov 19, 2026, 7:23 AM EST</span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/71dfdce835cba7a998719719b49b06e0838b7991">Commit <code>71dfdce</code></a>
+      <span>Built Nov 19, 2026, 11:49 AM EST</span>
       <a href="../../../index.html">All branch previews</a>
     </div>
   </div>
@@ -46,9 +46,33 @@
   <article class="prose"><h1 id="changelog">Changelog</h1>
 <p>All notable changes to this repository. Format: <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>; versions follow <a href="https://semver.org/">semantic versioning</a> (0.x before launch, one minor version per working session).</p>
 <h2 id="unreleased">[Unreleased]</h2>
+<h2 id="074---2026-11-19--session-s01-turn-10--claudeintelligent-cannon-d1nqq6">[0.7.4] - 2026-11-19 · Session S01, turn 10 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
+<p>Dave accepted the Supabase invitation. Paul asked what else could improve this. The sign-in page now explains, before anyone opens the email, what makes a link work, so a new person&#39;s first try is less likely to fail.</p>
+<h3 id="added">Added</h3>
+<ul>
+<li><p><strong>Sign-in guidance.</strong> Under the sign-in form, &quot;Getting the link to work&quot; says:</p>
+<ul>
+<li>open the email on this device and the link in this browser;</li>
+<li>check spam;</li>
+<li>each link works once, for 15 minutes;</li>
+<li>the desk can send only about two sign-in emails an hour, so asking again straight away does not help.</li>
+</ul>
+<p>The &quot;link on its way&quot; message now says &quot;Open it in this browser within 15 minutes&quot;.</p>
+</li>
+<li><p><strong><code>DESK_AUTH_EMAIL</code></strong> (<code>builtin</code> by default, or <code>custom</code>). With <code>custom</code> (custom SMTP and our template, whose links work anywhere), the browser and hourly-limit warnings disappear.</p>
+</li>
+</ul>
+<h3 id="docs">Docs</h3>
+<ul>
+<li><code>docs/LAUNCH_PREVIEW.md</code>:<ul>
+<li>&quot;Custom SMTP: what it fixes and how&quot;: the four limits it removes, the founders&#39; steps with Resend, and what the agent session does afterwards;</li>
+<li>a security follow-up: both Supabase owners should turn on two-factor authentication. Neither had it on, and the Free plan cannot require it.</li>
+</ul>
+</li>
+</ul>
 <h2 id="073---2026-11-19--session-s01-turn-9--claudeintelligent-cannon-d1nqq6">[0.7.3] - 2026-11-19 · Session S01, turn 9 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Dave has an owner account on the live desk, and owners can now see whether each staff member has signed in yet.</p>
-<h3 id="added">Added</h3>
+<h3 id="added-1">Added</h3>
 <ul>
 <li><strong>Staff sign-ins for owners</strong> (migration <code>20261119140000_staff_sign_ins.sql</code>):<ul>
 <li><code>app.staff_sign_ins()</code> returns when each staff member last signed in, to owners only. Anyone else gets no rows.</li>
@@ -116,7 +140,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="070---2026-11-18--session-s01-turn-7--claudeintelligent-cannon-d1nqq6">[0.7.0] - 2026-11-18 · Session S01, turn 7 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>The public site gets photographs and a motion and depth system: layered parallax, titles and images that animate in and reverse, raised and recessed surfaces lit from above, and a tighter type and spacing scale. Readers can turn animation off, and nothing depends on it. See ADR-006.</p>
-<h3 id="added-1">Added</h3>
+<h3 id="added-2">Added</h3>
 <ul>
 <li><strong>Story images (<code>supabase/migrations/20261119120000_story_images.sql</code>):</strong><ul>
 <li>A lead image per story, tied to a rights record. It reaches the site only while that record is cleared for the web.</li>
@@ -196,7 +220,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li>About and How we work pages from the founders&#39; copy;</li>
 <li>a publishing sweep endpoint, ready for a scheduler, so publications never wait in the queue.</li>
 </ul>
-<h3 id="added-2">Added</h3>
+<h3 id="added-3">Added</h3>
 <ul>
 <li><strong>Sample stories (<code>is_sample</code>):</strong><ul>
 <li>Only an operator can mark a sample; a trigger refuses staff, agents and the public.</li>
@@ -239,7 +263,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="050---2026-11-18--session-s01-turn-5-preview-launch--claudeintelligent-cannon-d1nqq6">[0.5.0] - 2026-11-18 · Session S01, turn 5 (preview launch) · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>The desk and the public site are live as a preview, for the founders to try. See <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/LAUNCH_PREVIEW.md">docs/LAUNCH_PREVIEW.md</a>.</p>
-<h3 id="added-3">Added</h3>
+<h3 id="added-4">Added</h3>
 <ul>
 <li><strong>Preview deployment:</strong><ul>
 <li>Desk on Cloud Run (<code>sc-desk</code>, us-west1, scales to zero) with its own runtime account and Secret Manager secrets.</li>
@@ -295,7 +319,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="040---2026-11-18--session-s01-turn-4--claudeintelligent-cannon-d1nqq6">[0.4.0] - 2026-11-18 · Session S01, turn 4 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Ghost-free publishing from the desk, with agents that may publish under the owner&#39;s switches and automated checks (ADR-005), and a cost plan that starts at about $1 a month.</p>
-<h3 id="added-4">Added</h3>
+<h3 id="added-5">Added</h3>
 <ul>
 <li><strong>Story text in the desk</strong> (<code>app.articles</code>): Markdown editor and append-only revisions. Saves from an outdated page are refused (AT-08). Agent proposals can be adopted as the starting text and stay labelled AI-written.</li>
 <li><strong>Public static site</strong> built by the desk from published stories: home, sections, stories, RSS, sitemap and 404. It uses the Working Waterfront design with self-hosted fonts and the WebGL bathymetry motif on the home page. It has a strict CSP and passes WCAG 2.2 AA (axe).</li>
@@ -331,7 +355,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="030---2026-11-18--session-s01-turn-3--claudeintelligent-cannon-d1nqq6">[0.3.0] - 2026-11-18 · Session S01, turn 3 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Hosting and cost plan, a proposal to automate Ghost while people still decide releases, a production container, and a Claude agent lab.</p>
-<h3 id="added-5">Added</h3>
+<h3 id="added-6">Added</h3>
 <ul>
 <li><code>docs/planning/HOSTING_AND_COSTS.md</code>: verified prices for Supabase, Google Cloud (Cloud Run, Cloud Storage) and Hugging Face Spaces. Recommends Supabase Pro plus Cloud Run, about $84–99 a month in cash.</li>
 <li><code>decisions/ADR-004-desk-driven-publishing.md</code> (Proposed): automatic Ghost drafts, webhook sync and one-click human publishing behind the release gate; agents still never publish.</li>
@@ -352,7 +376,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="020---2026-11-18--session-s01-turn-2--claudeintelligent-cannon-d1nqq6">[0.2.0] - 2026-11-18 · Session S01, turn 2 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Operations desk foundation (SC-005) and its first vertical slice (SC-006, SC-007, first part of SC-009). Local Supabase only; nothing is deployed and nothing publishes.</p>
-<h3 id="added-6">Added</h3>
+<h3 id="added-7">Added</h3>
 <ul>
 <li><code>apps/desk</code>: Next.js 16.4 operations desk. Magic-link staff sign-in (sign-up disabled), <code>/no-access</code> for identities without a staff role, Today (due, decisions, post-review placeholder, failures), Stories (list, commission, detail with one next action and the exact Ghost editor link), Contributors (pitch queue and decisions), Distribution (honest &quot;not built yet&quot;), Settings (staff, agents, tokens, audit trail). Working Waterfront tokens, self-hosted fonts, accessible forms.</li>
 <li>Public <code>/pitch</code> intake: text only, consent-gated, throttled per client and overall, honeypot, receipt only.</li>
@@ -371,7 +395,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="010---2026-11-18--session-s01--claudeintelligent-cannon-d1nqq6">[0.1.0] - 2026-11-18 · Session S01 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Repository foundation, tooling and planning readiness. No application code.</p>
-<h3 id="added-7">Added</h3>
+<h3 id="added-8">Added</h3>
 <ul>
 <li>Development kit unpacked at the repository root (byte-identical); founder originals in <code>packet/</code> with SHA-256 checksums.</li>
 <li>Delivery tracking: <code>devtrack/</code> (sessions, workstreams, append-only evidence with JSON Schemas), <code>devlog/</code> timestamped entries, generated <code>docs/IMPLEMENTATION_STATUS.md</code>.</li>
@@ -401,7 +425,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </div>
 </main>
 <footer class="site-footer"><div>
-  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9f405193e59a9505faa40076ae6fc6b97e469478">9f40519</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/71dfdce835cba7a998719719b49b06e0838b7991">71dfdce</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
   <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
 </div></footer>
 </body>
