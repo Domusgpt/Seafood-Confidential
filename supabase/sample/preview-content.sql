@@ -9,8 +9,9 @@
 --   deliberate operator loads, not agent requests, so the agent publishing gates do not apply;
 -- * adds seven stories marked is_sample, one per section plus an AI-written explainer, each with its
 --   text and clearly marked placeholder sources;
--- * queues one publish job per story. The desk's own publisher runs them on its next sweep (or the
---   Publishing page's "Run queued jobs"), the same path as any publication.
+-- * queues one publish job per story. The desk's own publisher runs them, the same path as any
+--   publication: an owner or managing editor presses "Run … queued jobs now" on the desk's
+--   Publishing page (each press runs up to five), or the scheduled sweep runs them if it is set up.
 --
 -- The text is placeholder copy: it shows how stories look and makes no factual claims to be relied
 -- on (no figures, names, quotations or real sources). Every page shows a "Sample" label and note,

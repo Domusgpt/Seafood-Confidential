@@ -1,4 +1,4 @@
-# Operations desk (v0.4.1)
+# Operations desk (v0.6.0)
 
 The operations desk for Seafood Confidential:
 - staff sign-in;
@@ -44,6 +44,26 @@ Hosting and costs: [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md
   - email addresses and phone numbers, including ones hidden by Markdown escapes, emphasis or invisible characters.
 
   The desk checks the rendered page once more before deploying.
+
+## Public site: preview mode, standing pages, samples, sweep (v0.5.0–v0.6.0)
+
+- **Preview mode.** With `SITE_PREVIEW_NOTICE` set, every public page shows that text in a banner, carries `noindex`, and `robots.txt` says `Disallow: /`. The desk itself always sends `X-Robots-Tag: noindex, nofollow`.
+- **Standing pages.** Each Markdown file in `apps/desk/site-src/pages/` becomes a page at `/<file name>/`, linked from every footer and listed in the sitemap.
+  - Front matter needs `title`, `description` and an optional numeric `order` (footer order).
+  - `{{pitch_url}}` is replaced with the pitch form's address.
+  - Headings start at h2 whatever level the file uses.
+  - Names that would collide with site paths (`stories`, `sections`, `assets`, the feed and sitemap) are refused.
+  - The pages are copied into the image at build time, so a change needs a redeploy.
+- **Sample stories.** A story marked `is_sample` is placeholder content for a preview.
+  - Only an operator (the database owner) can set or clear the flag; a trigger refuses every API role.
+  - The site labels samples everywhere, and the builder refuses to publish a site that is not a preview while any sample is live.
+  - In the desk, samples show a badge, and their next action is "Sample: nothing to do".
+  - `supabase/sample/preview-content.sql` loads seven; `remove-preview-content.sql` removes them (steps in [LAUNCH_PREVIEW.md](LAUNCH_PREVIEW.md)).
+- **Publishing sweep.** `POST /api/publishing/sweep` runs up to ten waiting publish jobs, for a scheduler such as Cloud Scheduler.
+  - It exists only when `PUBLISH_SWEEP_INVOKER` names the calling service account; otherwise it answers 404.
+  - It accepts only a Google-signed RS256 ID token from that account, issued for that exact address, with a verified email and at most an hour old.
+  - Refusals are logged with a reason class and the request ID, never the token.
+  - Without a scheduler, waiting jobs run after each publication (up to three) or from "Run … queued jobs now" on `/publishing` (up to five per press).
 
 ## Scope delivered in this version
 
@@ -199,5 +219,6 @@ CI runs all of it in the `desk` job of [`.github/workflows/ci.yml`](../.github/w
 - **Founder decision, 18 November 2026: the intake limits stay as built** (5 pitches per client per hour, 200 an hour overall, no challenge). Revisit if spam appears; a privacy-respecting challenge can be added later.
 - Review snapshots and stale detection (SC-008) before any social or newsletter work.
 - Hosted Supabase verification of the role-membership grants and transaction pooling (ADR-003 review triggers, SC-015).
-- Live Firebase Hosting deploys and Kit broadcasts are verified only against protocol fakes; their first live runs are part of SC-015. Scheduled publication, a public corrections note and images in stories are not built yet.
+- Firebase Hosting deploys have run live on the preview, through the desk's own deploy code run by an operator (EV-0047, EV-0053). A publication by the desk service on Cloud Run has not run yet. Kit broadcasts are verified only against protocol fakes. Their first live runs are part of SC-015.
+- Not built yet: publication at a scheduled time, a public corrections note, and images in stories.
 - The legacy "link a Ghost post" form and `ghost_post_id` column remain in the code and schema but are unused (ADR-005).

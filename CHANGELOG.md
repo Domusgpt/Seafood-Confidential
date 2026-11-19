@@ -4,6 +4,43 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-18 · Session S01, turn 6 · `claude/intelligent-cannon-d1nqq6`
+
+The preview now looks and works like the publication:
+- seven labelled sample stories, published with the desk's own publishing code;
+- About and How we work pages from the founders' copy;
+- a publishing sweep endpoint, ready for a scheduler, so publications never wait in the queue.
+
+### Added
+- **Sample stories (`is_sample`):**
+  - Only an operator can mark a sample; a trigger refuses staff, agents and the public.
+  - The site labels samples everywhere: a "Sample" chip, a note on the page and "Sample:" in the feed.
+  - The builder refuses to publish a site that is not a preview while any sample is live.
+  - `supabase/sample/preview-content.sql` loads seven placeholder stories (one per section plus an AI-written explainer) attributed to an inert "Sample content (preview)" identity, and queues their publication.
+  - `remove-preview-content.sql` takes them down. Its result says what to do next for each sample.
+  - The desk shows a Sample badge, and samples ask nothing of editors.
+- **Standing pages:** About (the brand guide's About introduction) and How we work (the editorial playbook's standards and ADR-005's agent rules), rendered from Markdown in `apps/desk/site-src/pages`, linked from every footer and listed in the sitemap.
+- **Publishing sweep:** `POST /api/publishing/sweep` runs waiting publish jobs. It accepts only a Google-signed OIDC token (RS256) for that exact address, from the configured service account with a verified email. Without that account configured, it answers 404.
+  - The endpoint and its caller account `sc-desk-scheduler` are live.
+  - The Cloud Scheduler job that would call it every 15 minutes has **not** been created. It is one command for the project owner, in `docs/LAUNCH_PREVIEW.md`.
+
+### Changed
+- **Headings in story text** start at h2 whatever level the writer used, with no skipped levels.
+- **Links:** same-site links are allowed (never `//host`), and only external links get `rel="nofollow"`.
+- **Titles and summaries** get typographic apostrophes.
+- **The repository's link check** skips the public-site pages and generated site output.
+
+### Verified
+- **Locally (EV-0054, EV-0055, EV-0057):**
+  - pgTAP 238/238, Vitest 114/114, Playwright 31/31 (including the sweep's 404), `pnpm check`, and a clean bundle scan;
+  - the whole sample lifecycle through the desk's own publisher: load, publish, remove, withdraw;
+  - an owner updating a live sample, which rebuilds the site with nothing visibly changed (the suggested first live test).
+- **Live (EV-0051 to EV-0053):**
+  - the migration and desk 0.6.0;
+  - the sweep refuses missing, HS256 and non-Google RS256 tokens;
+  - seven samples and both pages live, with 0 axe violations and no overflow on ten views.
+- **Not yet live (EV-0056):** a publication by the desk service on Cloud Run, and the sweep with a real scheduler token.
+
 ## [0.5.0] - 2026-11-18 · Session S01, turn 5 (preview launch) · `claude/intelligent-cannon-d1nqq6`
 
 The desk and the public site are live as a preview, for the founders to try. See [docs/LAUNCH_PREVIEW.md](docs/LAUNCH_PREVIEW.md).

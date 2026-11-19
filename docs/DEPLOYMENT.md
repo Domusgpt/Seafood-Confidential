@@ -1,4 +1,4 @@
-# Deploying the desk and the public site (v0.4.1)
+# Deploying the desk and the public site (v0.6.0)
 
 How to take the desk from the local stack to hosted Supabase and Google Cloud Run, with the public site on Firebase Hosting and the newsletter on Kit. This is the Ghost-free path in [ADR-005](../decisions/ADR-005-desk-publishing-without-ghost.md) and [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md). A preview has been deployed with these steps (with the adjustments recorded in [LAUNCH_PREVIEW.md](LAUNCH_PREVIEW.md): schema applied through the Supabase Management API, image built in Cloud Build, desk in the same region as the database). On Supabase's Free plan with the built-in mailer, the sign-in email template cannot be changed; the desk accepts Supabase's default links too (open them in the same browser). The production launch on the publication's own accounts (SC-001, D01) remains.
 
@@ -71,6 +71,22 @@ The build needs no secrets. Next.js generates the Server Actions encryption key 
 5. The desk is staff-only, so its `run.app` address is enough at the start. Cloud Run domain mapping (us-east4 supports it) is still a Preview, and a load balancer costs about $18 a month; add either later if you want `desk.<your-domain>`. Do not put the desk behind Firebase Hosting rewrites: they forward only the `__session` cookie and would break sign-in.
 
 Never set `SUPABASE_SECRET_KEY` on the service: the desk refuses to start with it.
+
+Optional settings:
+- **`SITE_PREVIEW_NOTICE`:** for a staging or pre-launch site. It adds a banner, `noindex` and `Disallow: /`. Leave it unset for the real site; the site builder then refuses to publish while any sample story is live.
+- **`PUBLISH_SWEEP_INVOKER`:** turns on the publishing sweep (v0.6.0), which runs publish jobs left waiting.
+  1. Create a service account with no roles, and set this variable to its email.
+  2. Create a Cloud Scheduler job that calls the sweep with that account's OIDC token. The audience must be the exact address:
+
+     ```bash
+     gcloud iam service-accounts create sc-desk-scheduler --display-name "Seafood Confidential publishing sweep (no roles)"
+     ```
+
+     ```bash
+     gcloud scheduler jobs create http sc-desk-publish-sweep --location <region> --schedule "*/15 * * * *" --uri https://<desk-address>/api/publishing/sweep --http-method POST --oidc-service-account-email sc-desk-scheduler@<gcp-project>.iam.gserviceaccount.com --oidc-token-audience https://<desk-address>/api/publishing/sweep --attempt-deadline 300s
+     ```
+
+  Each run touches the database, which keeps a Free-plan Supabase project awake.
 
 ## 4. Public site on Firebase Hosting
 

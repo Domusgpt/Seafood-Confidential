@@ -968,6 +968,129 @@
       "steps": "Creating a temporary account with an admin-generated sign-in link to test publishing was refused by the session's safety policy, correctly; Kit is not connected",
       "observed": "Paul's first sign-in and first publication are the first live runs. The runtime account has Firebase Hosting Admin and the deploy code itself released the site twice from this session. A failed publication is recorded on /publishing with the reason and can be retried",
       "result": "info"
+    },
+    {
+      "id": "EV-0051",
+      "recordedAt": "2026-11-18T19:50:40-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@84a1622c3fdaa023f34a047850d056caa7fa0d3b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005",
+        "SC-011"
+      ],
+      "kind": "verification",
+      "summary": "v0.6.0 rolled out to the live preview: sample-stories migration applied to hosted Supabase, desk revision sc-desk-00003-jpq serving 0.6.0",
+      "steps": "Applied supabase/migrations/20261119090000_sample_stories.sql through the Management API in one transaction (begin; migration; insert into supabase_migrations.schema_migrations; commit), then checked the catalog. Built the image with Cloud Build from git archive of 84a1622, deployed Cloud Run sc-desk with PUBLISH_SWEEP_INVOKER set, and called /api/health",
+      "observed": "Migration recorded; is_sample column and editorial_items_guard_sample trigger present; site_snapshot updated; publisher keeps EXECUTE on site_snapshot; staff roles have no EXECUTE on site_snapshot or the guard function. Revision sc-desk-00003-jpq serves 100% of traffic; health {status: ok, version: 0.6.0}",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0052",
+      "recordedAt": "2026-11-18T19:50:41-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@84a1622c3fdaa023f34a047850d056caa7fa0d3b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-011",
+        "SC-005"
+      ],
+      "kind": "verification",
+      "summary": "Live publishing sweep endpoint refuses every caller without a Google-signed token for its address and account; the desk on Cloud Run reaches Google's signing keys",
+      "steps": "POST https://sc-desk-629322111689.us-west1.run.app/api/publishing/sweep with (1) no Authorization header, (2) an HS256 token with a dummy signature naming the scheduler account, (3) an RS256 token signed by a key generated locally with every claim right (issuer accounts.google.com, this exact audience, the scheduler account, email_verified, fresh); then GET on the same address; then read the desk's Cloud Run log entries \"publish sweep refused\"",
+      "observed": "All three POSTs: 401 {\"error\":\"unauthenticated\"}; GET: 405. Logged reason classes, each with its request ID and never the token: \"no bearer token\", ERR_JOSE_ALG_NOT_ALLOWED, ERR_JWKS_NO_MATCHING_KEY. The last one is raised only after the desk has fetched Google's published keys, so Cloud Run can reach them. No jobs ran. A real scheduler token has not been tried because the Cloud Scheduler job does not exist (EV-0056)",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0053",
+      "recordedAt": "2026-11-18T19:50:41-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@84a1622c3fdaa023f34a047850d056caa7fa0d3b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-015"
+      ],
+      "kind": "verification",
+      "summary": "Seven labelled sample stories and the About and How we work pages are live on the preview site; 0 axe violations and no overflow on 10 views",
+      "steps": "Loaded supabase/sample/preview-content.sql on hosted Supabase (7 queued publish jobs); an operator run of the desk's publishing steps (app.claim_publish_job, app.site_snapshot, buildSite, FirebaseHostingDestination.deploy, app.complete_publish_job) put them live one by one; then fetched every page type and ran Playwright with axe (WCAG 2.2 AA tags) on home desktop/dark/iPhone 13, story desktop/iPhone 13, the AI explainer, the opinion piece, About, How we work and a section page",
+      "observed": "7 jobs succeeded (Firebase versions of 24 to 30 files); all 7 samples status published. Home shows 7 Sample chips, sections show theirs, About and How we work 200; every HTML page has noindex; feed titles start with 'Sample:'; robots.txt Disallow and the CSP and nosniff headers unchanged. All 10 views HTTP 200, axe 0, no horizontal overflow",
+      "result": "pass",
+      "location": "devlog/assets/2026-11-18-s01-t6"
+    },
+    {
+      "id": "EV-0054",
+      "recordedAt": "2026-11-18T19:50:41-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@84a1622c3fdaa023f34a047850d056caa7fa0d3b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-005",
+        "SC-011"
+      ],
+      "kind": "test",
+      "summary": "Final v0.6.0 tree: pgTAP 238/238, Vitest 114/114, Playwright 31/31, pnpm check (validators 9/9, lint, typecheck, hub, format) and bundle scan clean",
+      "steps": "supabase db reset; pnpm db:test; pnpm check; pnpm desk:build (includes scan:bundle); pnpm desk:e2e",
+      "observed": "All passed with exit code 0. Bundle scan: 45 shipped files, 11 rules including local secret values, no findings. CI is green on 84a1622 (push and pull_request runs)",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0055",
+      "recordedAt": "2026-11-18T19:50:41-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@84a1622c3fdaa023f34a047850d056caa7fa0d3b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-011"
+      ],
+      "kind": "test",
+      "summary": "Sample removal rehearsed end to end on the local stack, through the desk's own publisher",
+      "steps": "Local Supabase reset; staff add (owner); preview-content.sql; desk in preview mode (next start) and the local site server; Playwright signs in as the owner and presses 'Run … queued jobs now' until none are left; remove-preview-content.sql (pass 1); presses the button again; pass 2; pass 3; checks the site, feed, sitemap and desk lists after each step",
+      "observed": "Publish: 7 jobs in two presses (5 then 2); 7 chips, feed 7, axe 0. Pass 1 queued 7 unpublish jobs and its next_step column said to press the button. Unpublish: two presses; home shows 'Coming soon', the lead story 404s, feed and sitemap list 0 stories, About still 200, axe 0; stories on_hold. Pass 2: all 7 withdrawn ('Removed.'). Pass 3 changed nothing. The desk's Stories list no longer shows them",
+      "result": "pass",
+      "location": "supabase/sample/remove-preview-content.sql"
+    },
+    {
+      "id": "EV-0056",
+      "recordedAt": "2026-11-18T19:50:41-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@84a1622c3fdaa023f34a047850d056caa7fa0d3b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-011",
+        "SC-003"
+      ],
+      "kind": "observation",
+      "summary": "Not yet exercised live: the Cloud Scheduler job (not created) and a publication by the desk service on Cloud Run",
+      "steps": "Creating the recurring Cloud Scheduler job sc-desk-publish-sweep from this session was refused by the session's safety policy as a standing automation on Paul's account; it is left to Paul with a one-line command in docs/LAUNCH_PREVIEW.md. The samples were published by an operator run that gave the desk's deploy code a short-lived token for the deploy account",
+      "observed": "The sweep endpoint and its caller account sc-desk-scheduler (no roles) are ready. On Cloud Run the deploy code takes its token from the metadata server as sc-desk-runtime (Firebase Hosting Admin); that path has not run yet. Paul's first publication or first press of 'Run … queued jobs now' is the first live run; a failure is shown on /publishing and can be retried",
+      "result": "info"
+    },
+    {
+      "id": "EV-0057",
+      "recordedAt": "2026-11-18T19:54:59-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@84a1622c3fdaa023f34a047850d056caa7fa0d3b",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-003",
+        "SC-011"
+      ],
+      "kind": "test",
+      "summary": "An owner pressing 'Update the published story' on a live sample republishes it with nothing visible changing: the suggested first live test of publishing from Cloud Run",
+      "steps": "Local stack in preview mode: reset; owner added; preview-content.sql; owner signs in and runs the 7 queued jobs; opens SC-2026-007 and presses 'Update the published story'; checks the job, the site and the story's status",
+      "observed": "No warnings were shown. The desk said 'Updated the published story.' The job is republish:succeeded, requested by the owner (a human principal). The site home still shows 7 Sample chips, the story still answers 200, and the story stays published at revision 1",
+      "result": "pass"
     }
   ]
 }
