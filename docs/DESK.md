@@ -1,4 +1,4 @@
-# Operations desk (v0.7.1)
+# Operations desk (v0.7.2)
 
 The operations desk for Seafood Confidential:
 - staff sign-in;

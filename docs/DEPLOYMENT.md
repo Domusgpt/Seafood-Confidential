@@ -1,4 +1,4 @@
-# Deploying the desk and the public site (v0.7.1)
+# Deploying the desk and the public site (v0.7.2)
 
 How to take the desk from the local stack to hosted Supabase and Google Cloud Run, with the public site on Firebase Hosting and the newsletter on Kit. This is the Ghost-free path in [ADR-005](../decisions/ADR-005-desk-publishing-without-ghost.md) and [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md). A preview has been deployed with these steps (with the adjustments recorded in [LAUNCH_PREVIEW.md](LAUNCH_PREVIEW.md): schema applied through the Supabase Management API, image built in Cloud Build, desk in the same region as the database). On Supabase's Free plan with the built-in mailer, the sign-in email template cannot be changed; the desk accepts Supabase's default links too (open them in the same browser). The production launch on the publication's own accounts (SC-001, D01) remains.
 

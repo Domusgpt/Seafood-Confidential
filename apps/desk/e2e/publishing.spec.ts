@@ -1,4 +1,5 @@
 import {
+  devices,
   expect,
   test,
   type APIRequestContext,
@@ -385,6 +386,31 @@ test('a person adds a photograph; it goes live with its credit, in AVIF and WebP
     const meta = await sharp(Buffer.from(await file.body())).metadata();
     expect(meta.exif).toBeUndefined();
   }
+
+  // Each screen gets the smallest rendition that covers it, and phones denser than 2.5x are served
+  // as if 2x (v0.7.2): an iPhone gets the 800 px rendition of this 900 px photograph.
+  const chosenWidth = async (options: Parameters<typeof browser.newContext>[0]) => {
+    const context = await browser.newContext(options);
+    const reader = await context.newPage();
+    await reader.goto(url);
+    const hero = reader.locator('.media-frame--hero img');
+    await expect.poll(() => hero.evaluate((img: HTMLImageElement) => img.currentSrc)).toContain('/media/');
+    const width = await hero.evaluate((img: HTMLImageElement) => {
+      const source = img.parentElement!.querySelector(
+        `source[type="image/${img.currentSrc.split('.').pop()}"]`,
+      )!;
+      const match = source
+        .getAttribute('srcset')!
+        .split(',')
+        .map((c) => c.trim().split(/\s+/))
+        .find(([u]) => new URL(u, location.href).href === img.currentSrc);
+      return Number.parseInt(match![1]);
+    });
+    await context.close();
+    return width;
+  };
+  expect(await chosenWidth({ ...devices['iPhone 13'] })).toBe(800);
+  expect(await chosenWidth({ viewport: { width: 1360, height: 900 }, deviceScaleFactor: 1 })).toBe(900);
 });
 
 test('AT-30: the master switch stops agents at once', async ({ request, browser }, testInfo) => {

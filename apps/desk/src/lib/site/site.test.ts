@@ -13,6 +13,7 @@ import {
   type SiteImage,
   type SiteSnapshot,
   type SiteStory,
+  imageSizes,
 } from './build';
 import { DeployError, FirebaseHostingDestination, LocalDirectoryDestination } from './deploy';
 import { parseSitePage } from './assets';
@@ -636,5 +637,21 @@ describe('asset caching (v0.7.1)', () => {
     );
     // A stylesheet that does not load the font gets no preload for it.
     expect(file(buildSite(snapshot([]), config, [asset]), '/index.html')).not.toContain('rel="preload"');
+  });
+});
+
+describe('image sizes (v0.7.2)', () => {
+  // Phones denser than 2.5x choose renditions as if they were 2x; every other screen is unchanged.
+  it('repeats each slot at two-thirds for dense screens, ahead of the normal slots', () => {
+    expect(
+      imageSizes([
+        ['(min-width: 1080px)', '360px'],
+        [null, '100vw - 32px'],
+      ]),
+    ).toBe(
+      '(min-width: 1080px) and (min-resolution: 2.5dppx) calc((360px) * 0.67), ' +
+        '(min-resolution: 2.5dppx) calc((100vw - 32px) * 0.67), ' +
+        '(min-width: 1080px) 360px, calc(100vw - 32px)',
+    );
   });
 });

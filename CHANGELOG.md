@@ -4,6 +4,24 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-11-18 · Session S01, turn 8 · `claude/intelligent-cannon-d1nqq6`
+
+Paul asked whether the site wastes bandwidth by posting images at native size. It does not: readers never receive the original, and each browser downloads the smallest of up to five renditions that covers the image on its screen. A measurement on the live site found 0% excess over that across 15 page and device combinations. One saving remained, and this release takes it.
+
+### Changed
+- **Phones denser than 2.5x now choose image renditions as if they were 2x.**
+  - On a 3x iPhone or a 2.6x Pixel, a photograph 356 CSS pixels wide was fetched at 1,200 px. The detail beyond 2x is not visible at reading distance, and it about doubles the bytes.
+  - Every `sizes` value is now built by `imageSizes()`, which repeats each slot at two-thirds behind `(min-resolution: 2.5dppx)`.
+  - Desktops, laptops and tablets (up to 2x) choose exactly as before, and layout never depends on `sizes`.
+  - Browsers without the resolution media feature fall back to the previous choice.
+
+### Verified
+- **Tests:**
+  - A unit test for `imageSizes()`.
+  - An end-to-end check: an iPhone 13 gets the 800 px rendition of a 900 px photograph, and a desktop the 900 px one.
+  - The full suites.
+- **Live, after the update:** see the turn 8 dev log for the before and after figures.
+
 ## [0.7.1] - 2026-11-18 · Session S01, turn 7 · `claude/intelligent-cannon-d1nqq6`
 
 Image uploads now fit the desk's memory and accept the full 15 MB. Both problems were found by testing the desk's own container with Cloud Run's limits, before anyone uploaded a photograph to the live desk.

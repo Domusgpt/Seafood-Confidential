@@ -58,6 +58,7 @@ Both are still drafts for the founders to approve. They live in `apps/desk/site-
   - A sample that was already live shows its photograph once the story is updated, because publishing pins the image.
 - **Adding an image to a real story:** add a rights record (photo, provenance, licence, credit line, cleared for the web), then use "Lead image" on the story page. See `docs/DESK.md`.
 - **What an upload takes (v0.7.1):** a JPEG, PNG, WebP or AVIF up to 15 MB. The desk needs 20 to 60 seconds to make the renditions, one image at a time; keep the page open until it returns. HEIC photographs (the iPhone camera's usual format) must be exported as JPEG first; choosing a photograph on the iPhone itself converts it automatically.
+- **Image weight (v0.7.2):** readers never receive the original. Each browser downloads the smallest rendition that covers the picture on its screen, and phones denser than 2.5x are served as if 2x. To check any site, run `pnpm --filter @sc/desk audit:images https://seafood-confidential-preview.web.app`.
 - **Memory (v0.7.1):** testing the desk's container with the service's original 512 MiB showed that a 24-megapixel photograph crashed it. The processing was rebuilt to use far less memory, and the service now has 1 GiB.
 - **Motion:** parallax masthead, titles and images animated in on scroll, reversing on the way back. Readers can turn it off in the footer ("Animation: on"), and devices that ask for reduced motion never see it.
 

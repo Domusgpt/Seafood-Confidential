@@ -1,6 +1,6 @@
 {
   "name": "@sc/desk",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "private": true,
   "description": "Seafood Confidential operations desk: writing, publishing to the static public site, newsletter and the policy-gated agent gateway (Next.js 16, Supabase).",
   "license": "UNLICENSED",
@@ -22,6 +22,7 @@
     "scan:bundle": "node scripts/scan-bundle.mjs",
     "tokens:check": "node scripts/build-tokens.mjs --check",
     "images": "node --env-file=.env.ops.local scripts/images.ts",
+    "audit:images": "node scripts/audit-images.mjs",
     "site:contours": "node scripts/build-contours.mjs"
   },
   "dependencies": {

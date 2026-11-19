@@ -255,6 +255,35 @@ function picture(
   return `<picture>${avif.length ? `<source type="image/avif" srcset="${srcset(avif)}" sizes="${sizes}">` : ''}<source type="image/webp" srcset="${srcset(webp)}" sizes="${sizes}"><img src="${mediaPath(fallback)}" width="${fallback.width}" height="${fallback.height}" alt="${opts.decorative ? '' : esc(img.alt)}" class="fx-${focusStep(img.focalX)} fy-${focusStep(img.focalY)}" decoding="async"${opts.eager ? ' fetchpriority="high"' : ' loading="lazy"'}></picture>`;
 }
 
+/**
+ * A `sizes` value from [media condition, slot] pairs, the last without a condition. Each slot is
+ * repeated first at two-thirds for screens denser than 2.5x, so 3x phones choose a rendition as if
+ * they were 2x. The extra detail is not visible at reading distance and about doubles the bytes
+ * (measured on the live site, v0.7.2). Layout never depends on `sizes`: frames size images in CSS.
+ */
+const DENSE_SCREEN = '(min-resolution: 2.5dppx)';
+export function imageSizes(slots: [string | null, string][]): string {
+  const css = (slot: string) => (/^[\d.]+(px|vw)$/.test(slot) ? slot : `calc(${slot})`);
+  const dense = slots.map(
+    ([when, slot]) => `${when ? `${when} and ` : ''}${DENSE_SCREEN} calc((${slot}) * 0.67)`,
+  );
+  const normal = slots.map(([when, slot]) => (when ? `${when} ${css(slot)}` : css(slot)));
+  return [...dense, ...normal].join(', ');
+}
+const CARD_SIZES = imageSizes([
+  ['(min-width: 1080px)', '360px'],
+  ['(min-width: 720px)', '46vw'],
+  [null, '100vw - 32px'],
+]);
+const FEATURE_SIZES = imageSizes([
+  ['(min-width: 1100px)', '760px'],
+  [null, '100vw - 32px'],
+]);
+const HERO_SIZES = imageSizes([
+  ['(min-width: 1240px)', '1180px'],
+  [null, '100vw - 32px'],
+]);
+
 /** The drawn plate a story without a photo shows: the section over depth contours. Decorative. */
 function plate(story: SiteStory): string {
   return `<div class="plate plate--${sectionSlug(story.section)}" aria-hidden="true"><span class="plate__name">${esc(SECTION_NAMES[story.section])}</span></div>`;
@@ -403,8 +432,6 @@ function signup(config: SiteConfig, place: 'footer' | 'article'): string {
 
 // ---------- Cards and the lead feature ----------
 
-const CARD_SIZES = '(min-width: 1080px) 360px, (min-width: 720px) 46vw, calc(100vw - 32px)';
-
 function storyCard(story: SiteStory, opts: { heading?: 'h2' | 'h3'; compact?: boolean } = {}): string {
   const tag = opts.heading ?? 'h3';
   const media = story.heroImage
@@ -423,7 +450,7 @@ function storyCard(story: SiteStory, opts: { heading?: 'h2' | 'h3'; compact?: bo
 
 function feature(story: SiteStory): string {
   const media = story.heroImage
-    ? `<div class="media-frame media-frame--feature" data-media>${picture(story.heroImage, '(min-width: 1100px) 760px, calc(100vw - 32px)', { eager: true, decorative: true })}</div>`
+    ? `<div class="media-frame media-frame--feature" data-media>${picture(story.heroImage, FEATURE_SIZES, { eager: true, decorative: true })}</div>`
     : plate(story);
   return `<article class="feature">
   <div class="feature__media">${media}</div>
@@ -495,7 +522,7 @@ function sourceItem(s: SiteSource): string {
 
 function heroFigure(img: SiteImage): string {
   return `<figure class="hero" data-reveal>
-    <div class="media-frame media-frame--hero" data-media>${picture(img, '(min-width: 1240px) 1180px, calc(100vw - 32px)', { eager: true })}</div>
+    <div class="media-frame media-frame--hero" data-media>${picture(img, HERO_SIZES, { eager: true })}</div>
     <figcaption class="hero__caption">${img.caption ? `<span class="hero__text">${esc(img.caption)}</span> ` : ''}<span class="credit">${esc(img.credit)}</span>${provenanceTag(img)}</figcaption>
   </figure>`;
 }
