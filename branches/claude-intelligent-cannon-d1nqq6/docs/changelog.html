@@ -31,10 +31,10 @@
     <p class="tagline">Seafood, from the people who know it.</p>
     <div class="hub-meta">
       <span>Project hub</span>
-      <span>v0.7.2</span>
+      <span>v0.7.3</span>
       <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
-      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/b6e335fed92fb3ca35f4c9520ad09a84a337e02d">Commit <code>b6e335f</code></a>
-      <span>Built Nov 18, 2026, 11:08 PM EST</span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/58ab7c886337f1df8d3d9883a62e50f2d62ef5a9">Commit <code>58ab7c8</code></a>
+      <span>Built Nov 19, 2026, 7:08 AM EST</span>
       <a href="../../../index.html">All branch previews</a>
     </div>
   </div>
@@ -46,9 +46,29 @@
   <article class="prose"><h1 id="changelog">Changelog</h1>
 <p>All notable changes to this repository. Format: <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>; versions follow <a href="https://semver.org/">semantic versioning</a> (0.x before launch, one minor version per working session).</p>
 <h2 id="unreleased">[Unreleased]</h2>
+<h2 id="073---2026-11-19--session-s01-turn-9--claudeintelligent-cannon-d1nqq6">[0.7.3] - 2026-11-19 · Session S01, turn 9 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
+<p>Dave has an owner account on the live desk, and owners can now see whether each staff member has signed in yet.</p>
+<h3 id="added">Added</h3>
+<ul>
+<li><strong>Staff sign-ins for owners</strong> (migration <code>20261119140000_staff_sign_ins.sql</code>):<ul>
+<li><code>app.staff_sign_ins()</code> returns when each staff member last signed in, to owners only. Anyone else gets no rows.</li>
+<li>Only that one value leaves the auth schema.</li>
+<li>Settings, under Staff, shows it as &quot;Last signed in&quot; (&quot;Not yet&quot; for someone who has never signed in).</li>
+<li>10 new pgTAP tests and an end-to-end check, including that editors do not see it.</li>
+</ul>
+</li>
+</ul>
+<h3 id="changed">Changed</h3>
+<ul>
+<li><strong>The Staff card&#39;s note</strong> no longer mentions Ghost (ADR-005 replaced it). It says how people are added today, and that each person must be a member of the Supabase organization until the desk sends email through its own provider.</li>
+</ul>
+<h3 id="operations-live">Operations (live)</h3>
+<ul>
+<li><strong>Dave Simpson&#39;s owner account</strong> is on the preview desk: a confirmed sign-in identity, his desk record and the owner role, checked as the desk checks access. He can sign in once Paul invites him to the Supabase organization and he accepts (docs/LAUNCH_PREVIEW.md).</li>
+</ul>
 <h2 id="072---2026-11-18--session-s01-turn-8--claudeintelligent-cannon-d1nqq6">[0.7.2] - 2026-11-18 · Session S01, turn 8 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Paul asked whether the site wastes bandwidth by posting images at native size. It does not: readers never receive the original, and each browser downloads the smallest of up to five renditions that covers the image on its screen. A measurement on the live site found 0% excess over that across 15 page and device combinations. One saving remained, and this release takes it.</p>
-<h3 id="changed">Changed</h3>
+<h3 id="changed-1">Changed</h3>
 <ul>
 <li><strong>Phones denser than 2.5x now choose image renditions as if they were 2x.</strong><ul>
 <li>On a 3x iPhone or a 2.6x Pixel, a photograph 356 CSS pixels wide was fetched at 1,200 px. The detail beyond 2x is not visible at reading distance, and it about doubles the bytes.</li>
@@ -84,7 +104,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li><strong>HEIC photographs were called damaged.</strong> The desk&#39;s image library does not include HEIC (the iPhone camera&#39;s usual format). It now says what the file is and how to export it as JPEG.</li>
 <li><strong>Fonts and the contour linework could stay stale for a year.</strong> Everything under <code>/assets</code> is cached as immutable, and the stylesheet loaded these files by bare name. The asset build now versions every file the stylesheet loads by its content, and the font preload uses the same address, so the browser does not fetch the font twice. The live site picks this up at its next publication.</li>
 </ul>
-<h3 id="changed-1">Changed</h3>
+<h3 id="changed-2">Changed</h3>
 <ul>
 <li><strong>The live desk runs with 1 GiB</strong> (was 512 MiB), so an upload, a site build and page requests can coincide with room to spare. At preview traffic this stays inside Cloud Run&#39;s free tier.</li>
 </ul>
@@ -96,7 +116,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="070---2026-11-18--session-s01-turn-7--claudeintelligent-cannon-d1nqq6">[0.7.0] - 2026-11-18 · Session S01, turn 7 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>The public site gets photographs and a motion and depth system: layered parallax, titles and images that animate in and reverse, raised and recessed surfaces lit from above, and a tighter type and spacing scale. Readers can turn animation off, and nothing depends on it. See ADR-006.</p>
-<h3 id="added">Added</h3>
+<h3 id="added-1">Added</h3>
 <ul>
 <li><strong>Story images (<code>supabase/migrations/20261119120000_story_images.sql</code>):</strong><ul>
 <li>A lead image per story, tied to a rights record. It reaches the site only while that record is cleared for the web.</li>
@@ -143,7 +163,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </li>
 <li><strong>Design tokens v0.2:</strong> <code>space</code>, <code>radius</code>, <code>elevation</code> per theme (one light from above) and <code>motion</code> with presets, compiled for the site and the desk. Contour linework is generated from a seeded script (<code>scripts/build-contours.mjs</code>).</li>
 </ul>
-<h3 id="changed-2">Changed</h3>
+<h3 id="changed-3">Changed</h3>
 <ul>
 <li><strong>The site stylesheet is rewritten on the tokens:</strong><ul>
 <li>a tighter type scale;</li>
@@ -176,7 +196,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li>About and How we work pages from the founders&#39; copy;</li>
 <li>a publishing sweep endpoint, ready for a scheduler, so publications never wait in the queue.</li>
 </ul>
-<h3 id="added-1">Added</h3>
+<h3 id="added-2">Added</h3>
 <ul>
 <li><strong>Sample stories (<code>is_sample</code>):</strong><ul>
 <li>Only an operator can mark a sample; a trigger refuses staff, agents and the public.</li>
@@ -194,7 +214,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 </li>
 </ul>
-<h3 id="changed-3">Changed</h3>
+<h3 id="changed-4">Changed</h3>
 <ul>
 <li><strong>Headings in story text</strong> start at h2 whatever level the writer used, with no skipped levels.</li>
 <li><strong>Links:</strong> same-site links are allowed (never <code>//host</code>), and only external links get <code>rel=&quot;nofollow&quot;</code>.</li>
@@ -219,7 +239,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="050---2026-11-18--session-s01-turn-5-preview-launch--claudeintelligent-cannon-d1nqq6">[0.5.0] - 2026-11-18 · Session S01, turn 5 (preview launch) · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>The desk and the public site are live as a preview, for the founders to try. See <a href="https://github.com/Domusgpt/Seafood-Confidential/blob/claude/intelligent-cannon-d1nqq6/docs/LAUNCH_PREVIEW.md">docs/LAUNCH_PREVIEW.md</a>.</p>
-<h3 id="added-2">Added</h3>
+<h3 id="added-3">Added</h3>
 <ul>
 <li><strong>Preview deployment:</strong><ul>
 <li>Desk on Cloud Run (<code>sc-desk</code>, us-west1, scales to zero) with its own runtime account and Secret Manager secrets.</li>
@@ -231,7 +251,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li><strong>Preview mode for the public site (<code>SITE_PREVIEW_NOTICE</code>):</strong> every page carries a &quot;Preview.&quot; banner (new <code>notice</code> token roles, 8.01:1 in both themes) and a <code>noindex</code> tag, and robots.txt disallows everything.</li>
 <li><strong><code>apps/desk/cloudbuild.yaml</code>:</strong> reproducible image builds in Cloud Build from an exact <code>git archive</code>.</li>
 </ul>
-<h3 id="changed-4">Changed</h3>
+<h3 id="changed-5">Changed</h3>
 <ul>
 <li><strong>Sign-in links:</strong> the desk also accepts Supabase&#39;s default sign-in links (a PKCE code exchanged on the server). On the free plan with the built-in mailer, the email template cannot be customized. Our token-hash links still work. A failed link now says to open it in the same browser.</li>
 <li><strong>Indexing:</strong> the desk sends <code>X-Robots-Tag: noindex, nofollow</code> on every response.</li>
@@ -263,7 +283,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li><strong>Local site server:</strong> malformed URL escapes return 400 instead of crashing the process, and directory redirects are built from the file system, never from the request.</li>
 <li><strong>Agents see agent-facing outcomes.</strong> Failure details written for editors (hosting and database errors) are no longer returned to agents.</li>
 </ul>
-<h3 id="changed-5">Changed</h3>
+<h3 id="changed-6">Changed</h3>
 <ul>
 <li>A live story is updated, not published again (which could email subscribers twice). Publishing again with email after an unpublish warns that subscribers were already emailed.</li>
 <li>On a live story, the status picker offers only Published and explains that publishing sets it. The unused Ghost link action is removed.</li>
@@ -275,7 +295,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="040---2026-11-18--session-s01-turn-4--claudeintelligent-cannon-d1nqq6">[0.4.0] - 2026-11-18 · Session S01, turn 4 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Ghost-free publishing from the desk, with agents that may publish under the owner&#39;s switches and automated checks (ADR-005), and a cost plan that starts at about $1 a month.</p>
-<h3 id="added-3">Added</h3>
+<h3 id="added-4">Added</h3>
 <ul>
 <li><strong>Story text in the desk</strong> (<code>app.articles</code>): Markdown editor and append-only revisions. Saves from an outdated page are refused (AT-08). Agent proposals can be adopted as the starting text and stay labelled AI-written.</li>
 <li><strong>Public static site</strong> built by the desk from published stories: home, sections, stories, RSS, sitemap and 404. It uses the Working Waterfront design with self-hosted fonts and the WebGL bathymetry motif on the home page. It has a strict CSP and passes WCAG 2.2 AA (axe).</li>
@@ -298,7 +318,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </li>
 <li><strong>Docs:</strong> ADR-005; AGENTS.md updated; acceptance tests AT-27 to AT-30; backlog tickets SC-017 and SC-018, with SC-002, SC-003, SC-004 and SC-011 re-scoped. HOSTING_AND_COSTS rewritten with verified prices.</li>
 </ul>
-<h3 id="changed-6">Changed</h3>
+<h3 id="changed-7">Changed</h3>
 <ul>
 <li>Next actions point to the story text and the Publishing panel instead of Ghost. Marking a story ready by hand now needs its text instead of a Ghost link.</li>
 <li>The contract test now allows exactly one publish tool (<code>drafts.publish</code>, which takes a proposal ID only) and still forbids send, approve, export, delete and member tools.</li>
@@ -311,7 +331,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="030---2026-11-18--session-s01-turn-3--claudeintelligent-cannon-d1nqq6">[0.3.0] - 2026-11-18 · Session S01, turn 3 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Hosting and cost plan, a proposal to automate Ghost while people still decide releases, a production container, and a Claude agent lab.</p>
-<h3 id="added-4">Added</h3>
+<h3 id="added-5">Added</h3>
 <ul>
 <li><code>docs/planning/HOSTING_AND_COSTS.md</code>: verified prices for Supabase, Google Cloud (Cloud Run, Cloud Storage) and Hugging Face Spaces. Recommends Supabase Pro plus Cloud Run, about $84–99 a month in cash.</li>
 <li><code>decisions/ADR-004-desk-driven-publishing.md</code> (Proposed): automatic Ghost drafts, webhook sync and one-click human publishing behind the release gate; agents still never publish.</li>
@@ -320,7 +340,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li><code>DESK_DB_PREPARE</code> for the Supabase pooler&#39;s transaction mode.</li>
 <li>&quot;Operations desk UI patterns&quot; in the <code>sc-visual-codex</code> skill.</li>
 </ul>
-<h3 id="changed-7">Changed</h3>
+<h3 id="changed-8">Changed</h3>
 <ul>
 <li><code>DESK_TRUSTED_PROXY_HOPS</code> is required in production.</li>
 <li>The founders&#39; decision to keep the intake limits as built is recorded in <code>docs/DESK.md</code>.</li>
@@ -332,7 +352,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="020---2026-11-18--session-s01-turn-2--claudeintelligent-cannon-d1nqq6">[0.2.0] - 2026-11-18 · Session S01, turn 2 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Operations desk foundation (SC-005) and its first vertical slice (SC-006, SC-007, first part of SC-009). Local Supabase only; nothing is deployed and nothing publishes.</p>
-<h3 id="added-5">Added</h3>
+<h3 id="added-6">Added</h3>
 <ul>
 <li><code>apps/desk</code>: Next.js 16.4 operations desk. Magic-link staff sign-in (sign-up disabled), <code>/no-access</code> for identities without a staff role, Today (due, decisions, post-review placeholder, failures), Stories (list, commission, detail with one next action and the exact Ghost editor link), Contributors (pitch queue and decisions), Distribution (honest &quot;not built yet&quot;), Settings (staff, agents, tokens, audit trail). Working Waterfront tokens, self-hosted fonts, accessible forms.</li>
 <li>Public <code>/pitch</code> intake: text only, consent-gated, throttled per client and overall, honeypot, receipt only.</li>
@@ -343,7 +363,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li>Independent security review (no Critical or High findings) with every Medium and Low finding fixed: column-level update grants, database-stamped reviewers and deciders, final agent revocation that revokes tokens, SQL-side source redaction for agents, audited sources, rights and refused actions, gateway flood guards and per-agent budget, strict request IDs, serialized intake throttling with trusted-proxy hops.</li>
 <li>Operator CLIs (<code>staff</code>, <code>agent</code>), <code>apps/desk/.env.example</code>, <code>docs/DESK.md</code>, <code>packages/contracts</code> validator package.</li>
 </ul>
-<h3 id="changed-8">Changed</h3>
+<h3 id="changed-9">Changed</h3>
 <ul>
 <li>ADR-003 records the decisions made during the build (Cache Components off, ESLint 9, OpenTelemetry API 1.9.1, global stylesheet on tokens, gateway scope).</li>
 <li>Root scripts: <code>desk:*</code> and <code>db:*</code>; <code>pnpm check</code> includes the desk&#39;s static checks. Version 0.2.0.</li>
@@ -351,7 +371,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 <h2 id="010---2026-11-18--session-s01--claudeintelligent-cannon-d1nqq6">[0.1.0] - 2026-11-18 · Session S01 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Repository foundation, tooling and planning readiness. No application code.</p>
-<h3 id="added-6">Added</h3>
+<h3 id="added-7">Added</h3>
 <ul>
 <li>Development kit unpacked at the repository root (byte-identical); founder originals in <code>packet/</code> with SHA-256 checksums.</li>
 <li>Delivery tracking: <code>devtrack/</code> (sessions, workstreams, append-only evidence with JSON Schemas), <code>devlog/</code> timestamped entries, generated <code>docs/IMPLEMENTATION_STATUS.md</code>.</li>
@@ -362,7 +382,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li>Design tokens (<code>brand/tokens.json</code>) with computed contrast gates; <code>sc-visual-codex</code> project skill.</li>
 <li>Kit audit, foundation planning brief, ADR-002, contributing, security, license and third-party notices.</li>
 </ul>
-<h3 id="changed-9">Changed</h3>
+<h3 id="changed-10">Changed</h3>
 <ul>
 <li><code>README.md</code> keeps the original description and adds navigation.</li>
 <li><code>planning/BACKLOG.json</code> and <code>.csv</code>: SC-001 status <code>planned</code> → <code>in_progress</code> (repository, dev environment and vendor feasibility work begun; founder decisions outstanding).</li>
@@ -381,7 +401,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </div>
 </main>
 <footer class="site-footer"><div>
-  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/b6e335fed92fb3ca35f4c9520ad09a84a337e02d">b6e335f</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/58ab7c886337f1df8d3d9883a62e50f2d62ef5a9">58ab7c8</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
   <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
 </div></footer>
 </body>
