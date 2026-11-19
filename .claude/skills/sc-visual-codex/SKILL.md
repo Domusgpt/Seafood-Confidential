@@ -139,3 +139,20 @@ Reusable for any public page in this brand. Live reference: `apps/desk/site-src/
   - Turning it off reverts every change: GSAP context revert, then the style attributes motion added are removed. That is safe because the server's HTML has none under the CSP.
 - **Accessibility gates.** Run axe on pages at rest, after motion has settled. Keyboard focus reveals content at once, and reveals use opacity only, never visibility, so links stay focusable.
 - **CSP.** Self-host GSAP, copied byte for byte so its license notices stay intact. Set styles only through CSSOM (`el.style`) or classes, never inline `style=` in markup. Focal points are classes (`fx-0…4`, `fy-0…4`), not inline `object-position`.
+
+## Delivering images and assets (v0.7.1)
+
+Lessons from red-teaming the live desk. They apply to any project that serves its own images or long-cached assets.
+
+- **Immutable caching needs content-versioned addresses, everywhere.**
+  - Everything under a long-cached path (`/assets`, `/media`) gets a version in its URL: `?v=<hash>` for pages' links to CSS and JS, and the content hash in the name for images.
+  - That includes the `url()` references inside the stylesheet (fonts, masks). The asset build rewrites them (`apps/desk/scripts/build-site-assets.mjs`) and fails on a missing file.
+  - A font `<link rel="preload">` must use the exact versioned URL the stylesheet requests, or the browser downloads the font twice; the site builder reads it from the stylesheet.
+- **Image pipelines are memory-bounded and tested in the real container:**
+  - decode once, straight to a master the size of the largest rendition (JPEG and WebP shrink while decoding), and make every rendition from that master;
+  - cap the largest rendition by area (2400 px wide and about 4.3 megapixels here), not only by width; portrait photographs are the heavy case;
+  - process one image at a time per server, turn libvips' cache off, and set `MALLOC_ARENA_MAX=2` on glibc images;
+  - before shipping, run the production image with the production memory limit (`docker run --memory 512m --cpus 1`) and upload the largest allowed files through the real route. Read the container's charged memory, not only the process's;
+  - check any proxy or framework body limit against the upload limit: Next.js's proxy silently cut bodies at 10 MB until `proxyClientMaxBodySize` was raised.
+- **Name what cannot be read.** HEIC (the iPhone camera's usual format) is not in sharp's bundled libvips. Say so and how to export a JPEG, instead of "damaged".
+- **Page weight on a first visit** (cold cache) was 383 to 532 KB per page here. Fonts were the largest item (296 KB). Measure it with the cache disabled, and record LCP and CLS with the page weight.
