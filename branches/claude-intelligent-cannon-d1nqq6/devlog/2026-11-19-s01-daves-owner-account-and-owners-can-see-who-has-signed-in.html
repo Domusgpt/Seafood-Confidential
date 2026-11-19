@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Dave&#39;s owner account, and owners can see who has signed in · Seafood Confidential project hub</title>
+<meta name="description" content="Dev log DL-20261119-01.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.7.3</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/d365e19b431793474edf076254c3e314dfca971c">Commit <code>d365e19</code></a>
+      <span>Built Nov 19, 2026, 7:12 AM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html">Docs</a></li><li><a href="../devlog/index.html" aria-current="page">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<article class="prose" style="max-width:none">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Entry details" style="max-width:78ch"><table><tbody><tr><th scope="row">Entry</th><td>DL-20261119-01</td></tr><tr><th scope="row">Session</th><td>S01, turn 9</td></tr><tr><th scope="row">Version</th><td>0.7.3</td></tr><tr><th scope="row">Branch</th><td>claude/intelligent-cannon-d1nqq6</td></tr><tr><th scope="row">Base commit</th><td>b6e335fed92f</td></tr><tr><th scope="row">Started</th><td>Nov 19, 2026, 6:52 AM EST</td></tr><tr><th scope="row">Recorded</th><td>Nov 19, 2026, 7:20 AM EST</td></tr><tr><th scope="row">Tickets</th><td>SC-005</td></tr><tr><th scope="row">Workstreams</th><td>WS-ENV</td></tr><tr><th scope="row">Status</th><td>complete</td></tr></tbody></table></div>
+  <div style="max-width:78ch"><h1 id="dave39s-owner-account-and-owners-can-see-who-has-signed-in">Dave&#39;s owner account, and owners can see who has signed in</h1>
+<h2 id="summary">Summary</h2>
+<p>Paul asked to continue development and to get Dave signed up for his owner slot.</p>
+<p><strong>Dave Simpson now has an owner account on the live desk:</strong> a confirmed sign-in identity, his desk record and the owner role. It was checked the way the desk checks access, so the desk has two owners.</p>
+<p><strong>One step remains, and only Paul can take it.</strong> Supabase&#39;s free mailer emails only members of the Supabase organization, and its API cannot send that invitation. Paul invites Dave in the Supabase dashboard; Dave accepts, then signs in.</p>
+<p><strong>Owners can watch for it.</strong> In version 0.7.3, Settings under Staff shows owners when each person last signed in, or &quot;Not yet&quot;. It is live on the desk.</p>
+<p><strong>Also confirmed live:</strong> Paul&#39;s first real-email sign-in happened on the evening of 18 November. A publication by the desk on Cloud Run is still untested.</p>
+<h2 id="what-changed">What changed</h2>
+<ul>
+<li><strong>Live operation (no repository change):</strong> Dave&#39;s account was created as Paul&#39;s was in turn 5.<ul>
+<li><strong>Identity:</strong> Supabase&#39;s Auth admin API, using the project&#39;s secret key read into memory for one call and never printed or stored.</li>
+<li><strong>Desk record:</strong> one SQL transaction for the principal and the owner role, as <code>scripts/staff.ts</code> does.</li>
+<li><strong>Display name:</strong> &quot;Dave Simpson&quot;, inferred from his address; Paul can correct it.</li>
+<li><strong>Privacy:</strong> his address is not recorded anywhere in the repository.</li>
+</ul>
+</li>
+<li><strong>Database:</strong> migration <code>20261119140000_staff_sign_ins.sql</code> adds <code>app.staff_sign_ins()</code>.<ul>
+<li>It is a security-definer function returning each human principal&#39;s last sign-in, to owners only. Anyone else gets no rows.</li>
+<li>Only that one value leaves the auth schema.</li>
+<li>It is executable by signed-in staff, not by the public, agents or the publisher.</li>
+<li>It is applied live with its migration-history record (five migrations recorded).</li>
+</ul>
+</li>
+<li><strong>Desk, Settings, under Staff:</strong><ul>
+<li>owners get a &quot;Last signed in&quot; column (&quot;Not yet&quot; until someone&#39;s first sign-in);</li>
+<li>a disabled member reads &quot;Disabled&quot;;</li>
+<li>the card&#39;s note no longer mentions Ghost (ADR-005 replaced it), and says how people are added and that each person must be a Supabase organization member until the desk sends its own email.</li>
+</ul>
+</li>
+<li><strong>Tests:</strong> 10 pgTAP tests (shape, grants, owners see everyone including people who have never signed in; editors and disabled owners see nothing). One end-to-end test: a new member shows &quot;Not yet&quot;, the signed-in owner a time, and editors do not get the column.</li>
+<li><strong>Docs:</strong><ul>
+<li><code>docs/LAUNCH_PREVIEW.md</code>: both founders have owner accounts, Paul&#39;s three-step invitation with role guidance, how to add someone else, and real-email sign-in marked done;</li>
+<li><code>docs/DESK.md</code>: a Staff section;</li>
+<li>CHANGELOG 0.7.3.</li>
+</ul>
+</li>
+<li><strong>Live:</strong> desk v0.7.3 on revision <code>sc-desk-00007-nhx</code> (1 GiB).</li>
+</ul>
+<h2 id="decisions">Decisions</h2>
+<ul>
+<li><strong>Create the account now; leave the Supabase invitation to Paul.</strong><ul>
+<li>The Management API can list organization members but cannot invite them.</li>
+<li>An invitation grants dashboard access, so it is Paul&#39;s to send in any case.</li>
+<li>The organization holds only this project, so the docs give both options: Owner if Dave should co-own the infrastructure, Read-only if he only needs the desk.</li>
+</ul>
+</li>
+<li><strong>Do not test his sign-in by sending a link.</strong> The mailer would refuse his address today, the project&#39;s two-an-hour quota is shared, and a link requested by this session would not open in Dave&#39;s browser. Dave&#39;s own first sign-in is the test.</li>
+<li><strong>Show sign-ins to owners only, and only the time.</strong> That is what onboarding needs, and nothing else from the auth schema leaves it. Editors see the same staff list as before.</li>
+<li><strong>No self-service &quot;add staff&quot; form yet.</strong> Creating sign-in identities needs either a secret key in the desk, which ADR-003 rules out, or open sign-ups with an invitation check. And while the free mailer only reaches organization members, every new person needs Paul&#39;s invitation anyway. So it belongs with custom SMTP, as one decision.</li>
+</ul>
+<h2 id="problems-and-resolutions">Problems and resolutions</h2>
+<ul>
+<li><strong>The Docker daemon stopped while the session was paused, twice.</strong> The first restart was tied to the shell that started it. It now runs detached in its own session, and the local Supabase containers came back on their own.</li>
+<li><strong>The new column showed times &quot;in the future&quot;.</strong> It did not: the session had been paused for several hours, and the clock was right. The release and account dates in the docs were corrected from 18 to 19 November.</li>
+<li><strong>A first query used a wrong table name</strong> (<code>publishing_settings</code>) and failed harmlessly inside a rolled-back check.</li>
+</ul>
+<h2 id="evidence">Evidence</h2>
+<ul>
+<li><strong>EV-0073:</strong> Dave&#39;s owner account on the live desk. With his identity bound, he is staff and owner, and sees 7 stories and 14 publish jobs. The desk has 2 active owners.</li>
+<li><strong>EV-0074</strong> (observation): Supabase refuses to email addresses outside the organization&#39;s team, sends at most 2 emails an hour, and has no API to send invitations. The organization holds only this project.</li>
+<li><strong>EV-0075:</strong> pgTAP 282/282, Vitest 132/132, Playwright 33/33, <code>pnpm check</code>, bundle scan.</li>
+<li><strong>EV-0076:</strong><ul>
+<li>the migration and grants are live;</li>
+<li>an owner sees Dave as never signed in, and Paul as signed in at 02:51 UTC on the 19th;</li>
+<li>a non-staff identity gets nothing;</li>
+<li>desk v0.7.3 is live;</li>
+<li>all publish jobs since are operator runs.</li>
+</ul>
+</li>
+</ul>
+<p><img src="../devlog/assets/2026-11-19-s01-t9/local-staff-card-owner.jpg" alt="The Staff card as an owner sees it (local desk, test accounts): the new &quot;Last signed in&quot; column, with &quot;Not yet&quot; for someone just added" loading="lazy" decoding="async"></p>
+<h2 id="risks-and-open-questions">Risks and open questions</h2>
+<ul>
+<li><strong>Until Paul invites him, Dave cannot sign in.</strong> If he tries, the desk shows its neutral &quot;a link is on its way&quot; message and no email arrives. The desk logs the reason class, not the address.</li>
+<li><strong>Inviting Dave as Owner gives him full control of the Supabase project, billing and deletion included.</strong> That is right for a co-founder, but it is the founders&#39; call.</li>
+<li><strong>Two founders now share two sign-in emails an hour</strong> under the free mailer. Custom SMTP removes both that limit and the membership requirement.</li>
+<li><strong>Dave&#39;s display name was inferred</strong> (&quot;Dave Simpson&quot;). It shows in the desk, and on bylines if he writes.</li>
+</ul>
+<h2 id="next-actions">Next actions</h2>
+<ol>
+<li><strong>Paul:</strong><ul>
+<li>Invite Dave to the Supabase organization (dashboard: Organization, Team, Invite) with the role you choose.</li>
+<li>Tell Dave to accept the invitation, then sign in at the desk, opening the link in the same browser.</li>
+<li>Watch Settings, under Staff, for his first sign-in.</li>
+</ul>
+</li>
+<li><strong>Paul, carried over:</strong><ul>
+<li>the security clean-up (the exposed Supabase key, the Google Cloud key, the access token);</li>
+<li>&quot;Update the published story&quot; on a sample, which is the first publication from Cloud Run;</li>
+<li>confirming ADR-006.</li>
+</ul>
+</li>
+<li><strong>Development, recommended next:</strong> custom SMTP on the publication&#39;s own domain, then self-service staff invitations with it (one ADR). That needs the founders&#39; sending domain and an email provider account.</li>
+</ol>
+</div>
+  <h2>Evidence referenced</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">ID</th><th scope="col">Result</th><th scope="col">Summary</th><th scope="col">Observed</th></tr></thead><tbody><tr><td class="id"><a href="evidence.html#EV-0073">EV-0073</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live: Dave Simpson has an owner account on the preview desk (confirmed sign-in identity, desk principal, owner role), verified as the desk checks access</td><td>Identity created 2026-11-19 11:55 UTC, email confirmed, never signed in. Principal active, roles [owner]. Bound as Dave: is staff, is owner, sees 7 stories and 14 publish jobs. The desk now has 2 active human owners. No email was sent. His address is not recorded in the repository</td></tr><tr><td class="id"><a href="evidence.html#EV-0074">EV-0074</a></td><td><span class="badge tone-progress"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.2" y="7" width="1.6" height="4.5" fill="currentColor"/><circle cx="8" cy="4.9" r="1" fill="currentColor"/></svg>info</span></td><td>Dave cannot receive sign-in links until he is a member of the Supabase organization; that invitation can only be sent from the dashboard</td><td>Supabase: without custom SMTP, Auth &#39;will refuse to deliver messages to addresses that are not part of the project&#39;s team&#39; (&#39;Email address not authorized&#39;), 2 messages an hour. The Management API lists organization members but has no invitation endpoint. Auth config: built-in mailer (no SMTP host), sign-up disabled, links valid 15 minutes, 2 emails an hour. The organization holds only this project and has one member (Paul, Owner). Paul invites Dave in the dashboard; Dave accepts; then signs in</td></tr><tr><td class="id"><a href="evidence.html#EV-0075">EV-0075</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>v0.7.3 tree: pgTAP 282/282 (10 new staff sign-in tests), Vitest 132/132, Playwright 33/33 (owners see sign-ins, editors do not), pnpm check, bundle scan</td><td>All exit 0. pgTAP: shape (two columns only), grants (staff yes; public, agents, publisher no), an owner sees every staff member including a never-signed-in owner with no time, an editor and a disabled owner see none. End to end: a newly added member shows &#39;Not yet&#39;, the signed-in owner a time, and the editor&#39;s Settings has no such column</td></tr><tr><td class="id"><a href="evidence.html#EV-0076">EV-0076</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live: staff sign-ins migration applied and recorded, desk v0.7.3 on revision sc-desk-00007-nhx; an owner sees Paul&#39;s last sign-in and Dave as not yet signed in</td><td>5 migrations recorded. EXECUTE: authenticated yes; anon, desk_agent, desk_publisher no; returns (principal_id, last_sign_in_at) only. As an owner: Dave Simpson null (shown as &#39;Not yet&#39;), Paul Phillips 2026-11-19 02:51 UTC, so Paul&#39;s first real-email sign-in has happened. A non-staff identity gets 0 rows. Health {version: 0.7.3}; /settings without a session redirects to /sign-in. All publish jobs since are operator runs, so a publication by the desk on Cloud Run is still not exercised</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/d365e19b431793474edf076254c3e314dfca971c">d365e19</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
