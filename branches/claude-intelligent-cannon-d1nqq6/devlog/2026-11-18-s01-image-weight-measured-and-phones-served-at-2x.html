@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-YfUfXqjjWS5nPDj6J5a6BQYWbiSLcWkwH4YOy2W0yW8='; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#102B3A">
+<title>Image weight: measured, and phones served at 2x · Seafood Confidential project hub</title>
+<meta name="description" content="Dev log DL-20261118-09.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<link rel="stylesheet" href="../assets/hub.css">
+<script>try{var t=localStorage.getItem('sc-hub-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script src="../assets/hub.js" defer></script>
+<script src="../assets/waterfront-gl.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <canvas data-bathymetry aria-hidden="true"></canvas>
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <p class="wordmark"><a href="../index.html">Seafood Confidential</a></p>
+      <button class="theme-toggle" type="button" data-theme-toggle>Theme: system</button>
+    </div>
+    <hr class="masthead-rule">
+    <p class="tagline">Seafood, from the people who know it.</p>
+    <div class="hub-meta">
+      <span>Project hub</span>
+      <span>v0.7.2</span>
+      <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/b6e335fed92fb3ca35f4c9520ad09a84a337e02d">Commit <code>b6e335f</code></a>
+      <span>Built Nov 18, 2026, 11:08 PM EST</span>
+      <a href="../../../index.html">All branch previews</a>
+    </div>
+  </div>
+</header>
+<nav class="site-nav" aria-label="Hub sections"><ul><li><a href="../index.html">Overview</a></li><li><a href="../backlog.html">Backlog</a></li><li><a href="../acceptance.html">Acceptance</a></li><li><a href="../decisions.html">Decisions</a></li><li><a href="../editorial.html">Editorial</a></li><li><a href="../visual-codex.html">Visual codex</a></li><li><a href="../docs/index.html">Docs</a></li><li><a href="../devlog/index.html" aria-current="page">Dev log</a></li></ul></nav>
+<main id="content" tabindex="-1">
+<article class="prose" style="max-width:none">
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Entry details" style="max-width:78ch"><table><tbody><tr><th scope="row">Entry</th><td>DL-20261118-09</td></tr><tr><th scope="row">Session</th><td>S01, turn 8</td></tr><tr><th scope="row">Version</th><td>0.7.2</td></tr><tr><th scope="row">Branch</th><td>claude/intelligent-cannon-d1nqq6</td></tr><tr><th scope="row">Base commit</th><td>9c49bb096ffd</td></tr><tr><th scope="row">Started</th><td>Nov 18, 2026, 10:51 PM EST</td></tr><tr><th scope="row">Recorded</th><td>Nov 18, 2026, 11:12 PM EST</td></tr><tr><th scope="row">Tickets</th><td>SC-003, SC-015</td></tr><tr><th scope="row">Workstreams</th><td>WS-ENV</td></tr><tr><th scope="row">Status</th><td>complete</td></tr></tbody></table></div>
+  <div style="max-width:78ch"><h1 id="image-weight-measured-and-phones-served-at-2x">Image weight: measured, and phones served at 2x</h1>
+<h2 id="summary">Summary</h2>
+<p>Paul asked: &quot;Are we wasting the bandwidth posting images at native size?&quot; The measured answer is no.</p>
+<ul>
+<li><strong>No originals.</strong> Readers never receive the original upload, which stays private in the database.</li>
+<li><strong>Right-sized already.</strong> Each browser downloads the smallest of up to five renditions that covers the picture on its screen.</li>
+<li><strong>The measurement.</strong> Across 15 page and screen combinations on the live site, nothing was larger than that.</li>
+</ul>
+<p><strong>One saving remained.</strong> Phones with very dense screens (3x iPhones, 2.6x Pixels) fetched each photograph at three times its width, and the detail beyond 2x is not visible at reading distance.</p>
+<p>Version 0.7.2 serves those phones as if 2x, and it is live: phones now download about half the image bytes.</p>
+<ul>
+<li><strong>Home page:</strong> 369 KB to 188 KB.</li>
+<li><strong>A story:</strong> 214 KB to 113 KB.</li>
+</ul>
+<p>Other screens are unchanged. A side-by-side at actual phone size shows no difference.</p>
+<h2 id="what-changed">What changed</h2>
+<ul>
+<li><strong>Site builder (<code>src/lib/site/build.ts</code>).</strong><ul>
+<li><code>imageSizes()</code> now builds every <code>sizes</code> attribute: for the cards, the lead story and the story hero.</li>
+<li>It repeats each slot at two-thirds behind <code>(min-resolution: 2.5dppx)</code>, so phones denser than 2.5x choose a rendition as if they were 2x.</li>
+<li>Screens up to 2x match none of those entries, and choose exactly as before.</li>
+<li>Layout never depends on <code>sizes</code>: frames size their images in CSS.</li>
+</ul>
+</li>
+<li><strong>Audit tool (<code>scripts/audit-images.mjs</code>, <code>pnpm --filter @sc/desk audit:images &lt;site&gt;</code>).</strong> The measurement behind this entry, kept in the repository.<ul>
+<li>It loads each page cold on five screens: desktop 1x, laptop 2x, iPad, Pixel 7 and iPhone 13.</li>
+<li>For every photograph, it compares the rendition downloaded with the smallest one covering the drawn width times the density the site serves.</li>
+<li>It exits 1 if any image is larger or smaller than that.</li>
+</ul>
+</li>
+<li><strong>Tests:</strong><ul>
+<li>A unit test for <code>imageSizes()</code>.</li>
+<li>The end-to-end photograph test now opens the published story as an iPhone 13 (800 px rendition of a 900 px photograph) and as a desktop (900 px).</li>
+</ul>
+</li>
+<li><strong>Live:</strong><ul>
+<li>Desk v0.7.2 runs on revision <code>sc-desk-00006-hq2</code> (1 GiB kept).</li>
+<li>The site was rebuilt by one operator republish through the desk&#39;s publishing steps: 95 files, release <code>cc440e7e714cc853</code>.</li>
+<li>That rebuild also put v0.7.1&#39;s versioned font and contour addresses live.</li>
+</ul>
+</li>
+<li><strong>Docs:</strong> CHANGELOG 0.7.2; <code>docs/LAUNCH_PREVIEW.md</code> (image weight and the audit command); the visual codex rule &quot;Serve phones at 2x, not 3x&quot;.</li>
+</ul>
+<h2 id="decisions">Decisions</h2>
+<ul>
+<li><strong>Cap at 2x for screens of 2.5x and above; leave everything else alone.</strong><ul>
+<li>On a 356-pixel slot, a 3x phone would take a 1,200 px rendition. At 2x it takes the 800 px one, about half the bytes, and the difference cannot be seen at arm&#39;s length.</li>
+<li>Desktops, laptops and tablets are at most 2x and are untouched.</li>
+<li>This is common practice for photographs; screenshots of text or charts may later deserve full density, and the helper allows a different policy per use.</li>
+</ul>
+</li>
+<li><strong>Make the measurement a repository tool, not a one-off.</strong> &quot;Are images right-sized?&quot; will come up again with every new layout or redesign. The audit answers it in a minute on any site.</li>
+<li><strong>Rebuild the live site now with an operator republish.</strong> It is the same path used for the samples&#39; photographs earlier. The content is unchanged, and the rebuild also carried v0.7.1&#39;s versioned assets live.</li>
+</ul>
+<h2 id="problems-and-resolutions">Problems and resolutions</h2>
+<ul>
+<li><strong>The Docker daemon stopped in the middle of the gates</strong> (a session restart). The reset, pgTAP and Playwright failed because the database was gone, while <code>pnpm check</code> and the build passed. Docker was restarted, the Supabase containers came back on their own, and the three steps re-ran green.</li>
+<li><strong>The first version of the audit judged phones against their full 3x.</strong> After the change it reported a confusing &quot;-33.7% excess&quot;. It now applies the same density policy as the site, and reports each image as over or under.</li>
+</ul>
+<h2 id="evidence">Evidence</h2>
+<ul>
+<li><strong>EV-0069 (before):</strong> 15 views, 2,475 KB of images, all right-sized for full density. Phones: 369, 214 and 52 KB per page.</li>
+<li><strong>EV-0070:</strong> pgTAP 272/272, Vitest 132/132, Playwright 32/32 (including the iPhone and desktop rendition check), <code>pnpm check</code>, bundle scan.</li>
+<li><strong>EV-0071:</strong> desk v0.7.2 live with 1 GiB. Operator republish job <code>9d7206af</code> succeeded. The capped <code>sizes</code> and the versioned assets are live and served immutable.</li>
+<li><strong>EV-0072 (after):</strong><ul>
+<li>phones: home 188 KB, story 113 KB, section 24 KB;</li>
+<li>other screens unchanged;</li>
+<li>15 views, 1,852 KB in total, with 0 images over or under the right rendition;</li>
+<li>the story photograph went from 46 KB to 26 KB.</li>
+</ul>
+</li>
+</ul>
+<p><img src="../devlog/assets/2026-11-18-s01-t8/iphone13-before-after.jpg" alt="The story photograph on an iPhone 13 before (1,200 px rendition, 46 KB) and after (800 px, 26 KB); below, the same detail enlarged 2x in device pixels" loading="lazy" decoding="async"></p>
+<h2 id="risks-and-open-questions">Risks and open questions</h2>
+<ul>
+<li><strong>Older Safari</strong> (before version 16) does not support the resolution media feature in <code>sizes</code>. Those phones fall back to the previous choice, so nothing breaks.</li>
+<li><strong>Charts, maps and screenshots with small text</strong> may deserve full density on phones. When the site carries them, give them their own <code>imageSizes()</code> policy.</li>
+<li><strong>Publishing still reads every published image from the database on each build</strong> (ADR-006 review trigger: about 200 MB). That is bandwidth inside our own systems, not to readers. The fix, when needed, is to store each rendition&#39;s upload hash so a build fetches only what Firebase asks for.</li>
+</ul>
+<h2 id="next-actions">Next actions</h2>
+<ol>
+<li><strong>Paul:</strong> unchanged from turn 7. Do the security clean-up, the first live update and a first photograph, confirm ADR-006, and approve the standing pages.</li>
+<li><strong>Optional:</strong> run <code>pnpm --filter @sc/desk audit:images &lt;site&gt;</code> after any layout change. It exits 1 if an image is over- or under-sized.</li>
+</ol>
+</div>
+  <h2>Evidence referenced</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th scope="col">ID</th><th scope="col">Result</th><th scope="col">Summary</th><th scope="col">Observed</th></tr></thead><tbody><tr><td class="id"><a href="evidence.html#EV-0069">EV-0069</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live image weight before v0.7.2: readers never receive originals, and every browser downloaded the smallest rendition covering its slot (0% over right-sized, 15 page and screen combinations); 3x phones fetched each photograph at about 3x</td><td>Total 2,475 KB of images across the 15 views, all right-sized for the screen&#39;s full density. Desktop 1x: 96, 93 and 9 KB per page; laptop 2x: 266, 234, 24 KB; iPad: 266, 192, 24 KB. Phones at 2.6x and 3x: 369 KB home, 214 KB story, 52 KB section, each photograph a 1,200 px rendition for a slot about 356 to 380 CSS px wide</td></tr><tr><td class="id"><a href="evidence.html#EV-0070">EV-0070</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>v0.7.2 tree: pgTAP 272/272, Vitest 132/132, Playwright 32/32 (an iPhone 13 gets the 800 px rendition of a 900 px photograph, a desktop the 900 px one), pnpm check, bundle scan</td><td>All exit 0 on the final run. New: an imageSizes() unit test, and the end-to-end photograph test now opens the published story as an iPhone 13 and as a desktop and reads which srcset candidate each chose</td></tr><tr><td class="id"><a href="evidence.html#EV-0071">EV-0071</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live: desk v0.7.2 on revision sc-desk-00006-hq2 (1 GiB kept), and the site rebuilt by one operator republish through the desk&#39;s publishing steps</td><td>Health {version: 0.7.2}; image route 401 without a session; sign-in 200. Job 9d7206af succeeded: 95 files, 60 image renditions, release cc440e7e714cc853. Live pages carry the capped sizes; the stylesheet loads contours.svg and four fonts with ?v=&lt;content hash&gt;, each 200 with Cache-Control public, max-age=31536000, immutable; the font preload uses the same versioned address</td></tr><tr><td class="id"><a href="evidence.html#EV-0072">EV-0072</a></td><td><span class="badge tone-good"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6" fill="currentColor"/><path d="M5 8.2l2 2 4-4.4" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>pass</span></td><td>Live image weight after v0.7.2: phones download 47 to 54% fewer image bytes, other screens unchanged, every image right-sized under the 2x policy</td><td>Phones (iPhone 13 and Pixel 7): home 369 to 188 KB, story 214 to 113 KB, section 52 to 24 KB; each photograph is now the 800 px rendition. Desktop, laptop and iPad identical to before. All 15 views: 2,475 to 1,852 KB; 0 images larger or smaller than the right rendition (audit exit 0). The story photograph: 46 KB to 26 KB; indistinguishable at actual size, slightly softer only when enlarged 2x</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer"><div>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/b6e335fed92fb3ca35f4c9520ad09a84a337e02d">b6e335f</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
+  <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
+</div></footer>
+</body>
+</html>
