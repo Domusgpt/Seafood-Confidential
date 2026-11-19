@@ -31,10 +31,10 @@
     <p class="tagline">Seafood, from the people who know it.</p>
     <div class="hub-meta">
       <span>Project hub</span>
-      <span>v0.7.1</span>
+      <span>v0.7.2</span>
       <span>Branch <code>claude/intelligent-cannon-d1nqq6</code></span>
-      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9c49bb096ffd9c72ef9739944c2eba5ed622297d">Commit <code>9c49bb0</code></a>
-      <span>Built Nov 18, 2026, 10:21 PM EST</span>
+      <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/e3479e40bbe4f154e4c252ba61d8239b29ddb789">Commit <code>e3479e4</code></a>
+      <span>Built Nov 18, 2026, 11:01 PM EST</span>
       <a href="../../../index.html">All branch previews</a>
     </div>
   </div>
@@ -46,6 +46,28 @@
   <article class="prose"><h1 id="changelog">Changelog</h1>
 <p>All notable changes to this repository. Format: <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>; versions follow <a href="https://semver.org/">semantic versioning</a> (0.x before launch, one minor version per working session).</p>
 <h2 id="unreleased">[Unreleased]</h2>
+<h2 id="072---2026-11-18--session-s01-turn-8--claudeintelligent-cannon-d1nqq6">[0.7.2] - 2026-11-18 · Session S01, turn 8 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
+<p>Paul asked whether the site wastes bandwidth by posting images at native size. It does not: readers never receive the original, and each browser downloads the smallest of up to five renditions that covers the image on its screen. A measurement on the live site found 0% excess over that across 15 page and device combinations. One saving remained, and this release takes it.</p>
+<h3 id="changed">Changed</h3>
+<ul>
+<li><strong>Phones denser than 2.5x now choose image renditions as if they were 2x.</strong><ul>
+<li>On a 3x iPhone or a 2.6x Pixel, a photograph 356 CSS pixels wide was fetched at 1,200 px. The detail beyond 2x is not visible at reading distance, and it about doubles the bytes.</li>
+<li>Every <code>sizes</code> value is now built by <code>imageSizes()</code>, which repeats each slot at two-thirds behind <code>(min-resolution: 2.5dppx)</code>.</li>
+<li>Desktops, laptops and tablets (up to 2x) choose exactly as before, and layout never depends on <code>sizes</code>.</li>
+<li>Browsers without the resolution media feature fall back to the previous choice.</li>
+</ul>
+</li>
+</ul>
+<h3 id="verified">Verified</h3>
+<ul>
+<li><strong>Tests:</strong><ul>
+<li>A unit test for <code>imageSizes()</code>.</li>
+<li>An end-to-end check: an iPhone 13 gets the 800 px rendition of a 900 px photograph, and a desktop the 900 px one.</li>
+<li>The full suites.</li>
+</ul>
+</li>
+<li><strong>Live, after the update:</strong> see the turn 8 dev log for the before and after figures.</li>
+</ul>
 <h2 id="071---2026-11-18--session-s01-turn-7--claudeintelligent-cannon-d1nqq6">[0.7.1] - 2026-11-18 · Session S01, turn 7 · <code>claude/intelligent-cannon-d1nqq6</code></h2>
 <p>Image uploads now fit the desk&#39;s memory and accept the full 15 MB. Both problems were found by testing the desk&#39;s own container with Cloud Run&#39;s limits, before anyone uploaded a photograph to the live desk.</p>
 <h3 id="fixed">Fixed</h3>
@@ -62,7 +84,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li><strong>HEIC photographs were called damaged.</strong> The desk&#39;s image library does not include HEIC (the iPhone camera&#39;s usual format). It now says what the file is and how to export it as JPEG.</li>
 <li><strong>Fonts and the contour linework could stay stale for a year.</strong> Everything under <code>/assets</code> is cached as immutable, and the stylesheet loaded these files by bare name. The asset build now versions every file the stylesheet loads by its content, and the font preload uses the same address, so the browser does not fetch the font twice. The live site picks this up at its next publication.</li>
 </ul>
-<h3 id="changed">Changed</h3>
+<h3 id="changed-1">Changed</h3>
 <ul>
 <li><strong>The live desk runs with 1 GiB</strong> (was 512 MiB), so an upload, a site build and page requests can coincide with room to spare. At preview traffic this stays inside Cloud Run&#39;s free tier.</li>
 </ul>
@@ -121,7 +143,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </li>
 <li><strong>Design tokens v0.2:</strong> <code>space</code>, <code>radius</code>, <code>elevation</code> per theme (one light from above) and <code>motion</code> with presets, compiled for the site and the desk. Contour linework is generated from a seeded script (<code>scripts/build-contours.mjs</code>).</li>
 </ul>
-<h3 id="changed-1">Changed</h3>
+<h3 id="changed-2">Changed</h3>
 <ul>
 <li><strong>The site stylesheet is rewritten on the tokens:</strong><ul>
 <li>a tighter type scale;</li>
@@ -172,14 +194,14 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </ul>
 </li>
 </ul>
-<h3 id="changed-2">Changed</h3>
+<h3 id="changed-3">Changed</h3>
 <ul>
 <li><strong>Headings in story text</strong> start at h2 whatever level the writer used, with no skipped levels.</li>
 <li><strong>Links:</strong> same-site links are allowed (never <code>//host</code>), and only external links get <code>rel=&quot;nofollow&quot;</code>.</li>
 <li><strong>Titles and summaries</strong> get typographic apostrophes.</li>
 <li><strong>The repository&#39;s link check</strong> skips the public-site pages and generated site output.</li>
 </ul>
-<h3 id="verified">Verified</h3>
+<h3 id="verified-1">Verified</h3>
 <ul>
 <li><strong>Locally (EV-0054, EV-0055, EV-0057):</strong><ul>
 <li>pgTAP 238/238, Vitest 114/114, Playwright 31/31 (including the sweep&#39;s 404), <code>pnpm check</code>, and a clean bundle scan;</li>
@@ -209,13 +231,13 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li><strong>Preview mode for the public site (<code>SITE_PREVIEW_NOTICE</code>):</strong> every page carries a &quot;Preview.&quot; banner (new <code>notice</code> token roles, 8.01:1 in both themes) and a <code>noindex</code> tag, and robots.txt disallows everything.</li>
 <li><strong><code>apps/desk/cloudbuild.yaml</code>:</strong> reproducible image builds in Cloud Build from an exact <code>git archive</code>.</li>
 </ul>
-<h3 id="changed-3">Changed</h3>
+<h3 id="changed-4">Changed</h3>
 <ul>
 <li><strong>Sign-in links:</strong> the desk also accepts Supabase&#39;s default sign-in links (a PKCE code exchanged on the server). On the free plan with the built-in mailer, the email template cannot be customized. Our token-hash links still work. A failed link now says to open it in the same browser.</li>
 <li><strong>Indexing:</strong> the desk sends <code>X-Robots-Tag: noindex, nofollow</code> on every response.</li>
 <li><strong>Coming-soon page:</strong> it offers a subscription only when a Kit form is configured.</li>
 </ul>
-<h3 id="verified-1">Verified</h3>
+<h3 id="verified-2">Verified</h3>
 <ul>
 <li><strong>Live:</strong><ul>
 <li>database security model;</li>
@@ -241,13 +263,13 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li><strong>Local site server:</strong> malformed URL escapes return 400 instead of crashing the process, and directory redirects are built from the file system, never from the request.</li>
 <li><strong>Agents see agent-facing outcomes.</strong> Failure details written for editors (hosting and database errors) are no longer returned to agents.</li>
 </ul>
-<h3 id="changed-4">Changed</h3>
+<h3 id="changed-5">Changed</h3>
 <ul>
 <li>A live story is updated, not published again (which could email subscribers twice). Publishing again with email after an unpublish warns that subscribers were already emailed.</li>
 <li>On a live story, the status picker offers only Published and explains that publishing sets it. The unused Ghost link action is removed.</li>
 <li>The publishing log names each failed check briefly (&quot;Master switch: Agent publishing is switched off in Settings&quot;).</li>
 </ul>
-<h3 id="verified-2">Verified</h3>
+<h3 id="verified-3">Verified</h3>
 <ul>
 <li>pgTAP 229/229 (fresh and populated databases), Vitest 101/101, Playwright 30/30, agent lab self-test 18/18, <code>pnpm check</code>. See EV-0038 to EV-0044.</li>
 </ul>
@@ -276,7 +298,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </li>
 <li><strong>Docs:</strong> ADR-005; AGENTS.md updated; acceptance tests AT-27 to AT-30; backlog tickets SC-017 and SC-018, with SC-002, SC-003, SC-004 and SC-011 re-scoped. HOSTING_AND_COSTS rewritten with verified prices.</li>
 </ul>
-<h3 id="changed-5">Changed</h3>
+<h3 id="changed-6">Changed</h3>
 <ul>
 <li>Next actions point to the story text and the Publishing panel instead of Ghost. Marking a story ready by hand now needs its text instead of a Ghost link.</li>
 <li>The contract test now allows exactly one publish tool (<code>drafts.publish</code>, which takes a proposal ID only) and still forbids send, approve, export, delete and member tools.</li>
@@ -298,7 +320,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li><code>DESK_DB_PREPARE</code> for the Supabase pooler&#39;s transaction mode.</li>
 <li>&quot;Operations desk UI patterns&quot; in the <code>sc-visual-codex</code> skill.</li>
 </ul>
-<h3 id="changed-6">Changed</h3>
+<h3 id="changed-7">Changed</h3>
 <ul>
 <li><code>DESK_TRUSTED_PROXY_HOPS</code> is required in production.</li>
 <li>The founders&#39; decision to keep the intake limits as built is recorded in <code>docs/DESK.md</code>.</li>
@@ -321,7 +343,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li>Independent security review (no Critical or High findings) with every Medium and Low finding fixed: column-level update grants, database-stamped reviewers and deciders, final agent revocation that revokes tokens, SQL-side source redaction for agents, audited sources, rights and refused actions, gateway flood guards and per-agent budget, strict request IDs, serialized intake throttling with trusted-proxy hops.</li>
 <li>Operator CLIs (<code>staff</code>, <code>agent</code>), <code>apps/desk/.env.example</code>, <code>docs/DESK.md</code>, <code>packages/contracts</code> validator package.</li>
 </ul>
-<h3 id="changed-7">Changed</h3>
+<h3 id="changed-8">Changed</h3>
 <ul>
 <li>ADR-003 records the decisions made during the build (Cache Components off, ESLint 9, OpenTelemetry API 1.9.1, global stylesheet on tokens, gateway scope).</li>
 <li>Root scripts: <code>desk:*</code> and <code>db:*</code>; <code>pnpm check</code> includes the desk&#39;s static checks. Version 0.2.0.</li>
@@ -340,7 +362,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 <li>Design tokens (<code>brand/tokens.json</code>) with computed contrast gates; <code>sc-visual-codex</code> project skill.</li>
 <li>Kit audit, foundation planning brief, ADR-002, contributing, security, license and third-party notices.</li>
 </ul>
-<h3 id="changed-8">Changed</h3>
+<h3 id="changed-9">Changed</h3>
 <ul>
 <li><code>README.md</code> keeps the original description and adds navigation.</li>
 <li><code>planning/BACKLOG.json</code> and <code>.csv</code>: SC-001 status <code>planned</code> → <code>in_progress</code> (repository, dev environment and vendor feasibility work begun; founder decisions outstanding).</li>
@@ -359,7 +381,7 @@ In the same container the memory charged to it now peaks at 300 to 456 MiB from 
 </div>
 </main>
 <footer class="site-footer"><div>
-  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/9c49bb096ffd9c72ef9739944c2eba5ed622297d">9c49bb0</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
+  <p>Planning hub generated from <a href="https://github.com/Domusgpt/Seafood-Confidential/tree/claude/intelligent-cannon-d1nqq6">claude/intelligent-cannon-d1nqq6</a> at <a href="https://github.com/Domusgpt/Seafood-Confidential/commit/e3479e40bbe4f154e4c252ba61d8239b29ddb789">e3479e4</a>. The publication and the operations desk run only as a preview, not launched (docs/LAUNCH_PREVIEW.md); an acceptance scenario is UNRUN until an evidence record says otherwise.</p>
   <p>© 2026 the Seafood Confidential founders. All rights reserved. Type: Fraunces and Source Sans 3 (SIL Open Font License 1.1). The brand concept image is an AI-generated exploration, not final artwork or documentary photography.</p>
 </div></footer>
 </body>

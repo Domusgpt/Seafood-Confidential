@@ -1,10 +1,10 @@
 {
   "project": "Seafood Confidential",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "branch": "claude/intelligent-cannon-d1nqq6",
   "branchSlug": "claude-intelligent-cannon-d1nqq6",
-  "commit": "9c49bb096ffd9c72ef9739944c2eba5ed622297d",
-  "builtAt": "2026-11-18T22:21:49-05:00",
+  "commit": "e3479e40bbe4f154e4c252ba61d8239b29ddb789",
+  "builtAt": "2026-11-18T23:01:20-05:00",
   "previewsIndex": "../../index.html",
   "tickets": {
     "in_progress": 10,
