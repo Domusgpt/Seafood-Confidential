@@ -97,3 +97,21 @@ Reusable for any static publication in this brand. Live reference: `apps/desk/si
   - a CSP in a meta tag mirrored as a hosting header (`frame-ancestors` lives only in the header);
   - fonts preloaded and self-hosted with their OFL files.
 - **Checks before shipping:** axe WCAG 2.2 AA on home, an AI story and a person's story, each in light, dark and phone views, with no horizontal overflow.
+
+## Preview and placeholder labelling (v0.5.0–v0.6.0)
+
+Reusable for any staged or pre-launch site in this brand. Live reference: `apps/desk/site-src/site.css` (`.preview-banner`, `.label--sample`, `.sample-note`) and the site builder (`apps/desk/src/lib/site/build.ts`).
+
+- **One token role for "not the real thing":** `notice` (status warning) with `notice-text` (ink). The pair is 8.01:1 in both themes and listed in `contrast.pairs`. Use it only for preview and placeholder marking, never for decoration.
+- **Preview banner:** one centred line above the masthead: **Preview.** followed by a plain sentence ("Not launched yet. Stories here are tests by the founders."). Pair it with `noindex` on every page, `Disallow: /` in robots.txt, and `X-Robots-Tag` on private tools.
+- **Placeholder content:**
+  - an uppercase "Sample" chip beside the section eyebrow, on the card and the story;
+  - a `notice` callout at the top of the story body that says it is placeholder text, not reporting, and will be removed;
+  - "Sample:" before each feed title;
+  - sources visibly marked as placeholders.
+
+  Text always carries the meaning; colour only reinforces it.
+
+- **Placeholder copy makes no factual claims:** no figures, names, quotations or real sources. It shows form, never facts.
+- **Guard it in code, not only in style:** the build refuses to publish placeholder items to a site that is not a preview.
+- **Empty state:** "Coming soon" with one plain line ("The first stories are on their way."), and no sign-up offer unless a form really exists.
