@@ -50,6 +50,10 @@ export const IMAGE_OUTCOMES: Record<string, { ok: boolean; text: string }> = {
     text: 'That file is not an image the desk can read. Use a JPEG, PNG, WebP or AVIF.',
   },
   format: { ok: false, text: 'Use a JPEG, PNG, WebP or AVIF image.' },
+  heic: {
+    ok: false,
+    text: 'That is an HEIC photo, the iPhone camera’s usual format, which the desk cannot read. Export it as JPEG first (on a Mac, open it in Preview and choose File, Export), or pick it from the iPhone itself, which converts it.',
+  },
   animated: { ok: false, text: 'Animated images are not supported.' },
   damaged: { ok: false, text: 'The image could not be decoded; it may be damaged.' },
   too_small: { ok: false, text: 'Use an image at least 640 pixels wide.' },

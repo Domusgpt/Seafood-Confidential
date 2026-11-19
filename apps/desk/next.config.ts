@@ -32,6 +32,10 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['pino', 'postgres'],
   experimental: {
     serverActions: { bodySizeLimit: '1mb' },
+    // The proxy (src/proxy.ts) buffers request bodies and silently cuts them at 10 MB by default.
+    // Story images may be 15 MB (src/lib/images/process.ts), so allow just above that; the image
+    // route checks Content-Length before reading the body, and Server Actions keep their 1 MB limit.
+    proxyClientMaxBodySize: '16mb',
   },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];

@@ -123,6 +123,11 @@ export interface SiteConfig {
   motion?: MotionPreset;
   /** Footer links to the standing pages; filled in by buildSite. */
   pageLinks?: { href: string; label: string }[];
+  /**
+   * The masthead font's address exactly as the stylesheet loads it (versioned), so the preload is
+   * used rather than fetched twice; filled in by buildSite. Absent when the stylesheet does not load it.
+   */
+  fontPreload?: string;
 }
 
 export interface SiteFile {
@@ -327,7 +332,7 @@ function layout(p: PageInput): string {
 <meta property="og:url" content="${esc(canonical)}">${
     p.publishedAt ? `\n<meta property="article:published_time" content="${esc(p.publishedAt)}">` : ''
   }${ogImage(p)}
-<link rel="preload" href="/assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+${p.config.fontPreload ? `<link rel="preload" href="${esc(p.config.fontPreload)}" as="font" type="font/woff2" crossorigin>` : ''}
 <link rel="stylesheet" href="/assets/tokens.css?v=${v}">
 <link rel="stylesheet" href="/assets/site.css?v=${v}">
 <script src="/assets/motion-boot.js?v=${v}"></script>
@@ -680,9 +685,14 @@ export function buildSite(
     if (!SLUG.test(page.slug) || RESERVED_PAGE_SLUGS.has(page.slug))
       throw new Error(`unsafe page slug: ${page.slug}`);
   const orderedPages = [...pages].sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
+  const stylesheet = assets.find((a) => a.path === '/assets/site.css')?.body.toString('utf8') ?? '';
+  const masthead = /url\(['"]?(fonts\/fraunces-latin-full-normal\.woff2(?:\?v=[0-9a-f]+)?)['"]?\)/.exec(
+    stylesheet,
+  );
   const config: SiteConfig = {
     ...baseConfig,
     pageLinks: orderedPages.map((p) => ({ href: `/${p.slug}/`, label: p.title })),
+    fontPreload: masthead ? `/assets/${masthead[1]}` : undefined,
   };
   const v = assetVersion(assets);
   const stories = [...snapshot.stories].sort(

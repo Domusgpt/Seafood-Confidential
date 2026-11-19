@@ -70,4 +70,4 @@ export function env(): DeskEnv {
   return cached;
 }
 
-export const DESK_VERSION = '0.7.0';
+export const DESK_VERSION = '0.7.1';

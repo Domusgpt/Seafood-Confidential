@@ -618,3 +618,23 @@ describe('KitClient', () => {
     expect(error.outcomeUnknown).toBe(true);
   });
 });
+
+describe('asset caching (v0.7.1)', () => {
+  // /assets is cached for a year as immutable: the asset build versions every file the stylesheet
+  // loads, and the preload must use the same address or the browser fetches the font twice.
+  it('preloads the masthead font at the exact, versioned address the stylesheet loads', () => {
+    const css = {
+      path: '/assets/site.css',
+      body: Buffer.from(
+        "@font-face{src:url('fonts/fraunces-latin-full-normal.woff2?v=0123456789') format('woff2')}",
+      ),
+      contentType: 'text/css; charset=utf-8',
+    };
+    const home = file(buildSite(snapshot([]), config, [css]), '/index.html')!;
+    expect(home).toContain(
+      '<link rel="preload" href="/assets/fonts/fraunces-latin-full-normal.woff2?v=0123456789" as="font"',
+    );
+    // A stylesheet that does not load the font gets no preload for it.
+    expect(file(buildSite(snapshot([]), config, [asset]), '/index.html')).not.toContain('rel="preload"');
+  });
+});

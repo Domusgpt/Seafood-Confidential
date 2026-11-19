@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
 import { describe, expect, it } from 'vitest';
-import { ImageError, MAX_UPLOAD_BYTES, processImage } from './process';
+import { ImageError, MAX_UPLOAD_BYTES, formatProblem, processImage, renditionWidths } from './process';
 
 // Story image processing (v0.7.0): bounded decoding, upright pixels, renditions that never upscale,
 // and no metadata (camera details, GPS) in anything a reader downloads.
@@ -52,7 +52,28 @@ describe('processImage', () => {
     expect((await sharp(input).metadata()).orientation).toBe(6);
     const out = await processImage(input);
     expect([out.width, out.height]).toEqual([700, 1000]);
+    expect(out.renditions.map((r) => `${r.format}@${r.width}x${r.height}`).sort()).toEqual(
+      ['avif@480x686', 'avif@700x1000', 'webp@480x686', 'webp@700x1000'].sort(),
+    );
     for (const r of out.renditions) expect((await sharp(r.bytes).metadata()).orientation ?? 1).toBe(1);
+  }, 60_000);
+
+  it('makes renditions from one master the size of the largest rendition', async () => {
+    const out = await processImage(await photo(3000, 2000).toBuffer());
+    expect([out.width, out.height]).toEqual([3000, 2000]);
+    expect([...new Set(out.renditions.map((r) => r.width))]).toEqual([480, 800, 1200, 1600, 2400]);
+    expect(out.renditions.find((r) => r.width === 2400)?.height).toBe(1600);
+  }, 120_000);
+
+  it('processes one image at a time, and a refusal does not hold up the next upload', async () => {
+    const [a, refused, b] = await Promise.allSettled([
+      processImage(await photo(700, 700).toBuffer()),
+      processImage(Buffer.alloc(0)),
+      processImage(await photo(900, 600).toBuffer()),
+    ]);
+    expect(a.status === 'fulfilled' && a.value.width).toBe(700);
+    expect(refused.status === 'rejected' && (refused.reason as ImageError).code).toBe('empty');
+    expect(b.status === 'fulfilled' && b.value.width).toBe(900);
   }, 60_000);
 
   it('refuses what it should not try to decode or publish', async () => {
@@ -74,4 +95,23 @@ describe('processImage', () => {
     expect(await refusal(await photo(400, 300).toBuffer())).toBe('too_small');
     expect(await refusal(await photo(3000, 600).toBuffer())).toBe('too_narrow');
   }, 60_000);
+
+  it('names HEIC, unsupported and animated files from the header alone', () => {
+    expect(formatProblem({ format: 'heif', compression: 'hevc' })).toBe('heic');
+    expect(formatProblem({ format: 'heif', compression: 'av1' })).toBeNull();
+    expect(formatProblem({ format: 'gif' })).toBe('format');
+    expect(formatProblem({ format: 'svg' })).toBe('format');
+    expect(formatProblem({ format: 'webp', pages: 12 })).toBe('animated');
+    expect(formatProblem({ format: 'jpeg' })).toBeNull();
+  });
+
+  it('never makes a rendition wider than the image, 2400 px, or about 4.3 megapixels', () => {
+    expect(renditionWidths(640, 480)).toEqual([480, 640]);
+    expect(renditionWidths(1200, 800)).toEqual([480, 800, 1200]);
+    expect(renditionWidths(2400, 1600)).toEqual([480, 800, 1200, 1600, 2400]);
+    expect(renditionWidths(8000, 6000)).toEqual([480, 800, 1200, 1600, 2400]); // 4:3 keeps 2400
+    expect(renditionWidths(3000, 3000)).toEqual([480, 800, 1200, 1600, 2078]); // square
+    expect(renditionWidths(3024, 4032)).toEqual([480, 800, 1200, 1600, 1800]); // phone, portrait
+    expect(renditionWidths(4000, 6000)).toEqual([480, 800, 1200, 1600, 1697]); // camera, portrait
+  });
 });

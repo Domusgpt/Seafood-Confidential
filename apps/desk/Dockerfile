@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 # Operations desk container: one image for Google Cloud Run (recommended) or a Hugging Face
 # Docker Space. Build from the repository root:
-#   docker build -f apps/desk/Dockerfile -t sc-desk:0.7.0 .
+#   docker build -f apps/desk/Dockerfile -t sc-desk:0.7.1 .
 # Runtime configuration comes from the environment (see apps/desk/.env.example); no secret is
 # baked in except the Server Actions key Next.js embeds at build time (keep the image private).
 
@@ -32,7 +32,10 @@ RUN --mount=type=secret,id=extra_ca,required=false \
     pnpm --filter @sc/desk build
 
 FROM node:24.11-bookworm-slim AS run
-ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=8080 HOSTNAME=0.0.0.0 \
+# MALLOC_ARENA_MAX=2: image processing (sharp, libvips) is multi-threaded, and glibc's default
+# per-thread malloc arenas fragment memory; with two arenas a large photograph peaks about a third
+# lower, which matters in Cloud Run's 512 MiB (measured; see src/lib/images/process.ts).
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=8080 HOSTNAME=0.0.0.0 MALLOC_ARENA_MAX=2 \
     SITE_ASSETS_DIR=/app/apps/desk/site-static SITE_OUTPUT_DIR=/tmp/site-output
 WORKDIR /app
 COPY --from=build --chown=node:node /repo/apps/desk/.next/standalone ./

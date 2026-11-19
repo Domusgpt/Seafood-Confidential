@@ -1,4 +1,4 @@
-# Deploying the desk and the public site (v0.7.0)
+# Deploying the desk and the public site (v0.7.1)
 
 How to take the desk from the local stack to hosted Supabase and Google Cloud Run, with the public site on Firebase Hosting and the newsletter on Kit. This is the Ghost-free path in [ADR-005](../decisions/ADR-005-desk-publishing-without-ghost.md) and [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md). A preview has been deployed with these steps (with the adjustments recorded in [LAUNCH_PREVIEW.md](LAUNCH_PREVIEW.md): schema applied through the Supabase Management API, image built in Cloud Build, desk in the same region as the database). On Supabase's Free plan with the built-in mailer, the sign-in email template cannot be changed; the desk accepts Supabase's default links too (open them in the same browser). The production launch on the publication's own accounts (SC-001, D01) remains.
 
@@ -65,9 +65,15 @@ The build needs no secrets. Next.js generates the Server Actions encryption key 
 4. Deploy. The service is public because the desk has its own sign-in and serves the public pitch form:
 
    ```bash
-   gcloud run deploy sc-desk --image us-east4-docker.pkg.dev/<gcp-project>/sc/desk:0.4.1 --region us-east4 --port 8080 --min-instances 0 --max-instances 3 --allow-unauthenticated --set-env-vars DESK_SITE_URL=https://<service>-<hash>.us-east4.run.app,SUPABASE_URL=https://<project-ref>.supabase.co,SUPABASE_PUBLISHABLE_KEY=<sb_publishable_…>,DESK_DB_PREPARE=false,DESK_TRUSTED_PROXY_HOPS=1,SITE_PUBLIC_URL=https://<your-domain>,SITE_DESTINATION=firebase,FIREBASE_SITE_ID=<firebase-site-id>,KIT_FORM_ID=<kit-form-id>,LOG_LEVEL=info --set-secrets DESK_DATABASE_URL=desk-database-url:latest,INTAKE_HASH_SECRET=intake-hash-secret:latest,KIT_API_KEY=kit-api-key:latest
+   gcloud run deploy sc-desk --image us-east4-docker.pkg.dev/<gcp-project>/sc/desk:0.4.1 --region us-east4 --port 8080 --cpu 1 --memory 1Gi --min-instances 0 --max-instances 3 --allow-unauthenticated --set-env-vars DESK_SITE_URL=https://<service>-<hash>.us-east4.run.app,SUPABASE_URL=https://<project-ref>.supabase.co,SUPABASE_PUBLISHABLE_KEY=<sb_publishable_…>,DESK_DB_PREPARE=false,DESK_TRUSTED_PROXY_HOPS=1,SITE_PUBLIC_URL=https://<your-domain>,SITE_DESTINATION=firebase,FIREBASE_SITE_ID=<firebase-site-id>,KIT_FORM_ID=<kit-form-id>,LOG_LEVEL=info --set-secrets DESK_DATABASE_URL=desk-database-url:latest,INTAKE_HASH_SECRET=intake-hash-secret:latest,KIT_API_KEY=kit-api-key:latest
    ```
 
+   Give the service 1 GiB (`--memory 1Gi`). The desk processes story images itself:
+   - a 15 MB upload of a 59-megapixel photograph peaks at about 460 MiB charged to the container;
+   - the server process's high-water mark, which also counts shared program files, reaches about 510 MiB;
+   - on Cloud Run the site build's files are held in memory too.
+
+   512 MiB passed that test with almost nothing spare (v0.7.1, measured in this image).
 5. The desk is staff-only, so its `run.app` address is enough at the start. Cloud Run domain mapping (us-east4 supports it) is still a Preview, and a load balancer costs about $18 a month; add either later if you want `desk.<your-domain>`. Do not put the desk behind Firebase Hosting rewrites: they forward only the `__session` cookie and would break sign-in.
 
 Never set `SUPABASE_SECRET_KEY` on the service: the desk refuses to start with it.

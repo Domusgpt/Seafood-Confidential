@@ -5,7 +5,7 @@ import { registerOTel } from '@vercel/otel';
 // standard OTEL_* environment variables (e.g. OTEL_EXPORTER_OTLP_ENDPOINT); without them spans are
 // created for log correlation but not exported.
 export function register() {
-  registerOTel({ serviceName: 'sc-desk', attributes: { 'service.version': '0.7.0' } });
+  registerOTel({ serviceName: 'sc-desk', attributes: { 'service.version': '0.7.1' } });
 }
 
 export const onRequestError: Instrumentation.onRequestError = async (error, request, context) => {

@@ -62,5 +62,8 @@ Until v0.7.0 the site carried no images. ADR-005 lets agents publish only text, 
 - **GSAP is not open source.**
   - Its "no charge" Standard license allows this commercial use, requires its notices to stay intact, and can be changed by Webflow (THIRD_PARTY_NOTICES.md).
   - The site does not depend on it to be read, so it can be replaced by CSS scroll-driven animations if needed.
-- **Image processing takes time:** 20 to 30 seconds per large photograph on one CPU (mostly AVIF). The desk says so on the form; a lower AVIF effort is the first lever if that becomes a problem.
+- **Image processing takes time and memory.**
+  - **Time:** 20 to 60 seconds per photograph on one CPU, mostly the AVIF encoder. The desk says so on the form; a lower AVIF effort is the first lever if that becomes a problem.
+  - **Memory (v0.7.1):** the first version made every rendition from a full-size decode, and the desk's container with Cloud Run's 512 MiB was killed by a 24-megapixel photograph. The upload is now decoded once to a master of at most 2400 px and about 4.3 megapixels, one image at a time, with glibc's malloc arenas limited. The container's charged memory now peaks at 300 to 456 MiB for 12 to 59 megapixels, and the server process's high-water mark at 509 MiB. The service runs with 1 GiB for headroom.
+  - **Moving processing out of the desk:** if uploads become frequent or large, a separate job, such as a Cloud Run job or a function, could do the processing; the hashes and tables stay the same.
 - **Fix found while building this:** staff could insert a story with publication fields already set. Inserts by API roles may no longer set them (migration `20261119120000_story_images.sql`).

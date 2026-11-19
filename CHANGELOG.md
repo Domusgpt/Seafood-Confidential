@@ -4,6 +4,29 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-11-18 · Session S01, turn 7 · `claude/intelligent-cannon-d1nqq6`
+
+Image uploads now fit the desk's memory and accept the full 15 MB. Both problems were found by testing the desk's own container with Cloud Run's limits, before anyone uploaded a photograph to the live desk.
+
+### Fixed
+- **A large photograph could crash the desk.** Every rendition was decoded from a full-size copy of the upload. In the desk's container with Cloud Run's limits (512 MiB, one CPU), a 12-megapixel phone photograph peaked at 483 MiB, and a 24-megapixel camera photograph got the container killed for running out of memory. Now:
+  - the upload is decoded once, straight to a master the size of the largest rendition (JPEG and WebP shrink while they decode), and every rendition is made from that master;
+  - the largest rendition is at most 2400 px wide and about 4.3 megapixels (portrait photographs were the heavy case);
+  - one image is processed at a time per server, and libvips' cache is off;
+  - the image sets `MALLOC_ARENA_MAX=2`, which cuts glibc's memory fragmentation from sharp's threads by about a third.
+  In the same container the memory charged to it now peaks at 300 to 456 MiB from 12 to 59 megapixels, two uploads at once included. The server process's own high-water mark, which also counts shared program files, reaches 509 MiB, so 512 MiB leaves almost nothing spare.
+- **Uploads over 10 MB were refused as unreadable.** Next.js's proxy buffers request bodies and cut them at 10 MB, so the parsed form was broken. `proxyClientMaxBodySize` is now 16 MB, just above the 15 MB upload limit; Server Actions keep their 1 MB limit.
+- **HEIC photographs were called damaged.** The desk's image library does not include HEIC (the iPhone camera's usual format). It now says what the file is and how to export it as JPEG.
+- **Fonts and the contour linework could stay stale for a year.** Everything under `/assets` is cached as immutable, and the stylesheet loaded these files by bare name. The asset build now versions every file the stylesheet loads by its content, and the font preload uses the same address, so the browser does not fetch the font twice. The live site picks this up at its next publication.
+
+### Changed
+- **The live desk runs with 1 GiB** (was 512 MiB), so an upload, a site build and page requests can coincide with room to spare. At preview traffic this stays inside Cloud Run's free tier.
+
+### Verified (local)
+- The desk's container under `--memory 512m --cpus 1`: uploads of 12, 24, 45 and 59 megapixels (up to 14.4 MiB) through the real route, one at a time and two at once, all attached, with no memory-limit hits. The 0.7.0 container, given the same 24-megapixel upload, was killed for running out of memory.
+- Vitest 131/131, including eight image tests (HEIC detection, the area cap, one image at a time) and the font preload; pgTAP 272/272; Playwright 32/32; `pnpm check`; the bundle scan.
+- The live site's page weight, cold cache: 383 to 532 KB for the home, section and story pages on desktop, and up to 755 KB for the home page on an iPhone 13 (its photographs at three times the density). Largest contentful paint 0.38 to 1.2 s, layout shift at most 0.022.
+
 ## [0.7.0] - 2026-11-18 · Session S01, turn 7 · `claude/intelligent-cannon-d1nqq6`
 
 The public site gets photographs and a motion and depth system: layered parallax, titles and images that animate in and reverse, raised and recessed surfaces lit from above, and a tighter type and spacing scale. Readers can turn animation off, and nothing depends on it. See ADR-006.

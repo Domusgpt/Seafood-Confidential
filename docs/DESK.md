@@ -1,4 +1,4 @@
-# Operations desk (v0.7.0)
+# Operations desk (v0.7.1)
 
 The operations desk for Seafood Confidential:
 - staff sign-in;
@@ -69,6 +69,10 @@ Hosting and costs: [planning/HOSTING_AND_COSTS.md](planning/HOSTING_AND_COSTS.md
 
 - **A lead image per story.** On the story page, "Lead image" takes a JPEG, PNG, WebP or AVIF of at least 640 px and up to 15 MB. It also takes alternative text, an optional caption, where the subject sits, and the rights record that covers the image. Add the rights record first, under Rights and credits.
 - **What the desk does with it:** it makes AVIF and WebP renditions at the site's widths, turns the picture upright, and removes all metadata, location included. The original is kept for the record.
+- **How long, and what it cannot read (v0.7.1):**
+  - Processing takes 20 to 60 seconds on the live desk's single CPU, and the desk works on one image at a time.
+  - The largest rendition is 2400 px wide, or less for portrait and square pictures, at most about 4.3 megapixels, which keeps processing within the server's memory.
+  - HEIC photographs (an iPhone camera's usual format) cannot be read: export them as JPEG first. Choosing a photograph on the iPhone itself converts it.
 - **What readers see.** The image appears on the site only while its rights record is cleared for the web.
   - Publishing pins the image. Replacing or removing it on a live story changes the site only when the story is updated.
   - Illustrations and generated images are labelled as such.

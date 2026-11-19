@@ -3,6 +3,7 @@
 // from brand/tokens.json, the site stylesheet, self-hosted fonts with their licences, the favicon,
 // the bathymetry motif with its validated shaders inlined, the contour linework, and the motion
 // system with GSAP (sc-visual-codex).
+import { createHash } from 'node:crypto';
 import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -52,6 +53,27 @@ for (const [pkg, files] of Object.entries(fonts)) {
   for (const f of files) await copyFile(path.join(dir, 'files', f), path.join(out, 'fonts', f));
   await copyFile(path.join(dir, 'LICENSE'), path.join(out, 'fonts', `${pkg.split('/')[1]}-OFL.txt`));
 }
+
+// Version what the stylesheet loads (fonts, the contour linework) by content. Everything under
+// /assets is cached for a year as immutable, so a changed file needs a new address; the pages link
+// the stylesheet itself with the site-wide asset version (src/lib/site/build.ts), which changes
+// whenever this text does. A reference to a missing file fails the build.
+const cssFile = path.join(out, 'site.css');
+const css = await readFile(cssFile, 'utf8');
+const LOADED = /url\((['"]?)((?:fonts\/)?[\w.-]+\.(?:svg|woff2))\1\)/g;
+const versions = new Map();
+for (const [, , ref] of css.matchAll(LOADED))
+  versions.set(
+    ref,
+    createHash('sha256')
+      .update(await readFile(path.join(out, ref)))
+      .digest('hex')
+      .slice(0, 10),
+  );
+await writeFile(
+  cssFile,
+  css.replace(LOADED, (_, q, ref) => `url(${q}${ref}?v=${versions.get(ref)}${q})`),
+);
 
 const shader = (name) => readFile(path.join(root, 'tools/hub/assets/shaders', name), 'utf8');
 const gl = (await readFile(path.join(root, 'tools/hub/assets/waterfront-gl.js'), 'utf8'))
