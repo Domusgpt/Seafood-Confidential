@@ -1353,6 +1353,71 @@
       "observed": "Phones (iPhone 13 and Pixel 7): home 369 to 188 KB, story 214 to 113 KB, section 52 to 24 KB; each photograph is now the 800 px rendition. Desktop, laptop and iPad identical to before. All 15 views: 2,475 to 1,852 KB; 0 images larger or smaller than the right rendition (audit exit 0). The story photograph: 46 KB to 26 KB; indistinguishable at actual size, slightly softer only when enlarged 2x",
       "result": "pass",
       "location": "devlog/assets/2026-11-18-s01-t8"
+    },
+    {
+      "id": "EV-0073",
+      "recordedAt": "2026-11-19T07:10:44-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@58ab7c886337f1df8d3d9883a62e50f2d62ef5a9",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005"
+      ],
+      "kind": "verification",
+      "summary": "Live: Dave Simpson has an owner account on the preview desk (confirmed sign-in identity, desk principal, owner role), verified as the desk checks access",
+      "steps": "Supabase Auth admin API (the project's secret key read into memory for one call, never printed or stored) to create the identity with email_confirm; SQL through the Management API, in one transaction, for the principal and the owner assignment (as scripts/staff.ts does); then, with his identity bound under row-level security, app.current_staff_principal(), app.has_staff_role('owner') and the staff-visible tables",
+      "observed": "Identity created 2026-11-19 11:55 UTC, email confirmed, never signed in. Principal active, roles [owner]. Bound as Dave: is staff, is owner, sees 7 stories and 14 publish jobs. The desk now has 2 active human owners. No email was sent. His address is not recorded in the repository",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0074",
+      "recordedAt": "2026-11-19T07:10:44-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@58ab7c886337f1df8d3d9883a62e50f2d62ef5a9",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005"
+      ],
+      "kind": "observation",
+      "summary": "Dave cannot receive sign-in links until he is a member of the Supabase organization; that invitation can only be sent from the dashboard",
+      "steps": "Supabase's auth SMTP documentation; the Management API's OpenAPI description (organization endpoints); the project's auth configuration; the organization's member list",
+      "observed": "Supabase: without custom SMTP, Auth 'will refuse to deliver messages to addresses that are not part of the project's team' ('Email address not authorized'), 2 messages an hour. The Management API lists organization members but has no invitation endpoint. Auth config: built-in mailer (no SMTP host), sign-up disabled, links valid 15 minutes, 2 emails an hour. The organization holds only this project and has one member (Paul, Owner). Paul invites Dave in the dashboard; Dave accepts; then signs in",
+      "result": "info"
+    },
+    {
+      "id": "EV-0075",
+      "recordedAt": "2026-11-19T07:10:45-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@58ab7c886337f1df8d3d9883a62e50f2d62ef5a9",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005"
+      ],
+      "kind": "test",
+      "summary": "v0.7.3 tree: pgTAP 282/282 (10 new staff sign-in tests), Vitest 132/132, Playwright 33/33 (owners see sign-ins, editors do not), pnpm check, bundle scan",
+      "steps": "pnpm db:reset; pnpm db:test; pnpm devtrack status --write; pnpm check; pnpm desk:build; pnpm desk:e2e (twice: before and after a label fix). The Docker daemon had stopped while the session was paused; it was restarted detached from the shell",
+      "observed": "All exit 0. pgTAP: shape (two columns only), grants (staff yes; public, agents, publisher no), an owner sees every staff member including a never-signed-in owner with no time, an editor and a disabled owner see none. End to end: a newly added member shows 'Not yet', the signed-in owner a time, and the editor's Settings has no such column",
+      "result": "pass"
+    },
+    {
+      "id": "EV-0076",
+      "recordedAt": "2026-11-19T07:10:45-05:00",
+      "session": "S01",
+      "environment": "linux x64, Node v22.23.5",
+      "commit": "WORKTREE@58ab7c886337f1df8d3d9883a62e50f2d62ef5a9",
+      "operator": "unspecified operator",
+      "subjects": [
+        "SC-005"
+      ],
+      "kind": "verification",
+      "summary": "Live: staff sign-ins migration applied and recorded, desk v0.7.3 on revision sc-desk-00007-nhx; an owner sees Paul's last sign-in and Dave as not yet signed in",
+      "steps": "Migration 20261119140000_staff_sign_ins.sql through the Management API in one transaction with its schema_migrations record; grants and result type checked; the function called with an owner's identity bound and with a non-staff identity bound; Cloud Build from git archive of 58ab7c8 (4b9c5794, SUCCESS); gcloud run deploy with the new image only; probes",
+      "observed": "5 migrations recorded. EXECUTE: authenticated yes; anon, desk_agent, desk_publisher no; returns (principal_id, last_sign_in_at) only. As an owner: Dave Simpson null (shown as 'Not yet'), Paul Phillips 2026-11-19 02:51 UTC, so Paul's first real-email sign-in has happened. A non-staff identity gets 0 rows. Health {version: 0.7.3}; /settings without a session redirects to /sign-in. All publish jobs since are operator runs, so a publication by the desk on Cloud Run is still not exercised",
+      "result": "pass",
+      "location": "devlog/assets/2026-11-19-s01-t9"
     }
   ]
 }

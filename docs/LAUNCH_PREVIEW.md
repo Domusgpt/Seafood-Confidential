@@ -145,7 +145,7 @@ The desk and the database are in the same region: the Supabase project was creat
 
 **Not yet exercised live:**
 - **An image upload through the desk.** It is tested end to end locally and in the desk's container; Paul's first upload is the first live one.
-- **Sign-in with a real email.** Paul's first sign-in is the first one.
+- **Sign-in with a real email: done.** Paul signed in on the evening of 18 November (EV-0076). Dave's first sign-in follows his Supabase invitation.
 - **A publication by the desk service on Cloud Run.** The samples went live through the desk's own publishing code, run by an operator with a short-lived token. On Cloud Run the same code gets its token from the metadata server as `sc-desk-runtime` (Firebase Hosting Admin), and that has not run yet.
 
   **A safe first test:** sign in, open any sample story and press "Update the published story". It rebuilds the site with nothing visibly changed (rehearsed locally, EV-0057). If it fails, the publishing log on `/publishing` says why, nothing breaks, and the job can be retried.
