@@ -10,7 +10,7 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "check": "pnpm validate && pnpm test && pnpm desk:check && pnpm hub:build && pnpm hub:check && pnpm format:check",
+    "check": "pnpm validate && pnpm devtrack status --check && pnpm test && pnpm desk:check && pnpm hub:build && pnpm hub:check && pnpm format:check",
     "db:reset": "supabase db reset",
     "db:start": "supabase start -x studio,imgproxy,vector,logflare,realtime,storage-api,edge-runtime,supavisor,postgres-meta",
     "db:stop": "supabase stop",

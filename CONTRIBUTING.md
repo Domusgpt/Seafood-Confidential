@@ -19,7 +19,7 @@ The repository uses semantic versioning in `package.json` (and `apps/desk/packag
 2. Do the work in the smallest ticket-sized increments; respect ticket dependencies in `planning/BACKLOG.json`.
 3. Record what you observed with `pnpm devtrack evidence …`. **No evidence, no claim.** A ticket becomes `done` and a scenario becomes PASS only with an evidence record.
 4. Write the turn's dev log entry (`pnpm devlog:new --title "…"`; see [devlog/README.md](devlog/README.md)).
-5. Run `pnpm devtrack status --write`, then `pnpm check`. Commit only when it is green, or record why not in the dev log.
+5. Run `pnpm devtrack status --write`, then `pnpm check`. Commit only when it is green, or record why not in the dev log. `pnpm check` runs the same status check as CI, so a version bump or a new evidence record without regenerated status fails locally too.
 6. Produce visual evidence for any interface or design change: screenshots at desktop and mobile widths, plus an accessibility scan (`pnpm hub:shots` for the hub).
 
 ## Commits
