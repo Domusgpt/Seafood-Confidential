@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { ActionForm, SubmitButton, TextField } from '@/components/form';
 import { getSession } from '@/lib/auth';
+import { env } from '@/lib/env';
 import { requestMagicLink } from '../actions';
 
 export const metadata: Metadata = { title: 'Sign in' };
@@ -12,6 +13,7 @@ export default async function SignInPage({ searchParams }: PageProps<'/sign-in'>
   const params = await searchParams;
   const linkError = params.error === 'link';
   const signedOut = params.signed_out === '1';
+  const builtinMailer = env().DESK_AUTH_EMAIL === 'builtin';
   return (
     <>
       <header className="public-header">
@@ -58,6 +60,25 @@ export default async function SignInPage({ searchParams }: PageProps<'/sign-in'>
               <SubmitButton pendingText="Sending…">Email me a sign-in link</SubmitButton>
             </div>
           </ActionForm>
+        </section>
+        <section className="sign-in-help" aria-labelledby="sign-in-help-heading">
+          <h2 id="sign-in-help-heading">Getting the link to work</h2>
+          <ul>
+            {builtinMailer ? (
+              <li>
+                <strong>Open the email on this device, and the link in this browser.</strong> A link opened on
+                another device or in another browser is refused.
+              </li>
+            ) : null}
+            <li>It can take a minute or two to arrive. If it does not, check your spam or junk folder.</li>
+            <li>Each link works once, for 15 minutes.</li>
+            {builtinMailer ? (
+              <li>
+                The desk can send only about two sign-in emails an hour in total, so asking again straight
+                away does not help. Wait half an hour before trying again.
+              </li>
+            ) : null}
+          </ul>
         </section>
         <p className="small muted">
           Contributors do not need an account. To pitch a story, use the <a href="/pitch">pitch form</a>.

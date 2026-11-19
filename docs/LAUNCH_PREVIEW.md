@@ -67,6 +67,7 @@ Both are still drafts for the founders to approve. They live in `apps/desk/site-
   - With `--emit-sql <dir>` it writes the same work as SQL files, for a database this machine cannot reach (run them in the SQL editor).
   - A sample that was already live shows its photograph once the story is updated, because publishing pins the image.
 - **Adding an image to a real story:** add a rights record (photo, provenance, licence, credit line, cleared for the web), then use "Lead image" on the story page. See `docs/DESK.md`.
+- **Sign-in guidance (v0.7.4):** the sign-in page now says, before anyone opens the email, what makes a link work: open it on the same device and in the same browser, check spam, and remember the hourly limit. It adapts to `DESK_AUTH_EMAIL`.
 - **What an upload takes (v0.7.1):** a JPEG, PNG, WebP or AVIF up to 15 MB. The desk needs 20 to 60 seconds to make the renditions, one image at a time; keep the page open until it returns. HEIC photographs (the iPhone camera's usual format) must be exported as JPEG first; choosing a photograph on the iPhone itself converts it automatically.
 - **Image weight (v0.7.2):** readers never receive the original. Each browser downloads the smallest rendition that covers the picture on its screen, and phones denser than 2.5x are served as if 2x. To check any site, run `pnpm --filter @sc/desk audit:images https://seafood-confidential-preview.web.app`.
 - **Memory (v0.7.1):** testing the desk's container with the service's original 512 MiB showed that a 24-megapixel photograph crashed it. The processing was rebuilt to use far less memory, and the service now has 1 GiB.
@@ -183,6 +184,35 @@ From a machine or session with the project's deploy access, at the repository ro
 
 Schema changes are applied the same way as in `docs/DEPLOYMENT.md` (`supabase db push` from a machine that can reach the database), or through the Management API's SQL endpoint, one migration per transaction, recording each in `supabase_migrations.schema_migrations`.
 
+## Custom SMTP: what it fixes and how
+
+Today sign-in emails go through Supabase's free built-in mailer, which brings four limits:
+- **Membership:** it emails only members of the Supabase organization, so everyone who signs in to the desk needs a Supabase account. Dave became an Owner of the infrastructure partly for that.
+- **Volume:** it sends about two emails an hour for the whole project.
+- **Links:** the template cannot be changed, so a link works only in the browser that asked for it.
+- **Sender:** the email comes from Supabase, not from us.
+
+Custom SMTP removes all four.
+
+**What the founders do (about 30 minutes, mostly waiting for DNS):**
+1. **Choose the sending address,** for example `desk@` on the publication's domain, or on a subdomain such as `mail.` of a domain you already own.
+2. **Create a Resend account** (free tier: 3,000 emails a month, 100 a day). Add the domain and enter the DNS records it shows (SPF, DKIM; DMARC is recommended) at your registrar. Wait for "Verified".
+3. **Connect it to Supabase.** In the Supabase dashboard, open Authentication, then Emails, then SMTP Settings, and enable custom SMTP:
+   - host `smtp.resend.com`, port `465`, username `resend`;
+   - password: a Resend API key with sending access only;
+   - sender: the address from step 1, with the name "Seafood Confidential desk".
+
+   Resend's own Supabase integration can fill this in for you.
+4. **Tell the agent session it is done.**
+
+**What the agent session then does:**
+- puts our sign-in template live (`supabase/templates/magic_link.html`), so links work on any device;
+- raises the email rate limit;
+- sets `DESK_AUTH_EMAIL=custom` on the desk, so the sign-in page stops warning about browsers and the hourly limit;
+- checks it with a real sign-in.
+
+**Afterwards:** desk staff no longer need Supabase accounts. The founders can stay in the organization as its owners, but editors should not be added to it. The "Add a staff member" screen (next steps) is then worth building.
+
 ## Taking it down
 
 Delete the Cloud Scheduler job `sc-desk-publish-sweep` (if it was created), the service account `sc-desk-scheduler`, the Cloud Run service `sc-desk`, the Artifact Registry repository `sc-desk`, the two `sc-desk-*` secrets, the service account `sc-desk-runtime` and the Firebase Hosting site `seafood-confidential-preview`. Pause or delete the Supabase project.
@@ -192,6 +222,10 @@ Delete the Cloud Scheduler job `sc-desk-publish-sweep` (if it was created), the 
 1. **Delete the Supabase secret key `seafood_confidential_launch`.** It was pasted into the chat by mistake. Go to Project Settings, then API Keys. Also delete `desk_ops_launch` if it is still listed; it was only for the one-time setup.
 2. **Rotate the Google Cloud key `agents@…` (key ID starting `3b4c8ef7`).** The whole key file was displayed in the chat when it was attached. Create a new key only if you still need one; better, deploy from CI with Workload Identity Federation (no key at all).
 3. **Revoke the Supabase access token** under Account, Access Tokens when the launch work is done. Create a new one for the next session that needs it.
+4. **Both Supabase owners: turn on two-factor authentication.** Paul and Dave are both Owners of the organization, which means full control of the database, its keys and billing. Neither account had two-factor authentication on (19 November).
+   - Turn it on under your Supabase account settings, and save the recovery codes.
+   - Supabase can require it for a whole organization only on paid plans (Pro and up), so on the Free plan each owner turns it on themselves.
+   - Do the same for the Google accounts that own the Google Cloud project.
 
 ## Moving to the publication's own accounts
 
@@ -203,7 +237,7 @@ When Dave confirms D01:
 
 ## Next steps
 
-1. Custom SMTP (Resend free tier) on our own domain: removes the team-only and two-an-hour limits, and enables our sign-in template, whose links work in any browser.
+1. **Custom SMTP** on our own domain (see "Custom SMTP: what it fixes and how" below).
 2. An "Add a staff member" screen in Settings for owners, so adding Dave and others needs no operator.
 3. Deploys from CI with Workload Identity Federation, so no deploy key lives anywhere.
 4. Turn on the publishing sweep (the one command above) when the founders want waiting jobs to run without a button press.

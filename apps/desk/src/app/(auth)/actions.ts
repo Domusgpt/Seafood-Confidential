@@ -10,8 +10,12 @@ import { fieldErrors, formToObject, signInSchema } from '@/lib/validation';
 
 // The response is identical whether or not the address belongs to staff (no account enumeration).
 // Supabase sign-ups are disabled; only existing users receive a link.
-const NEUTRAL =
-  'If that address belongs to a desk account, a sign-in link is on its way. It expires in 15 minutes.';
+const NEUTRAL = {
+  builtin:
+    'If that address belongs to a desk account, a sign-in link is on its way. Open it in this browser within 15 minutes.',
+  custom:
+    'If that address belongs to a desk account, a sign-in link is on its way. It expires in 15 minutes.',
+};
 
 export async function requestMagicLink(_prev: FormState, formData: FormData): Promise<FormState> {
   const values = formToObject(formData);
@@ -36,7 +40,7 @@ export async function requestMagicLink(_prev: FormState, formData: FormData): Pr
   } else {
     logger.info({ request_id: requestId }, 'magic link sent');
   }
-  return { status: 'ok', message: NEUTRAL };
+  return { status: 'ok', message: NEUTRAL[env().DESK_AUTH_EMAIL] };
 }
 
 export async function signOut() {

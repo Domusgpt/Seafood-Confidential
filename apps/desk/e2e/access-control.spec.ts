@@ -88,6 +88,11 @@ test('sign-in does not reveal whether an address has an account', async ({ page 
   await expect(page.getByRole('status')).toContainText(
     'If that address belongs to a desk account, a sign-in link is on its way.',
   );
+  // With Supabase's built-in mailer (the default), the page says up front what makes a link work.
+  await expect(page.getByRole('status')).toContainText('Open it in this browser');
+  const help = page.getByRole('region', { name: 'Getting the link to work' });
+  await expect(help).toContainText('Open the email on this device, and the link in this browser.');
+  await expect(help).toContainText('check your spam or junk folder');
   await expectAccessible(page, '/sign-in');
 });
 

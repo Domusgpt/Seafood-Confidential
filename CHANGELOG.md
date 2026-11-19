@@ -4,6 +4,25 @@ All notable changes to this repository. Format: [Keep a Changelog](https://keepa
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-11-19 · Session S01, turn 10 · `claude/intelligent-cannon-d1nqq6`
+
+Dave accepted the Supabase invitation. Paul asked what else could improve this. The sign-in page now explains, before anyone opens the email, what makes a link work, so a new person's first try is less likely to fail.
+
+### Added
+- **Sign-in guidance.** Under the sign-in form, "Getting the link to work" says:
+  - open the email on this device and the link in this browser;
+  - check spam;
+  - each link works once, for 15 minutes;
+  - the desk can send only about two sign-in emails an hour, so asking again straight away does not help.
+
+  The "link on its way" message now says "Open it in this browser within 15 minutes".
+- **`DESK_AUTH_EMAIL`** (`builtin` by default, or `custom`). With `custom` (custom SMTP and our template, whose links work anywhere), the browser and hourly-limit warnings disappear.
+
+### Docs
+- `docs/LAUNCH_PREVIEW.md`:
+  - "Custom SMTP: what it fixes and how": the four limits it removes, the founders' steps with Resend, and what the agent session does afterwards;
+  - a security follow-up: both Supabase owners should turn on two-factor authentication. Neither had it on, and the Free plan cannot require it.
+
 ## [0.7.3] - 2026-11-19 · Session S01, turn 9 · `claude/intelligent-cannon-d1nqq6`
 
 Dave has an owner account on the live desk, and owners can now see whether each staff member has signed in yet.

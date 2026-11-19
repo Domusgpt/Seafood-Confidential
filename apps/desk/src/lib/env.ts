@@ -19,6 +19,10 @@ const schema = z.object({
   SITE_PREVIEW_NOTICE: z.string().trim().min(1).max(200).optional(),
   // Motion preset for the public site (brand/tokens.json motion.presets); "off" ships a still site.
   SITE_MOTION: z.enum(['calm', 'standard', 'expressive', 'off']).default('standard'),
+  // Which mailer sends sign-in links: Supabase's built-in one (team members only, about two emails
+  // an hour, links that open only in the requesting browser) or custom SMTP with our own template.
+  // It only changes the guidance the sign-in page gives.
+  DESK_AUTH_EMAIL: z.enum(['builtin', 'custom']).default('builtin'),
   SITE_OUTPUT_DIR: z.string().min(1).default('.site-output'),
   SITE_ASSETS_DIR: z.string().min(1).default('site-static'),
   FIREBASE_SITE_ID: z
@@ -70,4 +74,4 @@ export function env(): DeskEnv {
   return cached;
 }
 
-export const DESK_VERSION = '0.7.3';
+export const DESK_VERSION = '0.7.4';
